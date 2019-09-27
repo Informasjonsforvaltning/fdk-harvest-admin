@@ -1,0 +1,12 @@
+version: "3.5"
+
+services:
+  # TODO: node
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$FDKHARVESTADM_MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$FDKHARVESTADM_MONGO_PASSWORD
+    ports:
+      - 27017:27017
