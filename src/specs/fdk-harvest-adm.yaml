@@ -1,0 +1,148 @@
+openapi: 3.0.2
+info:
+  title: National Data Directory FDK Harvest Adm API
+  description: Exposes a basic service which keeps track of data sources to be harvested.
+  version: "1.0"
+  termsOfService: "https://fellesdatakatalog.brreg.no/about"
+  contact:
+    name: Brønnøysundregistrene
+    url: "https://fellesdatakatalog.brreg.no"
+    email: fellesdatakatalog@brreg.no
+  license:
+    name: License of API
+    url: "http://data.norge.no/nlod/no/2.0"
+externalDocs:
+  description: Dokumentasjon på Informasjonsforvaltning GitHub
+  url: https://informasjonsforvaltning.github.io/felles-datakatalog/datasett-katalog/api/
+tags:
+  - name: dataSource
+    description: Data Source Service
+servers:
+  # - url: 'https://fellesdatakatalog.brreg.no/api'
+  - url: "localhost:8000/api"
+paths:
+  /datasources:
+    post:
+      tags:
+        - dataSource
+      summary: Create a new data source
+      operationId: createDataSource
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: url to the new data source
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataSource"
+    get:
+      tags:
+        - dataSource
+      summary: Query for data sources.
+      description: Returns a collection of matching data sources
+      operationId: getDataSources
+      parameters:
+        - name: name
+          in: query
+          description: A query string to match a data source name
+          required: false
+          schema:
+            type: string
+        - name: publisher
+          in: query
+          description: If you want to filter by organizationId of the publisher
+          required: false
+          schema:
+            type: string
+        - name: dataSourceType
+          in: query
+          description: If you want to filter by the data source type
+          required: false
+          schema:
+            type: string
+            enum:
+              - SKOS-AP-NO
+              - DCAT-AP-NO
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataSource"
+  /datasources/{id}:
+    get:
+      tags:
+        - dataSource
+      description: Get a specific data source by id
+      operationId: getDataSourceById
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSource"
+    put:
+      tags:
+        - dataSource
+      description: Update a specific dataSource by id
+      operationId: updateDataSource
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSource"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataSource"
+components:
+  schemas:
+    DataSource:
+      type: object
+      description: A data source that is to be harvester
+      properties:
+        id:
+          type: string
+          description: system-generated id (GUID)
+        dataSourceType:
+          type: string
+          enum:
+            - SKOS-AP-NO
+            - DCAT-AP-NO
+        url:
+          type: string
+          description: Link to the organization entry in The Brønnøysund Register Centre
+        publisher:
+          type: string
+          description: Organization id
+        description:
+          type: string
+          description: A short description of the data source
