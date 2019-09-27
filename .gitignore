@@ -1,3 +1,23 @@
+# Node
+node_modules
+
+# Typescript Transpile
+dist
+
+# IDE
+.idea
+.env
+.vscode/*
+!.vscode/settings.json
+!.vscode/.tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Scratchpad
+scratchpad.ts
+
+# OS X
+.DS_Store
+
 target/
 *.iml
-.idea/
