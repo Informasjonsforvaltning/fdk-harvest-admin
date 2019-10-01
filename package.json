@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development ts-node-dev --respawn --no-notify --transpileOnly ./src/app.ts",
     "build": "rm -rf dist && tsc",
-    "test": "./node_modules/.bin/mocha --exit --timeout 10000"
+    "test": "NODE_ENV=test node node_modules/mocha/bin/_mocha -r ts-node/register test/api/datasource.test.ts --exit --timeout 10000"
   },
   "type": "module",
   "author": "",
@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "express-openapi-validate": "^0.4.4",
     "js-yaml": "^3.13.1",
+    "mongodb-memory-server": "^5.2.6",
     "mongoose": "^5.7.1",
     "promise": "^8.0.3",
     "swagger-ui-express": "^4.1.1",
