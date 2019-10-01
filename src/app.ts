@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import { path as approot } from 'app-root-path';
+import swaggerUI from 'swagger-ui-express';
+import { Utils } from './utils/utils';
 
 dotenv.config({ path: path.join(approot, '.env') });
 
@@ -32,7 +34,13 @@ app.use((
     message: err.message,
     errors: err.errors
   });
-});
+};
+
+app.use(
+  '/api-docs',
+  swaggerUI.serve,
+  swaggerUI.setup(Utils.readOpenApi(false))
+);
 
 app.listen(8000, err => {
   console.log('server running');
