@@ -1,5 +1,5 @@
-import express from 'express';
-import bodyParser from 'body-parser';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { path as approot } from 'app-root-path';
@@ -8,29 +8,18 @@ import { Utils } from './utils/utils';
 
 dotenv.config({ path: path.join(approot, '.env') });
 
-import dbInit from './db/db';
-dbInit();
-
-import generateDocs from './docs/swagger-docs';
+import { connect } from './db/db';
 import { DatasourceRouter } from './routes/routers';
 
 const app = express();
 
-generateDocs(app);
-
-app.use(bodyParser.json());
-app.use('/api/datasources', DatasourceRouter);
-
-app.use((
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const commonErrorHandler = (
   err: any,
-  _req: express.Request,
-  res: express.Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: express.NextFunction
-) => {
-  // format error
-  res.status(err.status).json({
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+): void => {
+  res.status(err.statusCode).json({
     message: err.message,
     errors: err.errors
   });
@@ -42,11 +31,19 @@ app.use(
   swaggerUI.setup(Utils.readOpenApi(false))
 );
 
-app.listen(8000, err => {
-  console.log('server running');
-  if (err) {
-    return console.log(err);
-  }
-});
+app.use(express.json());
+app.use('/api/datasources', DatasourceRouter);
+
+app.use(commonErrorHandler);
+
+if (process.env.NOD_ENV === 'test') {
+  app.listen(8000, Utils.listenCallback);
+} else {
+  connect()
+    .then(() => {
+      app.listen(8000, Utils.listenCallback);
+    })
+    .catch(Utils.abortAndExit);
+}
 
 export default app;

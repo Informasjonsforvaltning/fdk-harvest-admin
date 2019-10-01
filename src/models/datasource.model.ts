@@ -2,7 +2,11 @@ import mongoose from 'mongoose';
 
 const DatasourceSchema = new mongoose.Schema(
   {
-    id: String,
+    id: {
+      type: String,
+      required: true,
+      unique: true
+    },
     dataSourceType: String,
     url: String,
     publisher: String,

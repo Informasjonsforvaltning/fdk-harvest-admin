@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import config from 'config';
+import Promise from 'promise';
 
 mongoose.Promise = global.Promise;
 
@@ -7,12 +8,16 @@ const logRuntimeError = (error: mongoose.Error): void => {
   console.log(error);
 };
 
-const abortAndExit = (error: mongoose.Error): void => {
-  logRuntimeError(error);
-  process.exit(0);
+export const close = (): Promise<void> => {
+  return new Promise((resolve, reject): void => {
+    mongoose
+      .disconnect()
+      .then(resolve)
+      .catch(reject);
+  });
 };
 
-export default (): void => {
+export const connect = (): Promise<void> => {
   const { host, port, name } = config.get('mongodb');
   const {
     FDKHARVESTADM_MONGO_USERNAME = '',
@@ -22,14 +27,23 @@ export default (): void => {
   const url = `mongodb://${FDKHARVESTADM_MONGO_USERNAME}:${FDKHARVESTADM_MONGO_PASSWORD}@${host}:${port}/${name}`;
 
   const options = {
+    // fix deprecations
+    useUnifiedTopology: true,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useFindAndModify: false,
+    useCreateIndex: true
   };
 
-  mongoose
-    .connect(url, options)
-    .then(() => {
-      mongoose.connection.on('error', logRuntimeError);
-    })
-    .catch(abortAndExit);
+  return new Promise((resolve, reject): void => {
+    mongoose
+      .connect(url, options)
+      .then(() => {
+        mongoose.connection.on('error', logRuntimeError);
+        resolve();
+      })
+      .catch(err => {
+        logRuntimeError(err);
+        reject(err);
+      });
+  });
 };

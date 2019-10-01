@@ -20,6 +20,7 @@
     "express-openapi-validate": "^0.4.4",
     "js-yaml": "^3.13.1",
     "mongoose": "^5.7.1",
+    "promise": "^8.0.3",
     "swagger-ui-express": "^4.1.1",
     "yamljs": "^0.3.0"
   },
