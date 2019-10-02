@@ -1,9 +1,19 @@
 version: "3.5"
 
 services:
-  # TODO: node
+  app:
+    container_name: app
+    restart: always
+    build: .
+    ports:
+      - $FDKHARVESTADM_SERVER_PORT:$FDKHARVESTADM_SERVER_PORT
+      - $FDKHARVESTADM_SERVER_DEBUG_PORT:$FDKHARVESTADM_SERVER_DEBUG_PORT
+    links:
+      - mongo
+    command: npm start
 
-  mongodb:
+  mongo:
+    container_name: mongo
     image: mongo:latest
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$FDKHARVESTADM_MONGO_USERNAME

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development ts-node-dev --respawn --no-notify --transpileOnly ./src/app.ts",
     "build": "rm -rf dist && tsc",
+    "start": "NODE_ENV=production node ./dist/src/app.js",
     "test": "NODE_ENV=test node node_modules/mocha/bin/_mocha -r ts-node/register test/api/datasource.test.ts --exit --timeout 10000"
   },
   "type": "module",
