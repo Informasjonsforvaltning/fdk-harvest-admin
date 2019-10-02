@@ -11,6 +11,8 @@ dotenv.config({ path: path.join(approot, '.env') });
 import { connect } from './db/db';
 import { DatasourceRouter } from './routes/routers';
 
+const { PORT = 8000 } = process.env;
+
 const app = express();
 
 const commonErrorHandler = (
@@ -37,11 +39,11 @@ app.use(
 app.use('/api/datasources', DatasourceRouter);
 
 if (process.env.NODE_ENV === 'test') {
-  app.listen(8000, Utils.listenCallback);
+  app.listen(PORT as number, Utils.listenCallback);
 } else {
   connect()
     .then(() => {
-      app.listen(8000, Utils.listenCallback);
+      app.listen(PORT as number, Utils.listenCallback);
     })
     .catch(Utils.abortAndExit);
 }
