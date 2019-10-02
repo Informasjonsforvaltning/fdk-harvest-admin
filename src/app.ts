@@ -25,18 +25,18 @@ const commonErrorHandler = (
   });
 };
 
+app.use(express.json());
+app.use(commonErrorHandler);
+
 app.use(
   '/api-docs',
   swaggerUI.serve,
   swaggerUI.setup(Utils.readOpenApi(false))
 );
 
-app.use(express.json());
 app.use('/api/datasources', DatasourceRouter);
 
-app.use(commonErrorHandler);
-
-if (process.env.NOD_ENV === 'test') {
+if (process.env.NODE_ENV === 'test') {
   app.listen(8000, Utils.listenCallback);
 } else {
   connect()
