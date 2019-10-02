@@ -22,8 +22,7 @@
     "mongodb-memory-server": "^5.2.6",
     "mongoose": "^5.7.1",
     "promise": "^8.0.3",
-    "swagger-ui-express": "^4.1.1",
-    "yamljs": "^0.3.0"
+    "swagger-ui-express": "^4.1.1"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
@@ -39,7 +38,6 @@
     "@types/supertest": "^2.0.8",
     "@types/swagger-jsdoc": "^3.0.2",
     "@types/swagger-ui-express": "^3.0.1",
-    "@types/yamljs": "^0.2.30",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
     "chai": "^4.2.0",
