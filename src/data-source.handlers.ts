@@ -3,7 +3,6 @@ import omit from 'lodash/omit';
 import { DataSourceModel } from './data-source.model';
 import { NotFoundHttpError } from './lib/http-error';
 import uuidv4 from 'uuid/v4';
-import { dataSourcesPath } from './data-source.router';
 
 interface ResourceHandlerMap {
   create: RequestHandler;
@@ -21,7 +20,7 @@ export const dataSourceHandlers: ResourceHandlerMap = {
       .save()
       .then(datasource => {
         res
-          .location(`${dataSourcesPath}/${datasource.id}`)
+          .location(datasource.id)
           .status(201)
           .send();
       })
