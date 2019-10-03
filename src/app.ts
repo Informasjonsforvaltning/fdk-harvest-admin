@@ -3,13 +3,13 @@ import bodyParser from 'body-parser';
 import { commonErrorHandler } from './lib/common-error-handler';
 
 import { connect } from './db/db';
-import { dataSourceRouter, dataSourcesPath } from './data-source.router';
+import { dataSourceRouter } from './data-source.router';
 
 const app = express();
 
 app.use(bodyParser.json());
 
-app.use(dataSourcesPath, dataSourceRouter);
+app.use('/api', dataSourceRouter);
 
 app.use(commonErrorHandler);
 
