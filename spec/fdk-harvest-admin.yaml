@@ -47,14 +47,14 @@ paths:
       description: Returns a collection of matching data sources
       operationId: getDataSources
       parameters:
-        - name: publisherId
-          in: query
+        - in: query
+          name: publisherId
           description: If you want to filter by organizationId of the publisher
           required: false
           schema:
             type: string
-        - name: dataSourceType
-          in: query
+        - in: query
+          name: dataSourceType
           description: If you want to filter by the data source type
           required: false
           schema:
@@ -78,8 +78,8 @@ paths:
       description: Get a specific data source by id
       operationId: getDataSourceById
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           description: id
           required: true
           schema:
@@ -97,8 +97,8 @@ paths:
       description: Update a specific dataSource by id
       operationId: updateDataSource
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           description: id
           required: true
           schema:
@@ -133,9 +133,13 @@ components:
         url:
           type: string
           description: Link to the datasource to be harvested
-        publisher:
+        publisherId:
           type: string
           description: Organization id
         description:
           type: string
           description: A short description of the data source
+      required:
+        - publisherId
+        - dataSourceType
+        - url
