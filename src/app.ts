@@ -2,16 +2,28 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { commonErrorHandler } from './lib/common-error-handler';
 
+import { connect } from './db/db';
+import { dataSourceRouter, dataSourcesPath } from './data-source.router';
+
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use(dataSourcesPath, dataSourceRouter);
+
 app.use(commonErrorHandler);
 
-app.listen(8000, err => {
-  console.log('server running');
-  if (err) {
-    return console.log(err);
-  }
-});
+async function main(): Promise<void> {
+  await connect();
+
+  app.listen(8000, err => {
+    if (err) {
+      throw err;
+    }
+    console.log('server running on: 8000');
+  });
+}
+
+main().catch(console.error);
 
 export default app;
