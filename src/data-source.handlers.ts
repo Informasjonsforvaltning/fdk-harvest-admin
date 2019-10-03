@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express';
 import omit from 'lodash/omit';
-import { DataSourceModel } from './data-source.model';
+import { DataSourceDocument, DataSourceModel } from './data-source.model';
 import { NotFoundHttpError } from './lib/http-error';
 import uuidv4 from 'uuid/v4';
+import { elseThrow } from './lib/else-throw';
 
 interface ResourceHandlerMap {
   create: RequestHandler;
@@ -31,24 +32,15 @@ export const dataSourceHandlers: ResourceHandlerMap = {
     const { id } = req.params;
     const data = omit(req.body, 'id');
     DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
-      .then(doc => {
-        if (!doc) {
-          throw new NotFoundHttpError();
-        }
-        res.status(200).send(doc.toObject());
-      })
+      .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
+      .then(doc => res.status(200).send(doc.toObject()))
       .catch(next);
   },
 
   getById: (req, res, next) => {
     const { id } = req.params;
     DataSourceModel.findOne({ id })
-      .then(doc => {
-        if (!doc) {
-          throw new NotFoundHttpError();
-        }
-        return doc;
-      })
+      .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
       .then(doc => res.status(200).send(doc.toObject()))
       .catch(next);
   },
