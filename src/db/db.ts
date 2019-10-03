@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 import config from 'config';
 
+// export const close = async (): Promise<void> => {
+//      await mongoose.disconnect()
+// };
+
 export const connect = async (): Promise<void> => {
   const { host, port, name } = config.get('mongodb');
 
@@ -16,5 +20,6 @@ export const connect = async (): Promise<void> => {
   };
 
   await mongoose.connect(url, options);
+  console.log('main db connected', url)
   mongoose.connection.on('error', console.error);
 };

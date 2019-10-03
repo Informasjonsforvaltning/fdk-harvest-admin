@@ -4,6 +4,9 @@ import { commonErrorHandler } from './lib/common-error-handler';
 
 import { connect } from './db/db';
 import { dataSourceRouter } from './data-source.router';
+import config from "config";
+
+const { PORT = 8000 } = process.env;
 
 const app = express();
 
@@ -14,14 +17,18 @@ app.use('/api', dataSourceRouter);
 app.use(commonErrorHandler);
 
 async function main(): Promise<void> {
-  await connect();
+  const { listen } = config.get('server');
+  const database = config.get('database');
+  if (database!=="inMemory") {await connect()};
 
-  app.listen(8000, err => {
-    if (err) {
-      throw err;
-    }
-    console.log('server running on: 8000');
-  });
+  if(listen) {
+    app.listen(Number(PORT), err => {
+      if (err) {
+        throw err;
+      }
+      console.log(`server running on: ${PORT}`);
+    });
+  }
 }
 
 main().catch(console.error);

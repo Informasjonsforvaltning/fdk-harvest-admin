@@ -1,7 +1,7 @@
 {
-  "database": "default",
+  "database": "inMemory",
   "server": {
-    "listen": true,
+    "listen": false,
     "port": 8000
   },
   "mongodb": {
