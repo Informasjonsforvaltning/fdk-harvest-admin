@@ -28,7 +28,6 @@ export const dataSourceHandlers: ResourceHandlerMap = {
       .catch(next);
   },
 
-  // TODO(chlenix): validate input
   update: (req, res, next) => {
     const { id } = req.params;
     const data = omit(req.body, 'id');
@@ -42,7 +41,6 @@ export const dataSourceHandlers: ResourceHandlerMap = {
       .catch(next);
   },
 
-  // TODO(chlenix): validate input
   getById: (req, res, next) => {
     const { id } = req.params;
     DataSourceModel.findOne({ id })
@@ -56,7 +54,6 @@ export const dataSourceHandlers: ResourceHandlerMap = {
       .catch(next);
   },
 
-  // TODO(chlenix): validate input
   getAll: (req, res, next) => {
     DataSourceModel.find(req.query)
       .then(docs => res.send(docs.map(doc => doc.toObject())))
