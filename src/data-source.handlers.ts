@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import omit from 'lodash/omit';
 import { DataSourceModel } from './data-source.model';
 import {
   normalizeHttpError,
@@ -11,6 +12,7 @@ interface ResourceHandlerMap {
   create: RequestHandler;
   getById: RequestHandler;
   getAll: RequestHandler;
+  update: RequestHandler;
 }
 
 export const dataSourceHandlers: ResourceHandlerMap = {
@@ -25,6 +27,20 @@ export const dataSourceHandlers: ResourceHandlerMap = {
           .location(`${dataSourcesPath}/${datasource.id}`)
           .status(201)
           .send();
+      })
+      .catch(err => next(normalizeHttpError(err)));
+  },
+
+  // TODO(chlenix): validate input
+  update: (req, res, next) => {
+    const { id } = req.params;
+    const data = omit(req.body, 'id');
+    DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
+      .then(doc => {
+        if (!doc) {
+          throw new NotFoundHttpError();
+        }
+        res.status(200).send(doc.toObject());
       })
       .catch(err => next(normalizeHttpError(err)));
   },
