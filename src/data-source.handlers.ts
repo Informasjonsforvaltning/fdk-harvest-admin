@@ -1,10 +1,7 @@
 import { RequestHandler } from 'express';
 import omit from 'lodash/omit';
 import { DataSourceModel } from './data-source.model';
-import {
-  normalizeHttpError,
-  NotFoundHttpError
-} from './lib/normalize-http-error';
+import { NotFoundHttpError } from './lib/http-error';
 import uuidv4 from 'uuid/v4';
 import { dataSourcesPath } from './data-source.router';
 
@@ -28,7 +25,7 @@ export const dataSourceHandlers: ResourceHandlerMap = {
           .status(201)
           .send();
       })
-      .catch(err => next(normalizeHttpError(err)));
+      .catch(next);
   },
 
   // TODO(chlenix): validate input
@@ -42,7 +39,7 @@ export const dataSourceHandlers: ResourceHandlerMap = {
         }
         res.status(200).send(doc.toObject());
       })
-      .catch(err => next(normalizeHttpError(err)));
+      .catch(next);
   },
 
   // TODO(chlenix): validate input
@@ -56,7 +53,7 @@ export const dataSourceHandlers: ResourceHandlerMap = {
         return doc;
       })
       .then(doc => res.status(200).send(doc.toObject()))
-      .catch(err => next(normalizeHttpError(err)));
+      .catch(next);
   },
 
   // TODO(chlenix): validate input
@@ -65,6 +62,6 @@ export const dataSourceHandlers: ResourceHandlerMap = {
 
     DataSourceModel.find()
       .then(docs => res.send(docs.map(doc => doc.toObject())))
-      .catch(err => next(normalizeHttpError(err)));
+      .catch(next);
   }
 };

@@ -12,9 +12,3 @@ export class NotFoundHttpError extends HttpError {
     super(message, 404);
   }
 }
-
-export const normalizeHttpError = (err: {
-  message: string;
-  status?: number;
-}): HttpError =>
-  err instanceof HttpError ? err : new HttpError(err.message, err.status);

@@ -1,15 +1,17 @@
-import express from 'express';
+import { ErrorRequestHandler } from 'express';
+import { HttpError } from './http-error';
 
-export const commonErrorHandler = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  err: any,
-  _req: express.Request,
-  res: express.Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: express.NextFunction
-): void => {
-  // format error
-  res.status(err.status).json({
+export const commonErrorHandler: ErrorRequestHandler = (
+  err,
+  _req,
+  res,
+  _next //eslint-disable-line @typescript-eslint/no-unused-vars
+) => {
+  const error =
+    err instanceof HttpError
+      ? err
+      : new HttpError(err, err.status || err.statusCode);
+  res.status(error.status).json({
     message: err.message,
     errors: err.errors
   });
