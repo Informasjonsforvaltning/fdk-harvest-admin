@@ -13,10 +13,23 @@ interface DataSource {
 export interface DataSourceDocument extends Document, DataSource {}
 
 const dataSourceSchemaDefinition = {
-  id: String,
-  dataSourceType: String,
-  url: String,
-  publisherId: String,
+  id: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  dataSourceType: {
+    type: String,
+    required: true
+  },
+  url: {
+    type: String,
+    required: true
+  },
+  publisherId: {
+    type: String,
+    required: true
+  },
   description: String
 };
 
