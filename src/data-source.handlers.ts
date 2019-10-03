@@ -57,10 +57,8 @@ export const dataSourceHandlers: ResourceHandlerMap = {
   },
 
   // TODO(chlenix): validate input
-  getAll: (_req, res, next) => {
-    // TODO(chlenix): add optional urlparam filtering
-
-    DataSourceModel.find()
+  getAll: (req, res, next) => {
+    DataSourceModel.find(req.query)
       .then(docs => res.send(docs.map(doc => doc.toObject())))
       .catch(next);
   }
