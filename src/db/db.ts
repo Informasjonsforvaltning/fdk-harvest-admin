@@ -8,8 +8,11 @@ export const connect = async (): Promise<void> => {
     .MONGO_PASSWORD || ''}@${host}:${port}/${name}`;
 
   const options = {
+    // fix deprecations
+    useUnifiedTopology: true,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useFindAndModify: false,
+    useCreateIndex: true
   };
 
   await mongoose.connect(url, options);

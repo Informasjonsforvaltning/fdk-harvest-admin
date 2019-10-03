@@ -8,3 +8,4 @@ dataSourceRouter.get(`/`, dataSourceHandlers.getAll);
 dataSourceRouter.post(`/`, dataSourceHandlers.create);
 
 dataSourceRouter.get(`/:id`, dataSourceHandlers.getById);
+dataSourceRouter.put(`/:id`, dataSourceHandlers.update);
