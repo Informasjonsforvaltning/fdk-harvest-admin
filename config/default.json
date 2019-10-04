@@ -1,4 +1,7 @@
 {
+  "server": {
+    "port": 8135
+  },
   "mongodb": {
     "host": "localhost",
     "port": 27017,

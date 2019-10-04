@@ -1,7 +1,7 @@
 import { createApp } from './app';
 import config = require('config');
 
-const { PORT = 8000 } = process.env;
+const PORT = process.env.PORT || config.get('server.port');
 
 const { host, port, name } = config.get('mongodb');
 
