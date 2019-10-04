@@ -1,12 +1,6 @@
 import mongoose from 'mongoose';
-import config from 'config';
 
-export const connect = async (): Promise<void> => {
-  const { host, port, name } = config.get('mongodb');
-
-  const url = `mongodb://${process.env.MONGO_USERNAME || ''}:${process.env
-    .MONGO_PASSWORD || ''}@${host}:${port}/${name}`;
-
+export const connectDb = async (connectionUris: string): Promise<void> => {
   const options = {
     // fix deprecations
     useUnifiedTopology: true,
@@ -15,6 +9,6 @@ export const connect = async (): Promise<void> => {
     useCreateIndex: true
   };
 
-  await mongoose.connect(url, options);
+  await mongoose.connect(connectionUris, options);
   mongoose.connection.on('error', console.error);
 };
