@@ -2,11 +2,10 @@
   "name": "fdk-harvest-admin",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.ts",
   "scripts": {
     "dev": "NODE_ENV=development ts-node-dev --respawn --no-notify --transpileOnly ./src/server.ts",
     "build": "rm -rf dist && tsc",
-    "lint": "tsc --noEmit && eslint ./ --ext=js,jsx,ts,tsx --fix",
+    "lint": "tsc --noEmit && eslint ./src ./test --ext=js,ts --fix",
     "test": "NODE_ENV=test node node_modules/mocha/bin/_mocha -r ts-node/register test/data-source.api.test.ts --exit --timeout 10000"
   },
   "type": "module",
