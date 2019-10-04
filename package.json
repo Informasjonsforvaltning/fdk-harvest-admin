@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/app.ts",
   "scripts": {
-    "dev": "NODE_ENV=development ts-node-dev --respawn --no-notify --transpileOnly ./src/app.ts",
+    "dev": "NODE_ENV=development ts-node-dev --respawn --no-notify --transpileOnly ./src/server.ts",
     "build": "rm -rf dist && tsc",
     "lint": "tsc --noEmit && eslint ./ --ext=js,jsx,ts,tsx --fix"
   },
