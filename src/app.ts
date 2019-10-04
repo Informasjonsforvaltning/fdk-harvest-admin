@@ -2,10 +2,14 @@ import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import { commonErrorHandler } from './lib/common-error-handler';
 
-import { connect } from './db/db';
+import { connectDb } from './db/db';
 import { dataSourceRouter } from './data-source.router';
 
-export async function createApp(): Promise<Application> {
+export async function createApp({
+  connectionUris
+}: {
+  connectionUris: string;
+}): Promise<Application> {
   const app = express();
 
   app.use(bodyParser.json());
@@ -14,6 +18,6 @@ export async function createApp(): Promise<Application> {
 
   app.use(commonErrorHandler);
 
-  await connect();
+  await connectDb(connectionUris);
   return app;
 }
