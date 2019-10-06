@@ -1,0 +1,10 @@
+{
+  "server": {
+    "port": 8080
+  },
+  "mongodb": {
+    "host": "mongodb",
+    "port": 27017,
+    "name": "fdk-harvest-admin"
+  }
+}
