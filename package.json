@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "dbup": "docker-compose -f docker-compose-mongo.yml up -d mongodb ",
+    "dbdown": "docker-compose -f docker-compose-mongo.yml stop mongodb ",
     "dev": "NODE_ENV=development ts-node-dev --respawn --no-notify --transpileOnly ./src/server.ts",
     "build": "rm -rf dist && tsc",
     "lint": "tsc --noEmit && eslint ./src ./test --ext=js,ts --fix",
