@@ -5,25 +5,19 @@ import { createApp } from '../src/app';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
-import { spec, dataSourceApiValidator } from '../src/data-source.validator';
+import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 import { Application } from 'express';
 
 const mongoTestServer = new MongoMemoryServer();
 
-let appPromise: Promise<Application>;
+let app: Application;
 
-beforeEach(() => {
-  appPromise = mongoTestServer
-    .getConnectionString()
-    .then(connectionUris => createApp({ connectionUris }));
+beforeEach(async () => {
+  const connectionUris = await mongoTestServer.getConnectionString();
+  app = await createApp({ connectionUris });
 });
 
-afterEach(done => {
-  mongoose
-    .disconnect()
-    .then(done)
-    .catch(done);
-});
+afterEach(async () => mongoose.disconnect());
 
 describe('/api/datasources', () => {
   const supportedMethods = spec.paths['/datasources'];
@@ -36,7 +30,7 @@ describe('/api/datasources', () => {
       /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
     );
 
-    await request(await appPromise)
+    await request(app)
       .post(`/api/datasources`)
       .send({
         dataSourceType: 'SKOS-AP-NO',
