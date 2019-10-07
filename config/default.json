@@ -8,5 +8,9 @@
     "host": "localhost",
     "port": 27017,
     "name": "fdk-harvest-admin"
-   }
+  },
+  "rabbitmq": {
+    "host": "localhost",
+    "port": 5672
+  }
 }
