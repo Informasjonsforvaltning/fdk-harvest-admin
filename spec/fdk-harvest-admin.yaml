@@ -146,4 +146,3 @@ components:
         - publisherId
         - dataSourceType
         - url
-        - acceptHeaderValue
