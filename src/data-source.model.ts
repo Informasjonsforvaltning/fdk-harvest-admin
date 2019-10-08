@@ -7,6 +7,7 @@ interface DataSource {
   id?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   dataSourceType?: string;
   url?: string;
+  acceptHeaderValue?: string;
   publisherId?: string;
   description?: string;
 }
@@ -25,6 +26,10 @@ const dataSourceSchemaDefinition = {
     required: true
   },
   url: {
+    type: String,
+    required: true
+  },
+  acceptHeaderValue: {
     type: String,
     required: true
   },

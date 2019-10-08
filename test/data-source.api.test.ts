@@ -35,6 +35,7 @@ describe('/api/datasources', () => {
       .send({
         dataSourceType: 'SKOS-AP-NO',
         url: 'http://example.com',
+        acceptHeaderValue: 'text/turtle',
         publisherId: 'hi',
         description: 'Bla bla bla'
       })
