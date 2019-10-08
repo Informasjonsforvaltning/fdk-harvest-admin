@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import omit from 'lodash/omit';
 
-import { publishToQueue } from './rabbitmq/rabbitmq';
+import { publishDataSource } from './rabbitmq/rabbitmq';
 import { DataSourceDocument, DataSourceModel } from './data-source.model';
 import { NotFoundHttpError } from './lib/http-error';
 import { elseThrow } from './lib/else-throw';
@@ -25,14 +25,7 @@ export const createDataSourceHandlers = (): ResourceHandlerMap => {
           .status(201)
           .send();
 
-        return doc;
-      })
-      .then(({ publisherId = '', dataSourceType = '' }) => {
-        publishToQueue({
-          orgId: publisherId,
-          catalogId: publisherId,
-          datasourceType: dataSourceType
-        });
+        publishDataSource(doc);
       })
       .catch(next);
   },
@@ -44,14 +37,7 @@ export const createDataSourceHandlers = (): ResourceHandlerMap => {
         .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
         .then(doc => {
         res.status(200).send(doc.toObject());
-        return doc;
-      })
-      .then(({ publisherId = '', dataSourceType = '' }) => {
-        publishToQueue({
-          orgId: publisherId,
-          catalogId: publisherId,
-          datasourceType: dataSourceType
-        });
+        publishDataSource(doc);
       })
         .catch(next);
     },

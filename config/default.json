@@ -11,6 +11,8 @@
   },
   "rabbitmq": {
     "host": "localhost",
-    "port": 5672
+    "port": 5672,
+    "exchange": "harvests",
+    "topic": "conceptHarvestTrigger"
   }
 }
