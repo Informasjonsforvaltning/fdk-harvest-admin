@@ -133,6 +133,9 @@ components:
         url:
           type: string
           description: Link to the datasource to be harvested
+        acceptHeaderValue:
+          type: string
+          description: Accept header value to be used when harvesting
         publisherId:
           type: string
           description: Organization id
@@ -143,3 +146,4 @@ components:
         - publisherId
         - dataSourceType
         - url
+        - acceptHeaderValue
