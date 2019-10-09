@@ -3,5 +3,8 @@ version: "3"
 services:
   fdk-harvest-admin:
     image: dcatno/fdk-harvest-admin:latest
+    environment:
+      - MONGO_USERNAME
+      - MONGO_PASSWORD
     expose:
       - "8080"
