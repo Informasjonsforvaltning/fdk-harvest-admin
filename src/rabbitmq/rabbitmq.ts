@@ -9,11 +9,11 @@ interface HarvestCatalogueMessage {
   dataSourceType: string;
 }
 
-const { host = '', port = '', exchange, topic } = config.get('rabbitmq');
+const { user, pass, host, port, exchange, topic } = config.get('rabbitmq');
 
 let channel: Channel;
 
-amqplib.connect(`amqp://${host}:${port}`, (err, connection) => {
+amqplib.connect(`amqp://${user}:${pass}@${host}:${port}`, (err, connection) => {
   if (err) {
     throw err;
   }

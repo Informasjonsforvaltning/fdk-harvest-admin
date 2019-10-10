@@ -2,5 +2,9 @@
   "mongodb": {
     "username": "MONGO_USERNAME",
     "password": "MONGO_PASSWORD"
+  },
+  "rabbitmq": {
+    "user": "RABBIT_USERNAME",
+    "pass": "RABBIT_PASSWORD"
   }
 }
