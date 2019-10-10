@@ -13,12 +13,9 @@ const { host, port, name, username = '', password = '' } = config.get(
   'mongodb'
 );
 
-const { user, pass, rabbitHost, rabbitPort } = config.get('rabbitmq');
-
 const connectionUris = `mongodb://${username}:${password}@${host}:${port}/${name}?authSource=admin&authMechanism=SCRAM-SHA-1`;
-const rabbitConnectionUri = `amqp://${user}:${pass}@${rabbitHost}:${rabbitPort}`;
 
-createMessageBroker(rabbitConnectionUri)
+createMessageBroker()
   .then((messageBroker: MessageBroker = MOCK_MESSAGE_BROKER) => {
     createApp({ connectionUris, messageBroker }).then(app => {
       app.listen(Number(PORT), err => {

@@ -8,8 +8,8 @@
     "name": "fdk-harvest-admin"
   },
   "rabbitmq": {
-    "rabbitHost": "fdk-rabbitmq",
-    "rabbitPort": 5672,
+    "host": "fdk-rabbitmq",
+    "port": 5672,
     "exchange": "harvests",
     "topic": "conceptHarvestTrigger"
   }

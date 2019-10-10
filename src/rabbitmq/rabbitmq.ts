@@ -17,12 +17,12 @@ export const MOCK_MESSAGE_BROKER: MessageBroker = {
   publishDataSource: (): void => {}
 };
 
-export const createMessageBroker = async (
-  con: string
-): Promise<MessageBroker | void> => {
-  const { topic, exchange } = config.get('rabbitmq');
+export const createMessageBroker = async (): Promise<MessageBroker | void> => {
+  const { user, pass, host, port, topic, exchange } = config.get('rabbitmq');
+  const connectionUri = `amqp://${user}:${pass}@${host}:${port}`;
+
   try {
-    const connection: Connection = await amqplib.connect(con);
+    const connection: Connection = await amqplib.connect(connectionUri);
     connection.on('error', console.error);
     const channel: Channel = await connection.createChannel();
     channel.assertExchange(exchange, 'direct', { durable: false });
