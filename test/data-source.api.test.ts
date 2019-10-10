@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 
 import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 import { Application } from 'express';
+import { MessageBroker, MOCK_MESSAGE_BROKER } from '../src/rabbitmq/rabbitmq';
 
 const mongoTestServer = new MongoMemoryServer();
 
@@ -14,7 +15,8 @@ let app: Application;
 
 beforeEach(async () => {
   const connectionUris = await mongoTestServer.getConnectionString();
-  app = await createApp({ connectionUris });
+  const messageBroker: MessageBroker = MOCK_MESSAGE_BROKER;
+  app = await createApp({ connectionUris, messageBroker });
 });
 
 afterEach(async () => mongoose.disconnect());

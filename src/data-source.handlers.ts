@@ -1,10 +1,10 @@
 import { RequestHandler } from 'express';
 import omit from 'lodash/omit';
 
-import { publishDataSource } from './rabbitmq/rabbitmq';
 import { DataSourceDocument, DataSourceModel } from './data-source.model';
 import { NotFoundHttpError } from './lib/http-error';
 import { elseThrow } from './lib/else-throw';
+import { MessageBroker } from './rabbitmq/rabbitmq';
 
 interface ResourceHandlerMap {
   create: RequestHandler;
@@ -13,7 +13,9 @@ interface ResourceHandlerMap {
   update: RequestHandler;
 }
 
-export const createDataSourceHandlers = (): ResourceHandlerMap => {
+export const createDataSourceHandlers = (
+  messageBroker: MessageBroker
+): ResourceHandlerMap => {
   return {
     create: (req, res, next): void => {
       const data = omit(req.body, 'id');
@@ -22,13 +24,13 @@ export const createDataSourceHandlers = (): ResourceHandlerMap => {
         .then(doc => {
           res
             .location(doc.id)
-          .status(201)
-          .send();
+            .status(201)
+            .send();
 
-        publishDataSource(doc);
-      })
-      .catch(next);
-  },
+          messageBroker.publishDataSource(doc);
+        })
+        .catch(next);
+    },
 
     update: (req, res, next): void => {
       const { id } = req.params;
@@ -36,9 +38,9 @@ export const createDataSourceHandlers = (): ResourceHandlerMap => {
       DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
         .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
         .then(doc => {
-        res.status(200).send(doc.toObject());
-        publishDataSource(doc);
-      })
+          res.status(200).send(doc.toObject());
+          messageBroker.publishDataSource(doc);
+        })
         .catch(next);
     },
 
