@@ -116,6 +116,21 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/DataSource"
+    delete:
+      tags:
+        - dataSource
+      description: Delete a specific dataSource by id
+      operationId: deleteDatasource
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
 components:
   schemas:
     DataSource:
