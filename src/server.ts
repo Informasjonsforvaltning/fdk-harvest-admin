@@ -1,5 +1,5 @@
-import { createApp } from './app';
 import config = require('config');
+import { createApp } from './app';
 
 const PORT = config.get('server.port') || 8000;
 
