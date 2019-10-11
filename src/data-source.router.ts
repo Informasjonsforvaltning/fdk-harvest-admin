@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import { createDataSourceHandlers } from './data-source.handlers';
 import { dataSourceApiValidator } from './data-source.validator';
+import { MessageBroker } from './rabbitmq/rabbitmq';
 
 export const dataSourcesPath = '/datasources';
 
-export const createDataSourceRouter = (): Router => {
+export const createDataSourceRouter = (
+  messageBroker: MessageBroker
+): Router => {
   const dataSourceRouter = Router();
-  const dataSourceHandlers = createDataSourceHandlers();
+  const dataSourceHandlers = createDataSourceHandlers(messageBroker);
 
   dataSourceRouter.get(
     `${dataSourcesPath}`,

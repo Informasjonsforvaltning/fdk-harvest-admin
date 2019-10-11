@@ -4,6 +4,7 @@ import omit from 'lodash/omit';
 import { DataSourceDocument, DataSourceModel } from './data-source.model';
 import { NotFoundHttpError } from './lib/http-error';
 import { elseThrow } from './lib/else-throw';
+import { MessageBroker } from './rabbitmq/rabbitmq';
 
 interface ResourceHandlerMap {
   create: RequestHandler;
@@ -12,7 +13,9 @@ interface ResourceHandlerMap {
   update: RequestHandler;
 }
 
-export const createDataSourceHandlers = (): ResourceHandlerMap => {
+export const createDataSourceHandlers = (
+  messageBroker: MessageBroker
+): ResourceHandlerMap => {
   return {
     create: (req, res, next): void => {
       const data = omit(req.body, 'id');
@@ -23,6 +26,8 @@ export const createDataSourceHandlers = (): ResourceHandlerMap => {
             .location(doc.id)
             .status(201)
             .send();
+
+          messageBroker.publishDataSource(doc);
         })
         .catch(next);
     },
@@ -32,7 +37,10 @@ export const createDataSourceHandlers = (): ResourceHandlerMap => {
       const data = omit(req.body, 'id');
       DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
         .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
-        .then(doc => res.status(200).send(doc.toObject()))
+        .then(doc => {
+          res.status(200).send(doc.toObject());
+          messageBroker.publishDataSource(doc);
+        })
         .catch(next);
     },
 
