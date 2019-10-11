@@ -1,4 +1,5 @@
 import express, { Application } from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import { commonErrorHandler } from './lib/common-error-handler';
 
@@ -13,6 +14,8 @@ export async function createApp({
   const app = express();
 
   app.use(bodyParser.json());
+
+  app.use(cors({ origin: '*', exposedHeaders: 'Location' }));
 
   app.use('/api', createDataSourceRouter());
 
