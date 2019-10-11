@@ -1,11 +1,7 @@
 import config = require('config');
 
 import { createApp } from './app';
-import {
-  createMessageBroker,
-  MessageBroker,
-  MOCK_MESSAGE_BROKER
-} from './rabbitmq/rabbitmq';
+import { createMessageBroker, MessageBroker } from './rabbitmq/rabbitmq';
 
 const PORT = config.get('server.port') || 8000;
 
@@ -16,7 +12,7 @@ const { host, port, name, username = '', password = '' } = config.get(
 const connectionUris = `mongodb://${username}:${password}@${host}:${port}/${name}?authSource=admin&authMechanism=SCRAM-SHA-1`;
 
 createMessageBroker()
-  .then((messageBroker: MessageBroker = MOCK_MESSAGE_BROKER) => {
+  .then((messageBroker: MessageBroker) => {
     createApp({ connectionUris, messageBroker }).then(app => {
       app.listen(Number(PORT), err => {
         if (err) {
