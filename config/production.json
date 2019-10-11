@@ -6,5 +6,10 @@
     "host": "mongodb",
     "port": 27017,
     "name": "fdk-harvest-admin"
+  },
+  "rabbitmq": {
+    "host": "rabbitmq",
+    "port": 5672,
+    "exchange": "harvests"
   }
 }
