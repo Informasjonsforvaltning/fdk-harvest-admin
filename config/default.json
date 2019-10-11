@@ -3,6 +3,8 @@
     "port": 8135
   },
   "mongodb": {
+    "username": "admin",
+    "password": "admin",
     "host": "localhost",
     "port": 27017,
     "name": "fdk-harvest-admin"
