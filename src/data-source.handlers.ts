@@ -11,6 +11,7 @@ interface ResourceHandlerMap {
   getById: RequestHandler;
   getAll: RequestHandler;
   update: RequestHandler;
+  deleteById: RequestHandler;
 }
 
 export const createDataSourceHandlers = (
@@ -55,6 +56,13 @@ export const createDataSourceHandlers = (
     getAll: (req, res, next): void => {
       DataSourceModel.find(req.query)
         .then(docs => res.send(docs.map(doc => doc.toObject())))
+        .catch(next);
+    },
+
+    deleteById: (req, res, next): void => {
+      const { id } = req.params;
+      DataSourceModel.deleteOne({ id })
+        .then(() => res.status(204).send())
         .catch(next);
     }
   };

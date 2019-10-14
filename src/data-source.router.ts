@@ -35,5 +35,11 @@ export const createDataSourceRouter = (
     dataSourceHandlers.update
   );
 
+  dataSourceRouter.delete(
+    `${dataSourcesPath}/:id`,
+    dataSourceApiValidator.validate('delete', `${dataSourcesPath}/{id}`),
+    dataSourceHandlers.deleteById
+  );
+
   return dataSourceRouter;
 };
