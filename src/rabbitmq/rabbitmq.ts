@@ -29,7 +29,8 @@ export const createMessageBroker = async (): Promise<MessageBroker> => {
       channel.publish(
         exchange,
         'conceptPublisher.HarvestTrigger',
-        Buffer.from(JSON.stringify(message))
+        Buffer.from(JSON.stringify(message)),
+        { contentType: 'application/json' }
       );
     }
   };
