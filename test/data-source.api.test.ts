@@ -9,17 +9,27 @@ import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 import { Application } from 'express';
 import { MessageBroker } from '../src/rabbitmq/rabbitmq';
 
+import { internet, random } from 'faker';
+
 const messageBrokerMock: MessageBroker = {
   publishDataSource: (): void => {}
 };
 
 const mongoTestServer = new MongoMemoryServer();
 
+const dataSourceMock = {
+  dataSourceType: random.boolean ? 'SKOS-AP-NO' : 'DCAT_AP_NO',
+  url: internet.url(),
+  acceptHeaderValue: 'text/turtle',
+  publisherId: random.number({ min: 800_000_000, max: 900_000_000 }).toString(),
+  description: 'descriptive text here'
+};
+
 let app: Application;
 
 beforeEach(async () => {
-  const connectionUris = await mongoTestServer.getConnectionString();
   const messageBroker: MessageBroker = messageBrokerMock;
+  const connectionUris = await mongoTestServer.getConnectionString();
   app = await createApp({ connectionUris, messageBroker });
 });
 
@@ -38,13 +48,7 @@ describe('/api/datasources', () => {
 
     await request(app)
       .post(`/api/datasources`)
-      .send({
-        dataSourceType: 'SKOS-AP-NO',
-        url: 'http://example.com',
-        acceptHeaderValue: 'text/turtle',
-        publisherId: 'hi',
-        description: 'Bla bla bla'
-      })
+      .send(dataSourceMock)
       .expect(parseInt(code))
       .expect('Location', uuidV4regExp)
       .expect(dataSourceApiValidator.validateResponse('post', '/datasources'));
