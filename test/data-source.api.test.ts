@@ -8,6 +8,9 @@ import mongoose from 'mongoose';
 import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 import { Application } from 'express';
 import { MessageBroker } from '../src/rabbitmq/rabbitmq';
+import Keycloak from 'keycloak-connect';
+import { NextFunction } from 'connect';
+import { stub } from 'sinon';
 
 import { internet, random } from 'faker';
 import { DataSourceModel } from '../src/data-source.model';
@@ -44,11 +47,21 @@ const generateDataSourceMock = (): DataSourceMock => {
   };
 };
 
+const middlewareMock = (
+  _req: Request,
+  _res: Response,
+  next: NextFunction
+): void => {
+  next();
+};
+
 let app: Application;
 
 before(async () => {
   const messageBroker: MessageBroker = messageBrokerMock;
   const connectionUris = await mongoTestServer.getConnectionString();
+  stub(Keycloak.prototype, 'protect').callsFake((): any => middlewareMock);
+
   app = await createApp({ connectionUris, messageBroker });
 });
 
