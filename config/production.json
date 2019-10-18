@@ -11,5 +11,12 @@
     "host": "rabbitmq",
     "port": 5672,
     "exchange": "harvests"
+  },
+  "keycloak": {
+    "realm": "fdk",
+    "bearer-only": true,
+    "ssl-required": "all",
+    "resource": "fdk-harvest-admin",
+    "verify-token-audience": true
   }
 }

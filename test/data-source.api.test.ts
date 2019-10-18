@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import request from 'supertest';
-import { createApp } from '../src/app';
-
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-
-import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 import { Application } from 'express';
-import { MessageBroker } from '../src/rabbitmq/rabbitmq';
-
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { internet, random } from 'faker';
+import { stub } from 'sinon';
+import { NextFunction } from 'connect';
+
+import keycloak from '../src/keycloak';
+import { createApp } from '../src/app';
+import { MessageBroker } from '../src/rabbitmq/rabbitmq';
 import { DataSourceModel } from '../src/data-source.model';
+import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 
 const messageBrokerMock: MessageBroker = {
   publishDataSource: (): void => {}
@@ -44,11 +45,21 @@ const generateDataSourceMock = (): DataSourceMock => {
   };
 };
 
+const middlewareMock = (
+  _req: Request,
+  _res: Response,
+  next: NextFunction
+): void => {
+  next();
+};
+
 let app: Application;
 
 before(async () => {
   const messageBroker: MessageBroker = messageBrokerMock;
   const connectionUris = await mongoTestServer.getConnectionString();
+  stub(keycloak, 'protect').callsFake((): any => middlewareMock);
+
   app = await createApp({ connectionUris, messageBroker });
 });
 

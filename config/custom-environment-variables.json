@@ -6,5 +6,9 @@
   "rabbitmq": {
     "user": "RABBIT_USERNAME",
     "pass": "RABBIT_PASSWORD"
+  },
+
+  "keycloak": {
+    "auth-server-url": "KEYCLOAK_AUTH_URL"
   }
 }
