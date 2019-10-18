@@ -111,6 +111,7 @@ describe('/api/datasources/{id}', () => {
   const {
     get = {} as any,
     put = {} as any,
+    post = {} as any,
     delete: del = {} as any
   } = supportedMethods;
 
@@ -148,6 +149,18 @@ describe('/api/datasources/{id}', () => {
       .expect(parseInt(code))
       .expect(
         dataSourceApiValidator.validateResponse('get', '/datasources/{id}')
+      );
+  });
+
+  it(post.description || post.summary, async () => {
+    const { responses } = post;
+    const code = Object.keys(responses)[0];
+
+    await request(app)
+      .post(`/api/datasources/${dataSourceMock.id}`)
+      .expect(parseInt(code))
+      .expect(
+        dataSourceApiValidator.validateResponse('post', '/datasources/{id}')
       );
   });
 });
