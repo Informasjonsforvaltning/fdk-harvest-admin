@@ -45,5 +45,12 @@ export const createDataSourceRouter = (
     dataSourceHandlers.deleteById
   );
 
+  dataSourceRouter.post(
+    `${dataSourcesPath}/:id`,
+    keycloak.protect(),
+    dataSourceApiValidator.validate('post', `${dataSourcesPath}/{id}`),
+    dataSourceHandlers.harvestById
+  );
+
   return dataSourceRouter;
 };

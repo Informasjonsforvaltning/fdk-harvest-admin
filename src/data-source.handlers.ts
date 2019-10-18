@@ -12,6 +12,7 @@ interface ResourceHandlerMap {
   getAll: RequestHandler;
   update: RequestHandler;
   deleteById: RequestHandler;
+  harvestById: RequestHandler;
 }
 
 export const createDataSourceHandlers = (
@@ -63,6 +64,17 @@ export const createDataSourceHandlers = (
       const { id } = req.params;
       DataSourceModel.deleteOne({ id })
         .then(() => res.status(204).send())
+        .catch(next);
+    },
+
+    harvestById: (req, res, next): void => {
+      const { id } = req.params;
+      DataSourceModel.findOne({ id })
+        .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
+        .then(doc => {
+          res.status(204).send();
+          messageBroker.publishDataSource(doc);
+        })
         .catch(next);
     }
   };
