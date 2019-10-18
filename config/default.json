@@ -20,8 +20,6 @@
     "auth-server-url": "http://localhost:8084/auth",
     "ssl-required": "external",
     "resource": "fdk-harvest-admin",
-    "verify-token-audience": true,
-    "use-resource-role-mappings": true,
-    "confidential-port": 0
+    "verify-token-audience": true
   }
 }

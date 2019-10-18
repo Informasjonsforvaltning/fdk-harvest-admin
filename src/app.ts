@@ -6,8 +6,7 @@ import { commonErrorHandler } from './lib/common-error-handler';
 import { connectDb } from './db/db';
 import { createDataSourceRouter } from './data-source.router';
 import { MessageBroker } from './rabbitmq/rabbitmq';
-import config from 'config';
-import Keycloak from 'keycloak-connect';
+import keycloak from './keycloak';
 
 export async function createApp({
   connectionUris,
@@ -17,7 +16,6 @@ export async function createApp({
   messageBroker: MessageBroker;
 }): Promise<Application> {
   const app = express();
-  const keycloak = new Keycloak({}, config.get('keycloak'));
 
   app.use(bodyParser.json());
 
@@ -25,7 +23,7 @@ export async function createApp({
 
   app.use(keycloak.middleware());
 
-  app.use('/api', createDataSourceRouter(messageBroker, keycloak));
+  app.use('/api', createDataSourceRouter(messageBroker));
 
   app.use(commonErrorHandler);
 

@@ -2,13 +2,12 @@ import { Router } from 'express';
 import { createDataSourceHandlers } from './data-source.handlers';
 import { dataSourceApiValidator } from './data-source.validator';
 import { MessageBroker } from './rabbitmq/rabbitmq';
-import Keycloak from 'keycloak-connect';
+import keycloak from './keycloak';
 
 export const dataSourcesPath = '/datasources';
 
 export const createDataSourceRouter = (
-  messageBroker: MessageBroker,
-  keycloak: Keycloak
+  messageBroker: MessageBroker
 ): Router => {
   const dataSourceRouter = Router();
   const dataSourceHandlers = createDataSourceHandlers(messageBroker);
