@@ -18,7 +18,7 @@ tags:
   - name: dataSource
     description: Data Source Service
 servers:
-  - url: 'https://fellesdatakatalog.brreg.no/api'
+  - url: "https://fellesdatakatalog.brreg.no/api"
 paths:
   /datasources:
     post:
@@ -129,7 +129,22 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
+          description: No Content
+    post:
+      tags:
+        - dataSource
+      description: Harvest a specific dataSource by id
+      operationId: harvestDatasource
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
           description: No Content
 components:
   schemas:
