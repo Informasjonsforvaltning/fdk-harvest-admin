@@ -7,15 +7,10 @@ import { internet, random } from 'faker';
 import { stub } from 'sinon';
 import { NextFunction } from 'connect';
 
-import keycloak from '../src/keycloak';
 import { createApp } from '../src/app';
-import { MessageBroker } from '../src/rabbitmq/rabbitmq';
+import keycloak from '../src/keycloak';
 import { DataSourceModel } from '../src/data-source.model';
 import { dataSourceApiValidator, spec } from '../src/data-source.validator';
-
-const messageBrokerMock: MessageBroker = {
-  publishDataSource: (): void => {}
-};
 
 const mongoTestServer = new MongoMemoryServer();
 
@@ -32,6 +27,14 @@ interface DataSourceMock {
   description: string;
 }
 
+const middlewareMock = (
+  _req: Request,
+  _res: Response,
+  next: NextFunction
+): void => {
+  next();
+};
+
 const generateDataSourceMock = (): DataSourceMock => {
   return {
     id: random.uuid(),
@@ -45,22 +48,12 @@ const generateDataSourceMock = (): DataSourceMock => {
   };
 };
 
-const middlewareMock = (
-  _req: Request,
-  _res: Response,
-  next: NextFunction
-): void => {
-  next();
-};
-
 let app: Application;
 
 before(async () => {
-  const messageBroker: MessageBroker = messageBrokerMock;
   const connectionUris = await mongoTestServer.getConnectionString();
   stub(keycloak, 'protect').callsFake((): any => middlewareMock);
-
-  app = await createApp({ connectionUris, messageBroker });
+  app = await createApp({ connectionUris });
 });
 
 afterEach(async () => {
