@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import amqplib, { Channel, Connection } from 'amqplib';
+import amqplib, { Channel } from 'amqplib/callback_api';
 import config from 'config';
 import { DataSourceDocument } from '../data-source.model';
 
@@ -7,31 +7,52 @@ interface HarvestCatalogueMessage {
   publisherId: string;
 }
 
-export interface MessageBroker {
-  publishDataSource: (doc: DataSourceDocument) => void;
-}
+let channel: Channel | null;
 
-export const createMessageBroker = async (): Promise<MessageBroker> => {
-  const { user, pass, host, port, exchange } = config.get('rabbitmq');
-  const connectionUri = `amqp://${user}:${pass}@${host}:${port}`;
+const { user, pass, host, port, exchange } = config.get('rabbitmq');
+const connectionUri = `amqp://${user}:${pass}@${host}:${port}`;
 
-  const connection: Connection = await amqplib.connect(connectionUri);
-  connection.on('error', console.error);
-  const channel: Channel = await connection.createChannel();
-  channel.assertExchange(exchange, 'topic', { durable: false });
-
-  return {
-    publishDataSource: ({ publisherId = '' }: DataSourceDocument): void => {
-      const message: HarvestCatalogueMessage = {
-        publisherId: publisherId
-      };
-
-      channel.publish(
-        exchange,
-        'conceptPublisher.HarvestTrigger',
-        Buffer.from(JSON.stringify(message)),
-        { contentType: 'application/json' }
-      );
+export const rabbitConnect = (): void => {
+  amqplib.connect(connectionUri, (e, connection) => {
+    if (e) {
+      if (e.code === 'ECONNREFUSED') {
+        console.error(
+          `${e.code}: unable to connect to rabbit at ${e.address}:${e.port}`
+        );
+      }
+      setTimeout(rabbitConnect, 5000);
+    } else {
+      connection.on('error', console.error);
+      connection.on('close', () => {
+        console.log(`Lost connection to rabbitmq, reconnecting ...`);
+        channel = null;
+        rabbitConnect();
+      });
+      connection.createChannel((err, ch) => {
+        if (err) {
+          return connection.close();
+        }
+        ch.assertExchange(exchange, 'topic', { durable: false });
+        channel = ch;
+      });
     }
+  });
+};
+
+export const publishDataSource = ({
+  publisherId = ''
+}: DataSourceDocument): void => {
+  const message: HarvestCatalogueMessage = {
+    publisherId: publisherId
   };
+
+  channel &&
+    channel.publish(
+      exchange,
+      'conceptPublisher.HarvestTrigger',
+      Buffer.from(JSON.stringify(message)),
+      { contentType: 'application/json' }
+    );
+
+  console.log('published!');
 };
