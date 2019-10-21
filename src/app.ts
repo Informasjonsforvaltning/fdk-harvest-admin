@@ -5,15 +5,12 @@ import bodyParser from 'body-parser';
 import { commonErrorHandler } from './lib/common-error-handler';
 import { connectDb } from './db/db';
 import { createDataSourceRouter } from './data-source.router';
-import { MessageBroker } from './rabbitmq/rabbitmq';
 import keycloak from './keycloak';
 
 export async function createApp({
-  connectionUris,
-  messageBroker
+  connectionUris
 }: {
   connectionUris: string;
-  messageBroker: MessageBroker;
 }): Promise<Application> {
   const app = express();
 
@@ -23,7 +20,7 @@ export async function createApp({
 
   app.use(keycloak.middleware());
 
-  app.use('/api', createDataSourceRouter(messageBroker));
+  app.use('/api', createDataSourceRouter());
 
   app.use(commonErrorHandler);
 
