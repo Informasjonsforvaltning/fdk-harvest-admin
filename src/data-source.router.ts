@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import dataSourceHandlers from './data-source.handlers';
 import { dataSourceApiValidator } from './data-source.validator';
-import keycloak from './keycloak';
+import { enforceAuthority } from './keycloak';
 
 export const dataSourcesPath = '/datasources';
 
@@ -16,7 +16,7 @@ export const createDataSourceRouter = (): Router => {
 
   dataSourceRouter.post(
     `${dataSourcesPath}`,
-    keycloak.protect(),
+    enforceAuthority(),
     dataSourceApiValidator.validate('post', `${dataSourcesPath}`),
     dataSourceHandlers.create
   );
@@ -29,21 +29,21 @@ export const createDataSourceRouter = (): Router => {
 
   dataSourceRouter.put(
     `${dataSourcesPath}/:id`,
-    keycloak.protect(),
+    enforceAuthority(),
     dataSourceApiValidator.validate('put', `${dataSourcesPath}/{id}`),
     dataSourceHandlers.update
   );
 
   dataSourceRouter.delete(
     `${dataSourcesPath}/:id`,
-    keycloak.protect(),
+    enforceAuthority(),
     dataSourceApiValidator.validate('delete', `${dataSourcesPath}/{id}`),
     dataSourceHandlers.deleteById
   );
 
   dataSourceRouter.post(
     `${dataSourcesPath}/:id`,
-    keycloak.protect(),
+    enforceAuthority(),
     dataSourceApiValidator.validate('post', `${dataSourcesPath}/{id}`),
     dataSourceHandlers.harvestById
   );
