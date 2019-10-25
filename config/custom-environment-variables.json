@@ -9,6 +9,8 @@
   },
 
   "keycloak": {
-    "auth-server-url": "KEYCLOAK_AUTH_URL"
+    "config": {
+      "auth-server-url": "KEYCLOAK_AUTH_URL"
+    }
   }
 }
