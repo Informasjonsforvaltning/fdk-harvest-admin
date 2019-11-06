@@ -19,7 +19,11 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types", "src/types/*"],
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/types/*"]
+    },
+    "typeRoots": ["node_modules/@types"],
     "allowSyntheticDefaultImports": true
   },
   "include": ["./src/**/*", "./test/**/*"],

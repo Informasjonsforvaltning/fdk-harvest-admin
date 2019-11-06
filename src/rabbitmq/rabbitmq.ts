@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import amqplib, { Channel } from 'amqplib/callback_api';
+import amqplib, { Channel, Message } from 'amqplib/callback_api';
 import config from 'config';
-import { DataSourceDocument } from '../data-source.model';
+import { DataSourceDocument, DataSourceModel } from '../data-source.model';
+import { validator } from './asyncspec-validator';
 
 interface HarvestCatalogueMessage {
   publisherId: string;
@@ -9,7 +10,16 @@ interface HarvestCatalogueMessage {
 
 let channel: Channel | null;
 
-const { user, pass, host, port, exchange } = config.get('rabbitmq');
+const {
+  user,
+  pass,
+  host,
+  port,
+  exchange,
+  listenerKey,
+  publisherKey,
+  validationKey
+} = config.get('rabbitmq');
 const connectionUri = `amqp://${user}:${pass}@${host}:${port}`;
 
 export const rabbitConnect = (): void => {
@@ -33,7 +43,38 @@ export const rabbitConnect = (): void => {
           return connection.close();
         }
         ch.assertExchange(exchange, 'topic', { durable: false });
-        channel = ch;
+
+        ch.assertQueue(
+          '',
+          {
+            exclusive: true
+          },
+          (err, q) => {
+            if (err) {
+              console.error('listener queue could not be asserted');
+              return connection.close();
+            }
+            ch.bindQueue(q.queue, exchange, listenerKey);
+
+            ch.consume(q.queue, async ({ content, fields }: Message) => {
+              console.log(
+                "[x] received new datasource from:'%s'",
+                fields.routingKey
+              );
+
+              const dataSource = JSON.parse(content.toString());
+              try {
+                if ((await validator).validate(validationKey, dataSource)) {
+                  new DataSourceModel(dataSource).save();
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            });
+
+            channel = ch;
+          }
+        );
       });
     }
   });
@@ -49,7 +90,7 @@ export const publishDataSource = ({
   channel &&
     channel.publish(
       exchange,
-      'conceptPublisher.HarvestTrigger',
+      publisherKey,
       Buffer.from(JSON.stringify(message)),
       { contentType: 'application/json' }
     );
