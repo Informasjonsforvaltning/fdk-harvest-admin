@@ -12,7 +12,10 @@
   "rabbitmq": {
     "host": "localhost",
     "port": 5672,
-    "exchange": "harvests"
+    "exchange": "harvests",
+    "listenerKey": "*.NewDataSource",
+    "validationKey": "conceptPublisherNewDataSource-msg",
+    "publisherKey": "conceptPublisher.HarvestTrigger"
   },
   "keycloak": {
     "config": {
