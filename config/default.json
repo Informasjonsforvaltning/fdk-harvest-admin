@@ -13,9 +13,9 @@
     "host": "localhost",
     "port": 5672,
     "exchange": "harvests",
-    "listenerKey": "*.NewDataSource",
+    "listenerKey": "concept.*.NewDataSource",
     "validationKey": "conceptPublisherNewDataSource-msg",
-    "publisherKey": "conceptPublisher.HarvestTrigger"
+    "publisherKey": "concept.publisher.HarvestTrigger"
   },
   "keycloak": {
     "config": {
@@ -27,5 +27,9 @@
       "verify-token-audience": true
     },
     "allowed-authority": "system:root:admin"
+  },
+  "spec": {
+    "open-api": "fdk-harvest-admin.yaml",
+    "async-api": "fdk-message-broker.yaml"
   }
 }
