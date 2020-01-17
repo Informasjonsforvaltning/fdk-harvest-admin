@@ -16,8 +16,6 @@ RUN npm t
 #we will copy node modules later, so they need to be pruned first
 RUN npm prune --production
 
-
-
 #FINAL CONTAINER
 FROM node:12-alpine
 
