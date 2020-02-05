@@ -15,7 +15,7 @@
     "exchange": "harvests",
     "listenerKey": "concept.*.NewDataSource",
     "validationKey": "conceptPublisherNewDataSource-msg",
-    "publisherKey": "concept.publisher.HarvestTrigger"
+    "publisherPartialKey": "publisher.HarvestTrigger"
   },
   "keycloak": {
     "config": {

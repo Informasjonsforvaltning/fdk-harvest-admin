@@ -160,6 +160,12 @@ components:
           enum:
             - SKOS-AP-NO
             - DCAT-AP-NO
+        dataType:
+          type: string
+          enum:
+            - concept
+            - dataset
+            - informationmodel
         url:
           type: string
           description: Link to the datasource to be harvested
@@ -175,4 +181,5 @@ components:
       required:
         - publisherId
         - dataSourceType
+        - dataType
         - url

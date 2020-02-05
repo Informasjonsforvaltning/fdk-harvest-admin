@@ -12,6 +12,8 @@ import keycloak from '../src/keycloak';
 import { DataSourceModel } from '../src/data-source.model';
 import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 
+import { Standard, DataType } from '../src/types/enums';
+
 const mongoTestServer = new MongoMemoryServer();
 
 const uuidV4regExp = new RegExp(
@@ -21,6 +23,7 @@ const uuidV4regExp = new RegExp(
 interface DataSourceMock {
   id: string;
   dataSourceType: string;
+  dataType: string;
   url: string;
   acceptHeaderValue: string;
   publisherId: string;
@@ -38,7 +41,8 @@ const middlewareMock = (
 const generateDataSourceMock = (): DataSourceMock => {
   return {
     id: random.uuid(),
-    dataSourceType: random.boolean ? 'SKOS-AP-NO' : 'DCAT_AP_NO',
+    dataType: DataType.CONCEPT,
+    dataSourceType: Standard.SKOS_AP_NO,
     url: internet.url(),
     acceptHeaderValue: 'text/turtle',
     publisherId: random

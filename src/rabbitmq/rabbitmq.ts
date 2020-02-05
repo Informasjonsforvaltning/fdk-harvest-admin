@@ -17,7 +17,7 @@ const {
   port,
   exchange,
   listenerKey,
-  publisherKey,
+  publisherPartialKey,
   validationKey
 } = config.get('rabbitmq');
 const connectionUri = `amqp://${user}:${pass}@${host}:${port}`;
@@ -58,8 +58,7 @@ export const rabbitConnect = (): void => {
 
             ch.consume(q.queue, async ({ content, fields }: Message) => {
               console.log(
-                "[x] received new datasource from:'%s'",
-                fields.routingKey
+                `[*] received new datasource from: ${fields.routingKey}`
               );
 
               const dataSource = JSON.parse(content.toString());
@@ -81,17 +80,21 @@ export const rabbitConnect = (): void => {
 };
 
 export const publishDataSource = ({
-  publisherId = ''
+  id = '',
+  publisherId = '',
+  dataType = ''
 }: DataSourceDocument): void => {
   const message: HarvestCatalogueMessage = {
     publisherId: publisherId
   };
 
-  channel &&
-    channel.publish(
-      exchange,
-      publisherKey,
-      Buffer.from(JSON.stringify(message)),
-      { contentType: 'application/json' }
-    );
+  const key = `${dataType}.${publisherPartialKey}`;
+
+  console.log(`[*] (${publisherId}) publishing [id:${id}] to key ${key} ...`);
+
+  dataType &&
+    channel &&
+    channel.publish(exchange, key, Buffer.from(JSON.stringify(message)), {
+      contentType: 'application/json'
+    });
 };
