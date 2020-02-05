@@ -24,10 +24,15 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /usr/src/app
 
+# MongoDB migration files
+COPY migrate-mongo-config.js ./
+COPY migrations ./migrations
+
 COPY --from=build /usr/src/app/package.json ./
 COPY --from=build /usr/src/app/config ./config
 COPY --from=build /usr/src/app/spec ./spec
 COPY --from=build /usr/src/app/dist/src ./dist/src
 COPY --from=build /usr/src/app/node_modules ./node_modules
+
 
 CMD ["npm", "run", "prod"]

@@ -5,6 +5,7 @@ import uuidv4 from 'uuid/v4';
 interface DataSource {
   // set to any because of mongoose type compatibility, in reality it is string
   id?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  dataType?: string;
   dataSourceType?: string;
   url?: string;
   acceptHeaderValue?: string;
@@ -22,6 +23,10 @@ const dataSourceSchemaDefinition = {
     unique: true
   },
   dataSourceType: {
+    type: String,
+    required: true
+  },
+  dataType: {
     type: String,
     required: true
   },
