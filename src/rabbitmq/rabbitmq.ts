@@ -6,6 +6,7 @@ import { validator } from './asyncspec-validator';
 
 interface HarvestCatalogueMessage {
   publisherId: string;
+  dataType: string;
 }
 
 let channel: Channel | null;
@@ -81,20 +82,22 @@ export const rabbitConnect = (): void => {
 
 export const publishDataSource = ({
   id = '',
-  publisherId = '',
-  dataType = ''
+  dataType = '',
+  publisherId = ''
 }: DataSourceDocument): void => {
   const message: HarvestCatalogueMessage = {
-    publisherId: publisherId
+    publisherId: publisherId,
+    dataType: dataType
   };
 
   const key = `${dataType}.${publisherPartialKey}`;
 
-  console.log(`[*] (${publisherId}) publishing [id:${id}] to key ${key} ...`);
-
-  dataType &&
-    channel &&
+  if (channel && dataType) {
+    console.log(
+      `[id:${id}] organization (${publisherId}) publishing to ${key} ...`
+    );
     channel.publish(exchange, key, Buffer.from(JSON.stringify(message)), {
       contentType: 'application/json'
     });
+  }
 };
