@@ -22,7 +22,6 @@ jobs:
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: gcloud auth configure-docker
 
-
       - name: Build Docker image with GitHub commit sha and staging tag
         run: docker build . -t eu.gcr.io/fdk-infra/fdk-harvest-admin:$GITHUB_SHA -t eu.gcr.io/fdk-infra/fdk-harvest-admin:latest
 

@@ -1,4 +1,4 @@
-name: Build and deploy to staging (digdir) when pull request is created
+name: Build, test and deploy to production (digdir) on merge to master branch
 
 on:
   pull_request:
@@ -6,14 +6,13 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
-    name: Deploy to staging environment
+  build-test-and-deploy-production:
+    name: Build, test, publish and deploy to production environment
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v1
 
-      # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
@@ -24,7 +23,7 @@ jobs:
       - run: gcloud auth configure-docker
 
       - name: Build Docker image with GitHub commit sha and staging tag
-        run: docker build . -t eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:$GITHUB_SHA -t eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:staging_latest
+        run: docker build . -t eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:$GITHUB_SHA -t eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:latest
 
       - name: Publish docker image to Google Cloud
         run: docker -- push eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin
@@ -37,19 +36,19 @@ jobs:
             helm init --client-only
             helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
             helm fetch --untar --untardir ./helm fdk/fdk-harvest-admin
-            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:$GITHUB_SHA" -f ./helm/fdk-harvest-admin/values/staging-digdir.yaml ./helm/fdk-harvest-admin/ > ./kubectlapply.yaml
+            helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:$GITHUB_SHA" -f ./helm/fdk-harvest-admin/values/prod-digdir.yaml ./helm/fdk-harvest-admin/ > ./kubectlapply.yaml
             chmod o+w ./kubectlapply.yaml
             cat kubectlapply.yaml
 
       - name: Get kubeconfig file from GKE
         uses: machine-learning-apps/gke-kubeconfig@master
         with:
-          application_credentials: ${{ secrets.DIGDIR_FDK_DEV_AUTODEPLOY }}
-          project_id: digdir-fdk-dev
+          application_credentials: ${{ secrets.DIGDIR_FDK_PROD_AUTODEPLOY }}
+          project_id: digdir-fdk-prod
           location_zone: europe-north1-a
-          cluster_name: digdir-fdk-dev
+          cluster_name: digdir-fdk-prod
 
-      - name: Deploy to staging
+      - name: Deploy to production
         uses: docker://bitnami/kubectl:latest
         env:
           KUBECONFIG: '/github/workspace/.kube/config'
@@ -61,4 +60,11 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: pullreminders/slack-action@master
         with:
-          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: fdk-harvest-admin deployed to digdir-staging\"}'
+          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: fdk-harvest-admin deployed to digdir-production\"}'
+
+      - name: Trigger deploy to demo
+        uses: peter-evans/repository-dispatch@master
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          event-type: deploy-demo-digdir
+          client-payload: '{"sha": "${{ github.sha }}"}'
