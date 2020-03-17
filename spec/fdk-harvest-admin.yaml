@@ -166,6 +166,7 @@ components:
             - concept
             - dataset
             - informationmodel
+            - dataservice
         url:
           type: string
           description: Link to the datasource to be harvested
