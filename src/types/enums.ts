@@ -6,5 +6,6 @@ export enum Standard {
 export enum DataType {
   CONCEPT = 'concept',
   DATASET = 'dataset',
-  INFORMATION_MODEL = 'informationmodel'
+  INFORMATION_MODEL = 'informationmodel',
+  DATASERVICE = 'dataservice'
 }
