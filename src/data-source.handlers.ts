@@ -18,6 +18,18 @@ interface ResourceHandlerMap {
 export default {
   create: (req, res, next): void => {
     const data = omit(req.body, 'id');
+    const { allowedOrganizations } = res.locals;
+
+    if (
+      allowedOrganizations &&
+      allowedOrganizations.length > 0 &&
+      !allowedOrganizations.includes(data.publisherId)
+    ) {
+      res.status(403).send();
+
+      return;
+    }
+
     new DataSourceModel(data)
       .save()
       .then(doc => {
@@ -34,6 +46,18 @@ export default {
   update: (req, res, next): void => {
     const { id } = req.params;
     const data = omit(req.body, 'id');
+    const { allowedOrganizations } = res.locals;
+
+    if (
+      allowedOrganizations &&
+      allowedOrganizations.length > 0 &&
+      !allowedOrganizations.includes(data.publisherId)
+    ) {
+      res.status(403).send();
+
+      return;
+    }
+
     DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
       .then(doc => {
@@ -59,16 +83,45 @@ export default {
 
   deleteById: (req, res, next): void => {
     const { id } = req.params;
-    DataSourceModel.deleteOne({ id })
-      .then(() => res.status(204).send())
+    const { allowedOrganizations } = res.locals;
+
+    DataSourceModel.findOne({ id })
+      .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
+      .then(doc => {
+        if (
+          allowedOrganizations &&
+          allowedOrganizations.length > 0 &&
+          !allowedOrganizations.includes(doc.toObject().publisherId)
+        ) {
+          res.status(403).send();
+
+          return;
+        }
+
+        DataSourceModel.deleteOne({ id })
+          .then(() => res.status(204).send())
+          .catch(next);
+      })
       .catch(next);
   },
 
   harvestById: (req, res, next): void => {
     const { id } = req.params;
+    const { allowedOrganizations } = res.locals;
+
     DataSourceModel.findOne({ id })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
       .then(doc => {
+        if (
+          allowedOrganizations &&
+          allowedOrganizations.length > 0 &&
+          !allowedOrganizations.includes(doc.toObject().publisherId)
+        ) {
+          res.status(403).send();
+
+          return;
+        }
+
         res.status(204).send();
         publishDataSource(doc);
       })

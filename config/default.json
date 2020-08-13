@@ -21,12 +21,11 @@
     "config": {
       "realm": "fdk",
       "bearer-only": true,
-      "auth-server-url": "http://localhost:8084/auth",
+      "auth-server-url": "https://sso.staging.fellesdatakatalog.digdir.no/auth",
       "ssl-required": "external",
       "resource": "fdk-harvest-admin",
       "verify-token-audience": true
-    },
-    "allowed-authority": "system:root:admin"
+    }
   },
   "spec": {
     "open-api": "fdk-harvest-admin.yaml",
