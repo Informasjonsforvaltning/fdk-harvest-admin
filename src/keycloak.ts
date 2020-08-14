@@ -1,4 +1,4 @@
-import Keycloak, { SpecHandler } from 'keycloak-connect';
+import Keycloak, { GaurdFn } from 'keycloak-connect';
 import config from 'config';
 import { RequestHandler } from 'express';
 
@@ -6,7 +6,7 @@ const { config: keycloakConfig } = config.get('keycloak');
 
 const keycloakInstance = new Keycloak({}, keycloakConfig);
 
-const checkAuthority: SpecHandler = ({ content }, _, res) => {
+const checkAuthority: GaurdFn = ({ content }: any, _, res) => {
   const { authorities: authoritiesString } = content as any;
 
   const authorities: string[] = authoritiesString

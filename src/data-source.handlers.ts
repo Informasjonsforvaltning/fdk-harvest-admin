@@ -33,10 +33,7 @@ export default {
     new DataSourceModel(data)
       .save()
       .then(doc => {
-        res
-          .location(doc.id)
-          .status(201)
-          .send();
+        res.location(doc.id).status(201).send();
 
         publishDataSource(doc);
       })
