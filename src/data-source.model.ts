@@ -1,6 +1,6 @@
 import { Document, model, Schema } from 'mongoose';
 import pick from 'lodash/pick';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 
 interface DataSource {
   // set to any because of mongoose type compatibility, in reality it is string
@@ -17,7 +17,7 @@ export interface DataSourceDocument extends Document, DataSource {}
 
 const dataSourceSchemaDefinition = {
   id: {
-    default: uuidv4,
+    default: uuid,
     type: String,
     required: true,
     unique: true
