@@ -10,6 +10,7 @@ jobs:
     name: Deploy to staging environment
     runs-on: ubuntu-latest
 
+    steps:
       - uses: actions/checkout@v1
 
       # Setup gcloud CLI
