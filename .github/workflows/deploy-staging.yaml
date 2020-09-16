@@ -63,14 +63,18 @@ jobs:
         with:
           # args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: fdk-harvest-admin deployed to staging\"}'
           args: '{
-          \"channel\":\"C7NTH118T\",
-          \"attachments\":[{
-            \"fallback\": \"Required plain-text summary of the attachment.\",
-            \"color\": \"#36a64f\",
-            \"pretext\": \"Application: fdk-harvest-admin deployed to staging\",
-            \"author_name\": \"$GITHUB_ACTOR\",
-            \"author_link\": \"https://github.com/$GITHUB_ACTOR\",
-            \"title\": \"$GITHUB_SHA\",
-            \"title_link\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA\",
-            \"text\": \"test\"
+            \"channel\":\"C7NTH118T\",
+            \"attachments\":
+            [
+              {
+              \"fallback\": \"Required plain-text summary of the attachment.\",
+              \"color\": \"#36a64f\",
+              \"pretext\": \"Application: fdk-harvest-admin deployed to staging\",
+              \"author_name\": \"$GITHUB_ACTOR\",
+              \"author_link\": \"https://github.com/$GITHUB_ACTOR\",
+              \"title\": \"$GITHUB_SHA\",
+              \"title_link\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA\",
+              \"text\": \"test\"
+              }
+            ]
           }'
