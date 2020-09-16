@@ -64,7 +64,7 @@ jobs:
           # args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application: fdk-harvest-admin deployed to staging\"}'
           args: '{
           \"channel\":\"C7NTH118T\",
-          \"attachments\":\"[{
+          \"attachments\":[{
             \"fallback\": \"Required plain-text summary of the attachment.\",
             \"color\": \"#36a64f\",
             \"pretext\": \"Application: fdk-harvest-admin deployed to staging\",
