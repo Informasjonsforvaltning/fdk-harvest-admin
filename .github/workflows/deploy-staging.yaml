@@ -10,15 +10,6 @@ jobs:
     name: Deploy to staging environment
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: 8398a7/action-slack@master
-      with:
-        status: custom
-        fields: workflow,job,commit,repo,ref,author,took
-        custom_payload: |
-          {
-            username: ''
-
       - uses: actions/checkout@v1
 
       # Setup gcloud CLI
