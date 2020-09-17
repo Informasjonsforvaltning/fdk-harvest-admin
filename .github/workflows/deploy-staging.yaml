@@ -55,7 +55,7 @@ jobs:
         env:
           KUBECONFIG: '/github/workspace/.kube/config'
         with:
-          args: "apply -f ./kubectlapply.yaml --force"
+          args: "do not deploy please apply -f ./kubectlapply.yaml --force"
 
       - name: Notify slack
         uses: 8398a7/action-slack@v3
