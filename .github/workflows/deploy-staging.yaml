@@ -60,12 +60,9 @@ jobs:
       - name: Notify slack
         uses: 8398a7/action-slack@v3
         with:
-          mention: ${{ secrets.DEVOPS_SLACK_ID }}
-          if_mention: failure
-          status: ${{ job.status }}
+          mention: 'channel'
           author_name: 'Deploy fdk-harvest-admin to staging'
-          icon_emoji: ':fdk:'
-          fields: all # repo,message,commit,author,action,eventName,ref,workflow,job,took
+          fields: repo,message,commit,author,action,eventName,ref,workflow #job,took, all
         env:
           GITHUB_TOKEN: ${{ github.token }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
