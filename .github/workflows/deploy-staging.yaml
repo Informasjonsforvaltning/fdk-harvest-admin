@@ -8,10 +8,7 @@ on:
 jobs:
   build-and-deploy:
     name: Deploy to staging environment
-    strategy:
-      matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
 
@@ -60,6 +57,12 @@ jobs:
         with:
           args: "apply -f ./kubectlapply.yaml --force"
 
+  matrix-notification:
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
       - name: Notify slack
         uses: 8398a7/action-slack@v3
         with:
