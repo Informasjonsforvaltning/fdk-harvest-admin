@@ -58,7 +58,7 @@ jobs:
           args: "apply -f ./kubectlapply.yaml --force"
 
       - name: Notify slack
-        uses: 8398a7/action-slack@v3
+        uses: 8398a7/action-slack@master
         with:
           status: ${{ job.status }}
           fields: all # repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
