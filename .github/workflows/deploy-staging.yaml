@@ -11,6 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      -
+      - name: Notify slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+        env:
+          GITHUB_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} # optional
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+        if: always() # Pick up events even if the job fails or is canceled.
+
       - uses: actions/checkout@v1
 
       # Setup gcloud CLI
@@ -55,13 +66,3 @@ jobs:
           KUBECONFIG: '/github/workspace/.kube/config'
         with:
           args: "apply -f ./kubectlapply.yaml --force"
-
-      - name: Notify slack of deploy
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-        env:
-          GITHUB_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} # optional
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: always() # Pick up events even if the job fails or is canceled.
