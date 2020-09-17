@@ -42,12 +42,13 @@ jobs:
       - name: Notify slack
         uses: 8398a7/action-slack@v3
         with:
+          status: ${{ job.status }}
           mention: 'channel'
           if_mention: failure
-          status: ${{ job.status }}
           author_name: 'Deploy fdk-harvest-admin to demo'
-          fields: repo,message,commit,author,eventName,ref,workflow #message,action,job,took, all
+          fields: repo,message,commit,author,ref,workflow,job,took #all
         env:
           GITHUB_TOKEN: ${{ github.token }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
         if: always() # Pick up events even if the job fails or is canceled.

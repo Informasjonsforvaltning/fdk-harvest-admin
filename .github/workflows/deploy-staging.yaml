@@ -62,8 +62,9 @@ jobs:
         with:
           status: ${{ job.status }}
           author_name: 'Deploy fdk-harvest-admin to staging'
-          fields: repo,message,commit,author,eventName,ref,workflow #message,action,job,took, all
+          fields: repo,message,commit,author,ref,workflow,job,took #all
         env:
           GITHUB_TOKEN: ${{ github.token }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
         if: always() # Pick up events even if the job fails or is canceled.
