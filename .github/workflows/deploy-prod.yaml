@@ -62,11 +62,11 @@ jobs:
           if_mention: failure
           status: ${{ job.status }}
           author_name: 'Deploy fdk-harvest-admin to prod'
-          fields: repo,message,commit,author,eventName,ref,workflow #message,action,job,took, all
+          fields: repo,message,commit,author,ref,workflow
         env:
-          GITHUB_TOKEN: ${{ github.token }} # optional
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: always() # Pick up events even if the job fails or is canceled.
+          GITHUB_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
 
       - name: Trigger deploy to demo
         uses: peter-evans/repository-dispatch@master
