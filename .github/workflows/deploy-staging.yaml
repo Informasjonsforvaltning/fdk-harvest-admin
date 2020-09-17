@@ -60,7 +60,7 @@ jobs:
       - name: Notify slack
         uses: 8398a7/action-slack@v3
         with:
-          mention: 'channel'
+          mention: ${{ secrets.DEVOPS_SLACK_ID }}
           if_mention: failure
           status: ${{ job.status }}
           author_name: 'Deploy fdk-harvest-admin to staging'
