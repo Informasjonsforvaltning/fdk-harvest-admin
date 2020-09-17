@@ -10,7 +10,7 @@ jobs:
     name: Deploy to staging environment
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-18.04, ubuntu-20.04]
     runs-on: ${{ matrix.os }}
 
     steps:
