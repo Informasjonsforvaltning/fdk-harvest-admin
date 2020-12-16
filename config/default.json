@@ -13,7 +13,7 @@
     "host": "localhost",
     "port": 5672,
     "exchange": "harvests",
-    "listenerKey": "concept.*.NewDataSource",
+    "listenerKey": "*.*.NewDataSource",
     "validationKey": "conceptPublisherNewDataSource-msg",
     "publisherPartialKey": "publisher.HarvestTrigger"
   },
