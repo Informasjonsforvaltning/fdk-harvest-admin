@@ -160,6 +160,7 @@ components:
           enum:
             - SKOS-AP-NO
             - DCAT-AP-NO
+            - CPSV-AP-NO
         dataType:
           type: string
           enum:
@@ -167,6 +168,7 @@ components:
             - dataset
             - informationmodel
             - dataservice
+            - publicService
         url:
           type: string
           description: Link to the datasource to be harvested
