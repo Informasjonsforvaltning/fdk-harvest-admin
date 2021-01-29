@@ -15,7 +15,7 @@ rabbitConnect();
 
 createApp({ connectionUris })
   .then(app => {
-    app.listen(Number(PORT), err => {
+    app.listen(Number(PORT)).on('error', err => {
       if (err) {
         throw err;
       }

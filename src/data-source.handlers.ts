@@ -57,7 +57,7 @@ export default {
 
     DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
-      .then(doc => {
+      .then((doc: DataSourceDocument) => {
         res.status(200).send(doc.toObject());
         publishDataSource(doc);
       })
@@ -68,13 +68,15 @@ export default {
     const { id } = req.params;
     DataSourceModel.findOne({ id })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
-      .then(doc => res.status(200).send(doc.toObject()))
+      .then((doc: DataSourceDocument) => res.status(200).send(doc.toObject()))
       .catch(next);
   },
 
   getAll: (req, res, next): void => {
     DataSourceModel.find(req.query)
-      .then(docs => res.send(docs.map(doc => doc.toObject())))
+      .then((docs: DataSourceDocument[]) =>
+        res.send(docs.map((doc: DataSourceDocument) => doc.toObject()))
+      )
       .catch(next);
   },
 
@@ -84,7 +86,7 @@ export default {
 
     DataSourceModel.findOne({ id })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
-      .then(doc => {
+      .then((doc: DataSourceDocument) => {
         if (
           allowedOrganizations &&
           allowedOrganizations.length > 0 &&
@@ -108,7 +110,7 @@ export default {
 
     DataSourceModel.findOne({ id })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
-      .then(doc => {
+      .then((doc: DataSourceDocument) => {
         if (
           allowedOrganizations &&
           allowedOrganizations.length > 0 &&
