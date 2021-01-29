@@ -12,7 +12,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
         with:
