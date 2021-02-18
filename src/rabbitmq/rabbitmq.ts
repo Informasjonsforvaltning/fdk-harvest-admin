@@ -66,7 +66,14 @@ export const rabbitConnect = (): void => {
               const dataSource = JSON.parse(content.toString());
               try {
                 if ((await validator).validate(validationKey, dataSource)) {
-                  new DataSourceModel(dataSource).save();
+                  DataSourceModel.find({
+                    publisherId: dataSource.publisherId,
+                    url: dataSource.url })
+                  .then((docs: DataSourceDocument[]) => {
+                    if(!docs.length) {
+                      new DataSourceModel(dataSource).save();
+                    };
+                  });
                 }
               } catch (e) {
                 logger.error(e);
