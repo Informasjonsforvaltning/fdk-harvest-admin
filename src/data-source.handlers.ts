@@ -5,6 +5,7 @@ import { DataSourceDocument, DataSourceModel } from './data-source.model';
 import { NotFoundHttpError } from './lib/http-error';
 import { elseThrow } from './lib/else-throw';
 import { publishDataSource } from './rabbitmq/rabbitmq';
+import logger from './logger';
 
 interface ResourceHandlerMap {
   create: RequestHandler;
@@ -34,7 +35,7 @@ export default {
       .save()
       .then(doc => {
         res.location(doc.id).status(201).send();
-
+        logger.info(`Creating new DataSource with url ${doc.url}`);
         publishDataSource(doc);
       })
       .catch(next);
@@ -59,6 +60,7 @@ export default {
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
       .then((doc: DataSourceDocument) => {
         res.status(200).send(doc.toObject());
+        logger.info(`Updating DataSource with url ${doc.url}`);
         publishDataSource(doc);
       })
       .catch(next);
@@ -68,7 +70,10 @@ export default {
     const { id } = req.params;
     DataSourceModel.findOne({ id })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
-      .then((doc: DataSourceDocument) => res.status(200).send(doc.toObject()))
+      .then((doc: DataSourceDocument) => {
+        logger.info(`Get DataSource with url ${doc.url}`);
+        res.status(200).send(doc.toObject());
+      })
       .catch(next);
   },
 
@@ -98,7 +103,10 @@ export default {
         }
 
         DataSourceModel.deleteOne({ id })
-          .then(() => res.status(204).send())
+          .then(() => {
+            logger.info(`Delete DataSource with url ${doc.url}`);
+            res.status(204).send();
+          })
           .catch(next);
       })
       .catch(next);
@@ -122,6 +130,7 @@ export default {
         }
 
         res.status(204).send();
+        logger.info(`Harvest DataSource with url ${doc.url}`);
         publishDataSource(doc);
       })
       .catch(next);
