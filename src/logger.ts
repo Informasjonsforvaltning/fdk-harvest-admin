@@ -26,4 +26,10 @@ const logger = winston.createLogger({
   transports: [new winston.transports.Console({ level: 'info' })]
 });
 
+export const streamLogger = {
+  write: function (message: string): void {
+    logger.info(message);
+  }
+};
+
 export default logger;
