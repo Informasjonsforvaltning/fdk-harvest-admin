@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from '../logger';
 
 export const connectDb = async (connectionUris: string): Promise<void> => {
   const options = {
@@ -10,5 +11,5 @@ export const connectDb = async (connectionUris: string): Promise<void> => {
   };
 
   await mongoose.connect(connectionUris, options);
-  mongoose.connection.on('error', console.error);
+  mongoose.connection.on('error', logger.error);
 };
