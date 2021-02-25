@@ -3,6 +3,7 @@ import amqplib, { Channel, Message } from 'amqplib/callback_api';
 import config from 'config';
 import { DataSourceDocument, DataSourceModel } from '../data-source.model';
 import { validator } from './asyncspec-validator';
+import logger from '../logger';
 
 interface HarvestCatalogueMessage {
   publisherId: string;
@@ -27,15 +28,15 @@ export const rabbitConnect = (): void => {
   amqplib.connect(connectionUri, (e, connection) => {
     if (e) {
       if (e.code === 'ECONNREFUSED') {
-        console.error(
+        logger.error(
           `${e.code}: unable to connect to rabbit at ${e.address}:${e.port}`
         );
       }
       setTimeout(rabbitConnect, 5000);
     } else {
-      connection.on('error', console.error);
+      connection.on('error', logger.error);
       connection.on('close', () => {
-        console.error(`Lost connection to rabbitmq, reconnecting ...`);
+        logger.error(`Lost connection to rabbitmq, reconnecting ...`);
         channel = null;
         rabbitConnect();
       });
@@ -52,13 +53,13 @@ export const rabbitConnect = (): void => {
           },
           (err, q) => {
             if (err) {
-              console.error('listener queue could not be asserted');
+              logger.error('listener queue could not be asserted');
               return connection.close();
             }
             ch.bindQueue(q.queue, exchange, listenerKey);
 
             ch.consume(q.queue, async ({ content, fields }: Message) => {
-              console.log(
+              logger.info(
                 `[*] received new datasource from: ${fields.routingKey}`
               );
 
@@ -68,7 +69,7 @@ export const rabbitConnect = (): void => {
                   new DataSourceModel(dataSource).save();
                 }
               } catch (e) {
-                console.error(e);
+                logger.error(e);
               }
             });
 
@@ -93,7 +94,7 @@ export const publishDataSource = ({
   const key = `${dataType}.${publisherPartialKey}`;
 
   if (channel && dataType) {
-    console.log(
+    logger.info(
       `[id:${id}] organization (${publisherId}) publishing to ${key} ...`
     );
     channel.publish(exchange, key, Buffer.from(JSON.stringify(message)), {
