@@ -29,7 +29,7 @@
     "express-openapi-validate": "^0.5.1",
     "js-yaml": "^3.14.1",
     "keycloak-connect": "^11.0.3",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "migrate-mongo": "^8.1.4",
     "mongoose": "^5.10.1",
     "morgan": "^1.10.0",
