@@ -68,11 +68,11 @@ export const rabbitConnect = (): void => {
                 if ((await validator).validate(validationKey, dataSource)) {
                   DataSourceModel.find({
                     publisherId: dataSource.publisherId,
-                    url: dataSource.url })
-                  .then((docs: DataSourceDocument[]) => {
-                    if(!docs.length) {
+                    url: dataSource.url
+                  }).then((docs: DataSourceDocument[]) => {
+                    if (!docs.length) {
                       new DataSourceModel(dataSource).save();
-                    };
+                    }
                   });
                 }
               } catch (e) {
