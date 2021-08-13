@@ -17,6 +17,10 @@ const checkAuthority: GaurdFn = ({ content }: any, _, res) => {
     'system:root:admin'
   );
 
+  if (hasSystemAdminRootPermission) {
+    res.locals.isSysAdmin = true;
+  }
+
   const hasOrganizationAdminPermissions = authorities.some(authority =>
     authority.match(/^organization:\d{9}:admin$/)
   );
