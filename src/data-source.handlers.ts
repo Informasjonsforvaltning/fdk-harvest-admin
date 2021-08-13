@@ -19,51 +19,51 @@ interface ResourceHandlerMap {
 export default {
   create: (req, res, next): void => {
     const data = omit(req.body, 'id');
-    const { allowedOrganizations } = res.locals;
+    const { allowedOrganizations, isSysAdmin } = res.locals;
 
     if (
-      allowedOrganizations &&
-      allowedOrganizations.length > 0 &&
-      !allowedOrganizations.includes(data.publisherId)
+      isSysAdmin ||
+      (allowedOrganizations &&
+        allowedOrganizations.length > 0 &&
+        allowedOrganizations.includes(data.publisherId))
     ) {
+      new DataSourceModel(data)
+        .save()
+        .then(doc => {
+          res.location(doc.id).status(201).send();
+          logger.info(`Creating new DataSource with url ${doc.url}`);
+          publishDataSource(doc);
+        })
+        .catch(next);
+    } else {
       res.status(403).send();
-
       return;
     }
-
-    new DataSourceModel(data)
-      .save()
-      .then(doc => {
-        res.location(doc.id).status(201).send();
-        logger.info(`Creating new DataSource with url ${doc.url}`);
-        publishDataSource(doc);
-      })
-      .catch(next);
   },
 
   update: (req, res, next): void => {
     const { id } = req.params;
     const data = omit(req.body, 'id');
-    const { allowedOrganizations } = res.locals;
+    const { allowedOrganizations, isSysAdmin } = res.locals;
 
     if (
-      allowedOrganizations &&
-      allowedOrganizations.length > 0 &&
-      !allowedOrganizations.includes(data.publisherId)
+      isSysAdmin ||
+      (allowedOrganizations &&
+        allowedOrganizations.length > 0 &&
+        allowedOrganizations.includes(data.publisherId))
     ) {
+      DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
+        .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
+        .then((doc: DataSourceDocument) => {
+          res.status(200).send(doc.toObject());
+          logger.info(`Updating DataSource with url ${doc.url}`);
+          publishDataSource(doc);
+        })
+        .catch(next);
+    } else {
       res.status(403).send();
-
       return;
     }
-
-    DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
-      .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
-      .then((doc: DataSourceDocument) => {
-        res.status(200).send(doc.toObject());
-        logger.info(`Updating DataSource with url ${doc.url}`);
-        publishDataSource(doc);
-      })
-      .catch(next);
   },
 
   getById: (req, res, next): void => {
@@ -87,51 +87,52 @@ export default {
 
   deleteById: (req, res, next): void => {
     const { id } = req.params;
-    const { allowedOrganizations } = res.locals;
+    const { allowedOrganizations, isSysAdmin } = res.locals;
 
     DataSourceModel.findOne({ id })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
       .then((doc: DataSourceDocument) => {
         if (
-          allowedOrganizations &&
-          allowedOrganizations.length > 0 &&
-          !allowedOrganizations.includes(doc.toObject().publisherId)
+          isSysAdmin ||
+          (allowedOrganizations &&
+            allowedOrganizations.length > 0 &&
+            allowedOrganizations.includes(doc.toObject().publisherId))
         ) {
+          DataSourceModel.deleteOne({ id })
+            .then(() => {
+              logger.info(`Delete DataSource with url ${doc.url}`);
+              res.status(204).send();
+            })
+            .catch(next);
+        } else {
           res.status(403).send();
-
           return;
         }
-
-        DataSourceModel.deleteOne({ id })
-          .then(() => {
-            logger.info(`Delete DataSource with url ${doc.url}`);
-            res.status(204).send();
-          })
-          .catch(next);
       })
       .catch(next);
   },
 
   harvestById: (req, res, next): void => {
     const { id } = req.params;
-    const { allowedOrganizations } = res.locals;
+    const { allowedOrganizations, isSysAdmin } = res.locals;
 
     DataSourceModel.findOne({ id })
       .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
       .then((doc: DataSourceDocument) => {
         if (
-          allowedOrganizations &&
-          allowedOrganizations.length > 0 &&
-          !allowedOrganizations.includes(doc.toObject().publisherId)
+          isSysAdmin ||
+          (allowedOrganizations &&
+            allowedOrganizations.length > 0 &&
+            allowedOrganizations.includes(doc.toObject().publisherId))
         ) {
+          res.status(204).send();
+          logger.info(`Harvest DataSource with url ${doc.url}`);
+          publishDataSource(doc);
+        } else {
           res.status(403).send();
 
           return;
         }
-
-        res.status(204).send();
-        logger.info(`Harvest DataSource with url ${doc.url}`);
-        publishDataSource(doc);
       })
       .catch(next);
   }

@@ -30,11 +30,8 @@ interface DataSourceMock {
   description: string;
 }
 
-const middlewareMock = (
-  _req: Request,
-  _res: Response,
-  next: NextFunction
-): void => {
+const middlewareMock = (_req: Request, _res: any, next: NextFunction): void => {
+  _res.locals.isSysAdmin = true;
   next();
 };
 
