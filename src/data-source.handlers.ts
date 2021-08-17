@@ -21,12 +21,7 @@ export default {
     const data = omit(req.body, 'id');
     const { allowedOrganizations, isSysAdmin } = res.locals;
 
-    if (
-      isSysAdmin ||
-      (allowedOrganizations &&
-        allowedOrganizations.length > 0 &&
-        allowedOrganizations.includes(data.publisherId))
-    ) {
+    if (isSysAdmin || allowedOrganizations?.includes(data.publisherId)) {
       new DataSourceModel(data)
         .save()
         .then(doc => {
@@ -46,12 +41,7 @@ export default {
     const data = omit(req.body, 'id');
     const { allowedOrganizations, isSysAdmin } = res.locals;
 
-    if (
-      isSysAdmin ||
-      (allowedOrganizations &&
-        allowedOrganizations.length > 0 &&
-        allowedOrganizations.includes(data.publisherId))
-    ) {
+    if (isSysAdmin || allowedOrganizations?.includes(data.publisherId)) {
       DataSourceModel.findOneAndUpdate({ id }, data, { new: true })
         .then(elseThrow<DataSourceDocument>(() => new NotFoundHttpError()))
         .then((doc: DataSourceDocument) => {
@@ -94,9 +84,7 @@ export default {
       .then((doc: DataSourceDocument) => {
         if (
           isSysAdmin ||
-          (allowedOrganizations &&
-            allowedOrganizations.length > 0 &&
-            allowedOrganizations.includes(doc.toObject().publisherId))
+          allowedOrganizations?.includes(doc.toObject().publisherId)
         ) {
           DataSourceModel.deleteOne({ id })
             .then(() => {
@@ -121,9 +109,7 @@ export default {
       .then((doc: DataSourceDocument) => {
         if (
           isSysAdmin ||
-          (allowedOrganizations &&
-            allowedOrganizations.length > 0 &&
-            allowedOrganizations.includes(doc.toObject().publisherId))
+          allowedOrganizations?.includes(doc.toObject().publisherId)
         ) {
           res.status(204).send();
           logger.info(`Harvest DataSource with url ${doc.url}`);
