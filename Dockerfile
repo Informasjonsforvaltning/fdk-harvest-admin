@@ -1,4 +1,4 @@
-FROM node:12 AS build
+FROM node:14 AS build
 
 WORKDIR /usr/src/app
 
@@ -17,7 +17,7 @@ RUN npm t
 RUN npm prune --production
 
 #FINAL CONTAINER
-FROM node:12-alpine
+FROM node:14-alpine
 
 ENV TZ=Europe/Oslo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
