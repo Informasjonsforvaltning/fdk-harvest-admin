@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-deploy-production:
     name: Deploy to prod on merge to main branch
-    uses: Informasjonsforvaltning/workflows/build-deploy.yaml@chore/hos/move-path
+    uses: Informasjonsforvaltning/workflows/.githbub/workflows/build-deploy.yaml@main
     with:
       app_name: fdk-harvest-admin
       caller_sha: ${{ github.sha }}
@@ -26,7 +26,7 @@ jobs:
   deploy-to-demo:
     needs: build-and-deploy-production
     name: Deploy to demo if prod-deploy is successful
-    uses: Informasjonsforvaltning/workflows/deploy.yaml@chore/hos/move-path
+    uses: Informasjonsforvaltning/workflows/.githbub/workflows/deploy.yaml@main
     with:
       app_name: fdk-harvest-admin
       caller_sha: ${{ github.sha }}
