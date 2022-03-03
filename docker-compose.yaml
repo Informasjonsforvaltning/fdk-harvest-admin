@@ -1,0 +1,8 @@
+version: "3"
+services:
+
+  fdk-harvest-admin:
+      image: eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:test
+      build: .
+      ports:
+        - "8080:8080"

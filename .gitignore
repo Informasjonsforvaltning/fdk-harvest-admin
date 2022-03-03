@@ -17,3 +17,6 @@ scratchpad.ts
 
 target/
 *.iml
+
+# coverage
+coverage.txt
