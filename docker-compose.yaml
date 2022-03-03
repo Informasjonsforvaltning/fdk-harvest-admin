@@ -2,7 +2,23 @@ version: "3"
 services:
 
   fdk-harvest-admin:
-      image: eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:test
-      build: .
-      ports:
-        - "8080:8080"
+    image: eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin:test
+    build: .
+    environment:
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=admin
+      - MONGO_HOST=mongodb:27017
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:4
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./test/init-mongo:/docker-entrypoint-initdb.d
