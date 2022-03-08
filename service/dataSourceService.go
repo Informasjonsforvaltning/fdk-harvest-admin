@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/repository"
 )
@@ -14,8 +16,8 @@ func InitService() *DataSourceService {
 	return &service
 }
 
-func (service *DataSourceService) GetAllDataSources() (*[]model.DataSource, error) {
-	dataSources, err := service.repository.GetAllDataSources()
+func (service *DataSourceService) GetAllDataSources(ctx context.Context) (*[]model.DataSource, error) {
+	dataSources, err := service.repository.GetAllDataSources(ctx)
 	if err != nil {
 		return nil, err
 	}

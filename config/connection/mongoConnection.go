@@ -24,7 +24,7 @@ func ConnectionString() string {
 
 func MongoCollection() *mongo.Collection {
 	mongoOptions := options.Client().ApplyURI(ConnectionString())
-	client, err := mongo.Connect(context.TODO(), mongoOptions)
+	client, err := mongo.Connect(context.Background(), mongoOptions)
 	if err != nil {
 		logrus.Error("mongo client failed", err)
 	}

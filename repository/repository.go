@@ -23,14 +23,14 @@ func InitRepository() *DataSourceRepository {
 	return dataSourceRepository
 }
 
-func (r *DataSourceRepository) GetAllDataSources() ([]model.DataSource, error) {
-	current, err := r.collection.Find(context.TODO(), bson.D{})
+func (r *DataSourceRepository) GetAllDataSources(ctx context.Context) ([]model.DataSource, error) {
+	current, err := r.collection.Find(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
-	defer current.Close(context.TODO())
+	defer current.Close(ctx)
 	var dataSources []model.DataSource
-	for current.Next(context.TODO()) {
+	for current.Next(ctx) {
 		var dataSource model.DataSource
 		err := bson.Unmarshal(current.Current, &dataSource)
 		if err != nil {

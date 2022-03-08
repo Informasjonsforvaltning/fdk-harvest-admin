@@ -14,7 +14,7 @@ var GetAllHandler = func() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		logrus.Info("Getting all data sources")
 
-		dataSources, err := service.GetAllDataSources()
+		dataSources, err := service.GetAllDataSources(c.Request.Context())
 		if err != nil {
 			logrus.Error("Get all data sources failed ", err)
 		}
