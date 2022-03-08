@@ -14,8 +14,12 @@ go test -v -race -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic ./
 ```
 * Start the service:
 ```
+// Start with go run
+docker-compose up -d mongodb
 go get
 go run main.go
+// Start with docker-compose
+docker-compose up -d --build
 ```
 * Check that service is running:
 ```
