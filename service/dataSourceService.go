@@ -24,3 +24,12 @@ func (service *DataSourceService) GetAllDataSources(ctx context.Context) (*[]mod
 
 	return &dataSources, nil
 }
+
+func (service *DataSourceService) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
+	dataSource, err := service.repository.GetDataSource(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return dataSource, nil
+}

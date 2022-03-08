@@ -43,3 +43,23 @@ func (r *DataSourceRepository) GetAllDataSources(ctx context.Context) ([]model.D
 	}
 	return dataSources, nil
 }
+
+func (r *DataSourceRepository) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
+	filter := bson.D{{Key: "_id", Value: id}}
+	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
+
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var dataSource model.DataSource
+	unmarshalError := bson.Unmarshal(bytes, &dataSource)
+	if unmarshalError != nil {
+		return nil, unmarshalError
+	}
+
+	return &dataSource, nil
+}
