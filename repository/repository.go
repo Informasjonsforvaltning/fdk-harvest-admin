@@ -69,3 +69,13 @@ func (r *DataSourceRepository) DeleteDataSource(ctx context.Context, id string) 
 	_, err := r.collection.FindOneAndDelete(ctx, filter).DecodeBytes()
 	return err
 }
+
+func (r *DataSourceRepository) CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error) {
+	result, err := r.collection.InsertOne(ctx, dataSource, nil)
+
+	if err != nil {
+		return nil, err
+	}
+	id := result.InsertedID.(string)
+	return &id, nil
+}

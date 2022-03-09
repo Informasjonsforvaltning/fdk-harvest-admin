@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/service"
 
 	"github.com/gin-gonic/gin"
@@ -58,6 +60,28 @@ var DeleteDataSourceHandler = func() func(c *gin.Context) {
 			c.Status(http.StatusInternalServerError)
 		} else {
 			c.Status(http.StatusOK)
+		}
+	}
+}
+
+var CreateDataSourceHandler = func() func(c *gin.Context) {
+	service := service.InitService()
+	return func(c *gin.Context) {
+		logrus.Infof("Creating data source")
+		bytes, err := c.GetRawData()
+
+		if err != nil {
+			logrus.Errorf("Unable to get bytes from request. ", err)
+			c.Status(http.StatusBadRequest)
+		} else {
+			id, err := service.CreateDataSource(c.Request.Context(), bytes)
+			if err != nil || id == nil {
+				logrus.Errorf("Data source creation failed. ", err)
+				c.Status(http.StatusBadRequest)
+			} else {
+				c.Writer.Header().Add("Location", fmt.Sprintf("/%s/%s", env.PathValues.Datasources, *id))
+				c.Status(http.StatusCreated)
+			}
 		}
 	}
 }
