@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/repository"
+	"github.com/google/uuid"
 )
 
 type DataSourceService struct {
@@ -36,4 +38,15 @@ func (service *DataSourceService) GetDataSource(ctx context.Context, id string) 
 
 func (service *DataSourceService) DeleteDataSource(ctx context.Context, id string) error {
 	return service.repository.DeleteDataSource(ctx, id)
+}
+
+func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []byte) (*string, error) {
+	var dataSource model.DataSource
+	err := json.Unmarshal(bytes, &dataSource)
+	if err != nil {
+		return nil, err
+	}
+
+	dataSource.Id = uuid.New().String()
+	return service.repository.CreateDataSource(ctx, dataSource)
 }
