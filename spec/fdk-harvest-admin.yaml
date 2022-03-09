@@ -3,29 +3,64 @@ info:
   title: National Data Directory FDK Harvest Adm API
   description: Exposes a basic service which keeps track of data sources to be harvested.
   version: "1.0"
-  termsOfService: "https://fellesdatakatalog.brreg.no/about"
   contact:
-    name: Brønnøysundregistrene
-    url: "https://fellesdatakatalog.brreg.no"
-    email: fellesdatakatalog@brreg.no
+    name: Digitaliseringsdirektoratet
+    url: 'https://fellesdatakatalog.digdir.no'
+    email: fellesdatakatalog@digdir.no
   license:
     name: License of API
     url: "http://data.norge.no/nlod/no/2.0"
-externalDocs:
-  description: Dokumentasjon på Informasjonsforvaltning GitHub
-  url: https://informasjonsforvaltning.github.io/felles-datakatalog/datasett-katalog/api/
 tags:
   - name: dataSource
     description: Data Source Service
 servers:
-  - url: "https://fellesdatakatalog.brreg.no/api"
+  - url: 'https://admin-api.fellesdatakatalog.digdir.no'
+    description: Production
+  - url: 'https://admin-api.staging.fellesdatakatalog.digdir.no'
+    description: Test
+  - url: 'https://admin-api.demo.fellesdatakatalog.digdir.no'
+    description: Demo
 paths:
   /datasources:
+    get:
+      tags:
+        - dataSource
+      summary: Query for data sources.
+      description: Returns a collection of matching data sources
+      operationId: getDataSources
+      parameters:
+        - in: query
+          name: dataSourceType
+          description: If you want to filter by the data source type
+          required: false
+          schema:
+            type: string
+            enum:
+              - SKOS-AP-NO
+              - DCAT-AP-NO
+              - CPSV-AP-NO
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataSource"
+  /organizations/{org}/datasources:
     post:
       tags:
         - dataSource
       summary: Create a new data source
       operationId: createDataSource
+      parameters:
+        - in: path
+          name: org
+          description: Organization Id for publisher of new data source
+          required: true
+          schema:
+            type: string
       responses:
         "201":
           description: Created
@@ -44,13 +79,13 @@ paths:
       tags:
         - dataSource
       summary: Query for data sources.
-      description: Returns a collection of matching data sources
-      operationId: getDataSources
+      description: Returns a collection of data sources for specified organization
+      operationId: getOrgDataSources
       parameters:
-        - in: query
-          name: publisherId
-          description: If you want to filter by organizationId of the publisher
-          required: false
+        - in: path
+          name: org
+          description: Organization Id for publisher of data sources
+          required: true
           schema:
             type: string
         - in: query
@@ -62,6 +97,7 @@ paths:
             enum:
               - SKOS-AP-NO
               - DCAT-AP-NO
+              - CPSV-AP-NO
       responses:
         "200":
           description: OK
@@ -71,7 +107,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/DataSource"
-  /datasources/{id}:
+  /organizations/{org}/datasources/{id}:
     get:
       tags:
         - dataSource
@@ -131,6 +167,7 @@ paths:
       responses:
         "204":
           description: No Content
+  /organizations/{org}/datasources/{id}/start-harvesting:
     post:
       tags:
         - dataSource
