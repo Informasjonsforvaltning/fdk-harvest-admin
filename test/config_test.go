@@ -15,7 +15,7 @@ import (
 
 var dbClient *mongo.Client
 
-func MongoContainerRunner(m *testing.M) {
+func TestMain(m *testing.M) {
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
