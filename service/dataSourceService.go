@@ -33,3 +33,7 @@ func (service *DataSourceService) GetDataSource(ctx context.Context, id string) 
 
 	return dataSource, nil
 }
+
+func (service *DataSourceService) DeleteDataSource(ctx context.Context, id string) error {
+	return service.repository.DeleteDataSource(ctx, id)
+}

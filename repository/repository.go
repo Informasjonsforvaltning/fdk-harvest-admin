@@ -63,3 +63,9 @@ func (r *DataSourceRepository) GetDataSource(ctx context.Context, id string) (*m
 
 	return &dataSource, nil
 }
+
+func (r *DataSourceRepository) DeleteDataSource(ctx context.Context, id string) error {
+	filter := bson.D{{Key: "_id", Value: id}}
+	_, err := r.collection.FindOneAndDelete(ctx, filter).DecodeBytes()
+	return err
+}
