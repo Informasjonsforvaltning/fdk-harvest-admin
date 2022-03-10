@@ -21,6 +21,10 @@ func MongoUsername() string {
 	return getEnv("MONGO_USERNAME", "admin")
 }
 
+func KeycloakHost() string {
+	return getEnv("KEYCLOAK_HOST", "https://sso.staging.fellesdatakatalog.digdir.no")
+}
+
 type Constants struct {
 	MongoAuthParams string
 	MongoCollection string
@@ -36,6 +40,13 @@ type Paths struct {
 	Ready          string
 }
 
+type Security struct {
+	TokenAudience   string
+	SysAdminAuth    string
+	OrgType         string
+	AdminPermission string
+}
+
 var ConstantValues = Constants{
 	MongoAuthParams: "authSource=admin&authMechanism=SCRAM-SHA-1",
 	MongoCollection: "datasources",
@@ -49,4 +60,11 @@ var PathValues = Paths{
 	Organizations:  "organizations",
 	Ping:           "ping",
 	Ready:          "ready",
+}
+
+var SecurityValues = Security{
+	TokenAudience:   "fdk-harvest-admin",
+	SysAdminAuth:    "system:root:admin",
+	OrgType:         "organization",
+	AdminPermission: "admin",
 }

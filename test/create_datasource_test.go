@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -25,8 +26,11 @@ func TestCreateDataSource(t *testing.T) {
 		PublisherId:       "987654321",
 		Description:       "created source",
 	}
+	orgAdminAuth := OrgAdminAuth("987654321")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
 	body, _ := json.Marshal(toBeCreated)
 	req, _ := http.NewRequest("POST", "/organizations/987654321/datasources", bytes.NewReader(body))
+	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusCreated, w.Code)

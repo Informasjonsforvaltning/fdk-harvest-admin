@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -15,6 +16,8 @@ func TestDeleteDataSourceNotFound(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/organizations/987654321/datasources/not-found", nil)
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &TestValues.SysAdminAuth, &TestValues.Audience)
+	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
@@ -31,6 +34,8 @@ func TestDeleteDataSource(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/organizations/987654321/datasources/to-be-deleted", nil)
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &TestValues.SysAdminAuth, &TestValues.Audience)
+	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
