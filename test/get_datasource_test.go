@@ -16,7 +16,7 @@ func TestGetDataSourceRoute(t *testing.T) {
 	router := config.SetupRouter()
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/datasources/test-id", nil)
+	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/test-id", nil)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -42,7 +42,7 @@ func TestGetDataSourceNotFound(t *testing.T) {
 	router := config.SetupRouter()
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/datasources/not-found", nil)
+	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/not-found", nil)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
