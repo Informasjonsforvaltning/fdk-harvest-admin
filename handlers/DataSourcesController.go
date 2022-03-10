@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/service"
@@ -89,10 +90,12 @@ var CreateDataSourceHandler = func() func(c *gin.Context) {
 			logrus.Errorf("Unable to get bytes from request. ", err)
 			c.Status(http.StatusBadRequest)
 		} else {
-			id, err := service.CreateDataSource(c.Request.Context(), bytes)
-			if err != nil || id == nil {
+			id, err := service.CreateDataSource(c.Request.Context(), bytes, c.Param("org"))
+			if err != nil && strings.Contains(err.Error(), "Bad Request") {
+				c.JSON(http.StatusBadRequest, err.Error())
+			} else if err != nil || id == nil {
 				logrus.Errorf("Data source creation failed. ", err)
-				c.Status(http.StatusBadRequest)
+				c.Status(http.StatusInternalServerError)
 			} else {
 				location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, c.Param("org"), env.PathValues.Datasources, *id)
 				c.Writer.Header().Add("Location", location)

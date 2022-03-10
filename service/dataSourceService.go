@@ -3,10 +3,12 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/repository"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -45,11 +47,21 @@ func (service *DataSourceService) DeleteDataSource(ctx context.Context, id strin
 	return service.repository.DeleteDataSource(ctx, id)
 }
 
-func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []byte) (*string, error) {
+func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []byte, org string) (*string, error) {
 	var dataSource model.DataSource
 	err := json.Unmarshal(bytes, &dataSource)
 	if err != nil {
-		return nil, err
+		logrus.Error("create failed, ", err)
+		return nil, errors.New("Bad Request - " + err.Error())
+	}
+	err = dataSource.Validate()
+	if err != nil {
+		logrus.Error("create failed, ", err)
+		return nil, errors.New("Bad Request - " + err.Error())
+	}
+	if org != dataSource.PublisherId {
+		logrus.Error("create failed, wrong org")
+		return nil, errors.New("Bad Request - trying to create data source for other organization")
 	}
 
 	dataSource.Id = uuid.New().String()
