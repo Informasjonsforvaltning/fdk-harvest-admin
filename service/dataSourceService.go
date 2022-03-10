@@ -7,6 +7,7 @@ import (
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/repository"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type DataSourceService struct {
@@ -18,8 +19,12 @@ func InitService() *DataSourceService {
 	return &service
 }
 
-func (service *DataSourceService) GetAllDataSources(ctx context.Context) (*[]model.DataSource, error) {
-	dataSources, err := service.repository.GetAllDataSources(ctx)
+func (service *DataSourceService) GetDataSources(ctx context.Context, org *string) (*[]model.DataSource, error) {
+	query := bson.D{}
+	if org != nil {
+		query = append(query, bson.E{Key: "publisherId", Value: org})
+	}
+	dataSources, err := service.repository.GetDataSources(ctx, query)
 	if err != nil {
 		return nil, err
 	}

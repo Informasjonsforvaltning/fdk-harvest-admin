@@ -16,6 +16,7 @@ func InitializeRoutes(e *gin.Engine) {
 	e.GET(env.PathValues.Datasource, handlers.GetDataSourceHandler())
 	e.DELETE(env.PathValues.Datasource, security.RequireAdminAuth(), handlers.DeleteDataSourceHandler())
 	e.GET(env.PathValues.Datasources, handlers.GetAllHandler())
+	e.GET(env.PathValues.OrgDatasources, handlers.GetOrgDataSourcesHandler())
 	e.POST(env.PathValues.OrgDatasources, security.RequireAdminAuth(), handlers.CreateDataSourceHandler())
 }
 
