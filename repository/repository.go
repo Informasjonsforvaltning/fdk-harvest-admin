@@ -23,8 +23,8 @@ func InitRepository() *DataSourceRepository {
 	return dataSourceRepository
 }
 
-func (r *DataSourceRepository) GetAllDataSources(ctx context.Context) ([]model.DataSource, error) {
-	current, err := r.collection.Find(ctx, bson.D{})
+func (r *DataSourceRepository) GetDataSources(ctx context.Context, query bson.D) ([]model.DataSource, error) {
+	current, err := r.collection.Find(ctx, query)
 	if err != nil {
 		return nil, err
 	}

@@ -25,5 +25,5 @@ func TestGetDataSourcesRoute(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &actualResponse)
 
 	assert.Nil(t, err)
-	assert.True(t, len(actualResponse) > 0)
+	assert.True(t, len(actualResponse) > 1)
 }
