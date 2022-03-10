@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
+	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/security"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/handlers"
 )
 
@@ -13,9 +14,9 @@ func InitializeRoutes(e *gin.Engine) {
 	e.GET(env.PathValues.Ping, handlers.PingHandler())
 	e.GET(env.PathValues.Ready, handlers.ReadyHandler())
 	e.GET(env.PathValues.Datasource, handlers.GetDataSourceHandler())
-	e.DELETE(env.PathValues.Datasource, handlers.DeleteDataSourceHandler())
+	e.DELETE(env.PathValues.Datasource, security.RequireAdminAuth(), handlers.DeleteDataSourceHandler())
 	e.GET(env.PathValues.Datasources, handlers.GetAllHandler())
-	e.POST(env.PathValues.OrgDatasources, handlers.CreateDataSourceHandler())
+	e.POST(env.PathValues.OrgDatasources, security.RequireAdminAuth(), handlers.CreateDataSourceHandler())
 }
 
 func SetupRouter() *gin.Engine {

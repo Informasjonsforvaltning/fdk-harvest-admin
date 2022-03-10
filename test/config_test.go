@@ -15,7 +15,24 @@ import (
 
 var dbClient *mongo.Client
 
+type TestConstants struct {
+	Audience     []string
+	SysAdminAuth string
+}
+
+var TestValues = TestConstants{
+	Audience:     []string{"fdk-harvest-admin"},
+	SysAdminAuth: "system:root:admin",
+}
+
+func OrgAdminAuth(org string) string {
+	return fmt.Sprintf("organization:%s:admin", org)
+}
+
 func TestMain(m *testing.M) {
+	mockJwkStore := MockJwkStore()
+	os.Setenv("KEYCLOAK_HOST", mockJwkStore.URL)
+
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
