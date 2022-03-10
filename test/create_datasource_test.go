@@ -26,7 +26,7 @@ func TestCreateDataSource(t *testing.T) {
 		Description:       "created source",
 	}
 	body, _ := json.Marshal(toBeCreated)
-	req, _ := http.NewRequest("POST", "/datasources", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", "/organizations/987654321/datasources", bytes.NewReader(body))
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusCreated, w.Code)

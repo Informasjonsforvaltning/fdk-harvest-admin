@@ -28,10 +28,12 @@ type Constants struct {
 }
 
 type Paths struct {
-	Datasource  string
-	Datasources string
-	Ping        string
-	Ready       string
+	Datasource     string
+	Datasources    string
+	OrgDatasources string
+	Organizations  string
+	Ping           string
+	Ready          string
 }
 
 var ConstantValues = Constants{
@@ -41,8 +43,10 @@ var ConstantValues = Constants{
 }
 
 var PathValues = Paths{
-	Datasource:  "datasources/:id",
-	Datasources: "datasources",
-	Ping:        "ping",
-	Ready:       "ready",
+	Datasource:     "organizations/:org/datasources/:id",
+	Datasources:    "datasources",
+	OrgDatasources: "organizations/:org/datasources",
+	Organizations:  "organizations",
+	Ping:           "ping",
+	Ready:          "ready",
 }

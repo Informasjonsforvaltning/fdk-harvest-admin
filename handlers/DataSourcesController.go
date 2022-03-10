@@ -79,7 +79,8 @@ var CreateDataSourceHandler = func() func(c *gin.Context) {
 				logrus.Errorf("Data source creation failed. ", err)
 				c.Status(http.StatusBadRequest)
 			} else {
-				c.Writer.Header().Add("Location", fmt.Sprintf("/%s/%s", env.PathValues.Datasources, *id))
+				location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, c.Param("org"), env.PathValues.Datasources, *id)
+				c.Writer.Header().Add("Location", location)
 				c.Status(http.StatusCreated)
 			}
 		}
