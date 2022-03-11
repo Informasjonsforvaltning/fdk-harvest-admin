@@ -21,10 +21,13 @@ func InitService() *DataSourceService {
 	return &service
 }
 
-func (service *DataSourceService) GetDataSources(ctx context.Context, org *string) (*[]model.DataSource, error) {
+func (service *DataSourceService) GetDataSources(ctx context.Context, org *string, dataSourceType string) (*[]model.DataSource, error) {
 	query := bson.D{}
 	if org != nil {
 		query = append(query, bson.E{Key: "publisherId", Value: org})
+	}
+	if len(dataSourceType) > 0 {
+		query = append(query, bson.E{Key: "dataSourceType", Value: dataSourceType})
 	}
 	dataSources, err := service.repository.GetDataSources(ctx, query)
 	if err != nil {

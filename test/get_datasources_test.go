@@ -25,5 +25,32 @@ func TestGetDataSourcesRoute(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &actualResponse)
 
 	assert.Nil(t, err)
-	assert.True(t, len(actualResponse) > 1)
+	assert.True(t, len(actualResponse) > 2)
+}
+
+func TestGetDataSourcesByDataSourceType(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/datasources?dataSourceType=DCAT-AP-NO", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var expectedResponse []model.DataSource
+	expectedResponse = append(expectedResponse, model.DataSource{
+		Id:                "test-id",
+		DataSourceType:    "DCAT-AP-NO",
+		DataType:          "dataset",
+		Url:               "http://url.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherId:       "123456789",
+		Description:       "test source",
+	})
+
+	var actualResponse []model.DataSource
+	err := json.Unmarshal(w.Body.Bytes(), &actualResponse)
+
+	assert.Nil(t, err)
+	assert.Equal(t, expectedResponse, actualResponse)
 }

@@ -20,6 +20,15 @@ db.datasources.insert([
         "description": "test source 2"
     },
     {
+        "_id": "test-id-3",
+        "dataSourceType": "CPSV-AP-NO",
+        "dataType": "publicService",
+        "url": "http://url3.com",
+        "acceptHeaderValue": "text/turtle",
+        "publisherId": "123456789",
+        "description": "test source 3"
+    },
+    {
         "_id": "to-be-deleted",
         "dataSourceType": "SKOS-AP-NO",
         "dataType": "concept",
