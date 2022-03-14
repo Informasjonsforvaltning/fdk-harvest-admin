@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/Informasjonsforvaltning/fdk-harvest-admin/logging"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/service"
 
 	"github.com/gin-gonic/gin"
@@ -71,7 +72,8 @@ var CreateDataSourceHandler = func() func(c *gin.Context) {
 		bytes, err := c.GetRawData()
 
 		if err != nil {
-			logrus.Errorf("Unable to get bytes from request. ", err)
+			logrus.Errorf("Unable to get bytes from request.")
+			logging.LogAndPrintError(err)
 			c.JSON(http.StatusBadRequest, err.Error())
 		} else {
 			msg, location, status := service.CreateDataSource(c.Request.Context(), bytes, c.Param("org"))

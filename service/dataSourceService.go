@@ -3,10 +3,12 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
+	"github.com/Informasjonsforvaltning/fdk-harvest-admin/logging"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/repository"
 	"github.com/google/uuid"
@@ -34,7 +36,8 @@ func (service *DataSourceService) GetDataSources(ctx context.Context, org *strin
 	}
 	dataSources, err := service.repository.GetDataSources(ctx, query)
 	if err != nil {
-		logrus.Error("Get data sources failed ", err)
+		logrus.Error("Get data sources failed ")
+		logging.LogAndPrintError(err)
 		return nil, http.StatusInternalServerError
 	}
 
@@ -44,7 +47,8 @@ func (service *DataSourceService) GetDataSources(ctx context.Context, org *strin
 func (service *DataSourceService) GetDataSource(ctx context.Context, id string) (*model.DataSource, int) {
 	dataSource, err := service.repository.GetDataSource(ctx, id)
 	if err != nil {
-		logrus.Errorf("Get data source with id %s failed, ", id, err)
+		logrus.Errorf("Get data source with id %s failed, ", id)
+		logging.LogAndPrintError(err)
 		return nil, http.StatusInternalServerError
 	} else if dataSource == nil {
 		return nil, http.StatusNotFound
@@ -60,7 +64,8 @@ func (service *DataSourceService) DeleteDataSource(ctx context.Context, id strin
 	} else if err == mongo.ErrNoDocuments {
 		return http.StatusNotFound
 	} else {
-		logrus.Error("Delete data source with id %s failed, ", id, err)
+		logrus.Error("Delete data source with id %s failed, ", id)
+		logging.LogAndPrintError(err)
 		return http.StatusInternalServerError
 	}
 }
@@ -70,19 +75,19 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	var msg string
 	err := json.Unmarshal(bytes, &dataSource)
 	if err != nil {
-		logrus.Error("Create failed, ", err)
+		logging.LogAndPrintError(err)
 		msg = fmt.Sprintf("Bad Request - %s", err.Error())
 		return &msg, nil, http.StatusBadRequest
 	}
 
 	err = dataSource.Validate()
 	if err != nil {
-		logrus.Error("Create failed, ", err)
+		logging.LogAndPrintError(err)
 		msg = fmt.Sprintf("Bad Request - %s", err.Error())
 		return &msg, nil, http.StatusBadRequest
 	}
 	if org != dataSource.PublisherId {
-		logrus.Error("Create failed, wrong org")
+		logging.LogAndPrintError(errors.New("Create failed, trying to create data source for other organization"))
 		msg = "Bad Request - trying to create data source for other organization"
 		return &msg, nil, http.StatusBadRequest
 	}
@@ -91,7 +96,8 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	var createdId *string
 	createdId, err = service.repository.CreateDataSource(ctx, dataSource)
 	if err != nil {
-		logrus.Error("Create failed, ", err)
+		logrus.Error("Create failed")
+		logging.LogAndPrintError(err)
 		return nil, nil, http.StatusInternalServerError
 	} else {
 		location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, org, env.PathValues.Datasources, *createdId)
