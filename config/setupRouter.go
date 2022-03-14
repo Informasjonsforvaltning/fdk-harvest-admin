@@ -18,6 +18,7 @@ func InitializeRoutes(e *gin.Engine) {
 	e.GET(env.PathValues.Datasources, handlers.GetAllHandler())
 	e.GET(env.PathValues.OrgDatasources, handlers.GetOrgDataSourcesHandler())
 	e.POST(env.PathValues.OrgDatasources, security.RequireAdminAuth(), handlers.CreateDataSourceHandler())
+	e.POST(env.PathValues.StartHarvest, security.RequireAdminAuth(), handlers.StartHarvestingHandler())
 }
 
 func SetupRouter() *gin.Engine {

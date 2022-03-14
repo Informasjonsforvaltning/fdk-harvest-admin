@@ -25,10 +25,29 @@ func KeycloakHost() string {
 	return getEnv("KEYCLOAK_HOST", "https://sso.staging.fellesdatakatalog.digdir.no")
 }
 
+func RabbitPassword() string {
+	return getEnv("RABBIT_PASSWORD", "guest")
+}
+
+func RabbitUsername() string {
+	return getEnv("RABBIT_USERNAME", "guest")
+}
+
+func RabbitHost() string {
+	return getEnv("RABBIT_HOST", "localhost")
+}
+
+func RabbitPort() string {
+	return getEnv("RABBIT_PORT", "5672")
+}
+
 type Constants struct {
-	MongoAuthParams string
-	MongoCollection string
-	MongoDatabase   string
+	MongoAuthParams    string
+	MongoCollection    string
+	MongoDatabase      string
+	RabbitExchange     string
+	RabbitMsgKeyMiddle string
+	RabbitMsgKeyEnd    string
 }
 
 type Paths struct {
@@ -38,6 +57,7 @@ type Paths struct {
 	Organizations  string
 	Ping           string
 	Ready          string
+	StartHarvest   string
 }
 
 type Security struct {
@@ -48,9 +68,12 @@ type Security struct {
 }
 
 var ConstantValues = Constants{
-	MongoAuthParams: "authSource=admin&authMechanism=SCRAM-SHA-1",
-	MongoCollection: "datasources",
-	MongoDatabase:   "fdk-harvest-admin",
+	MongoAuthParams:    "authSource=admin&authMechanism=SCRAM-SHA-1",
+	MongoCollection:    "datasources",
+	MongoDatabase:      "fdk-harvest-admin",
+	RabbitExchange:     "harvests",
+	RabbitMsgKeyMiddle: "publisher",
+	RabbitMsgKeyEnd:    "HarvestTrigger",
 }
 
 var PathValues = Paths{
@@ -60,6 +83,7 @@ var PathValues = Paths{
 	Organizations:  "organizations",
 	Ping:           "ping",
 	Ready:          "ready",
+	StartHarvest:   "organizations/:org/datasources/:id/start-harvesting",
 }
 
 var SecurityValues = Security{
