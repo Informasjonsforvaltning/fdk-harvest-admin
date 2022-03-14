@@ -12,6 +12,7 @@ services:
       - "8080:8080"
     depends_on:
       - mongodb
+      - rabbitmq
 
   mongodb:
     image: mongo:4
@@ -22,3 +23,12 @@ services:
       - "27017:27017"
     volumes:
       - ./test/init-mongo:/docker-entrypoint-initdb.d
+
+  rabbitmq:
+    image: rabbitmq:3.8.2-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"

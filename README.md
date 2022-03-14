@@ -16,6 +16,7 @@ go test -v -race -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic ./
 ```
 // Start with go run
 docker-compose up -d mongodb
+docker-compose up -d rabbitmq
 go get
 go run main.go
 // Start with docker-compose

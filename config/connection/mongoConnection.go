@@ -2,6 +2,7 @@ package connection
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -11,20 +12,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func ConnectionString() string {
+func mongoConnectionString() string {
 	authParams := env.ConstantValues.MongoAuthParams
 	dbName := env.ConstantValues.MongoDatabase
 	host := env.MongoHost()
 	password := env.MongoPassword()
 	user := env.MongoUsername()
 
-	connectionString := "mongodb://" + user + ":" + password + "@" + host + "/" + dbName + "?" + authParams
+	connectionString := fmt.Sprintf("mongodb://%s:%s@%s/%s?%s", user, password, host, dbName, authParams)
 
 	return connectionString
 }
 
 func MongoCollection() *mongo.Collection {
-	mongoOptions := options.Client().ApplyURI(ConnectionString())
+	mongoOptions := options.Client().ApplyURI(mongoConnectionString())
 	client, err := mongo.Connect(context.Background(), mongoOptions)
 	if err != nil {
 		logrus.Error("mongo client failed")

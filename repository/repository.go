@@ -10,20 +10,27 @@ import (
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 )
 
-type DataSourceRepository struct {
+type DataSourceRepository interface {
+	GetDataSources(ctx context.Context, query bson.D) ([]model.DataSource, error)
+	GetDataSource(ctx context.Context, id string) (*model.DataSource, error)
+	DeleteDataSource(ctx context.Context, id string) error
+	CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error)
+}
+
+type DataSourceRepositoryImpl struct {
 	collection *mongo.Collection
 }
 
-var dataSourceRepository *DataSourceRepository
+var dataSourceRepository *DataSourceRepositoryImpl
 
-func InitRepository() *DataSourceRepository {
+func InitRepository() *DataSourceRepositoryImpl {
 	if dataSourceRepository == nil {
-		dataSourceRepository = &DataSourceRepository{collection: connection.MongoCollection()}
+		dataSourceRepository = &DataSourceRepositoryImpl{collection: connection.MongoCollection()}
 	}
 	return dataSourceRepository
 }
 
-func (r *DataSourceRepository) GetDataSources(ctx context.Context, query bson.D) ([]model.DataSource, error) {
+func (r *DataSourceRepositoryImpl) GetDataSources(ctx context.Context, query bson.D) ([]model.DataSource, error) {
 	current, err := r.collection.Find(ctx, query)
 	if err != nil {
 		return nil, err
@@ -44,7 +51,7 @@ func (r *DataSourceRepository) GetDataSources(ctx context.Context, query bson.D)
 	return dataSources, nil
 }
 
-func (r *DataSourceRepository) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
+func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
 	filter := bson.D{{Key: "_id", Value: id}}
 	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
 
@@ -64,13 +71,13 @@ func (r *DataSourceRepository) GetDataSource(ctx context.Context, id string) (*m
 	return &dataSource, nil
 }
 
-func (r *DataSourceRepository) DeleteDataSource(ctx context.Context, id string) error {
+func (r *DataSourceRepositoryImpl) DeleteDataSource(ctx context.Context, id string) error {
 	filter := bson.D{{Key: "_id", Value: id}}
 	_, err := r.collection.FindOneAndDelete(ctx, filter).DecodeBytes()
 	return err
 }
 
-func (r *DataSourceRepository) CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error) {
+func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error) {
 	result, err := r.collection.InsertOne(ctx, dataSource, nil)
 
 	if err != nil {

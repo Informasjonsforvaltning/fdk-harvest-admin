@@ -88,3 +88,11 @@ var CreateDataSourceHandler = func() func(c *gin.Context) {
 		}
 	}
 }
+
+var StartHarvestingHandler = func() func(c *gin.Context) {
+	service := service.InitService()
+	return func(c *gin.Context) {
+		status := service.StartHarvesting(c.Request.Context(), c.Param("id"), c.Param("org"))
+		c.Status(status)
+	}
+}

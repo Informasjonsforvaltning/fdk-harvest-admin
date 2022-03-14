@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/json"
@@ -9,10 +10,49 @@ import (
 	"net/http/httptest"
 	"time"
 
+	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
+	"go.mongodb.org/mongo-driver/bson"
 )
+
+type MockDataSourceRepository struct {
+	MockDataSource *model.DataSource
+	MockError      error
+}
+
+func (m *MockDataSourceRepository) GetDataSources(ctx context.Context, query bson.D) ([]model.DataSource, error) {
+	var dataSources []model.DataSource
+	if m.MockDataSource != nil {
+		dataSources = append(dataSources, *m.MockDataSource)
+	}
+	return dataSources, m.MockError
+}
+
+func (m *MockDataSourceRepository) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
+	return m.MockDataSource, m.MockError
+}
+
+func (m *MockDataSourceRepository) DeleteDataSource(ctx context.Context, id string) error {
+	return m.MockError
+}
+
+func (m *MockDataSourceRepository) CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error) {
+	if m.MockDataSource != nil {
+		return &m.MockDataSource.Id, m.MockError
+	} else {
+		return nil, m.MockError
+	}
+}
+
+type MockPublisher struct {
+	MockError error
+}
+
+func (m *MockPublisher) Publish(routingKey string, data []byte) error {
+	return m.MockError
+}
 
 type MockResponseWriter struct {
 	MockHeader         map[string][]string
@@ -72,5 +112,4 @@ func CreateMockJwt(expiresAt int64, auth *string, audience *[]string) *string {
 	signed_string := string(signed)
 
 	return &signed_string
-
 }
