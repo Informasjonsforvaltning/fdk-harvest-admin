@@ -46,6 +46,10 @@ func TestGetDataSourcesByDataSourceType(t *testing.T) {
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source",
+		AuthHeader:        &model.AuthHeader{
+		    Name: "X-API-KEY",
+		    Value: "MyApiKey",
+		},
 	})
 
 	var actualResponse []model.DataSource

@@ -8,7 +8,11 @@ db.datasources.insert([
         "url": "http://url.com",
         "acceptHeaderValue": "text/turtle",
         "publisherId": "123456789",
-        "description": "test source"
+        "description": "test source",
+        "authHeader": {
+            "name": "X-API-KEY",
+            "value": "MyApiKey"
+        }
     },
     {
         "_id": "test-id-2",

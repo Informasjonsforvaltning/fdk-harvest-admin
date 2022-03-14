@@ -30,6 +30,10 @@ func TestGetOrgDataSourcesRoute(t *testing.T) {
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source",
+		AuthHeader:        &model.AuthHeader{
+            Name: "X-API-KEY",
+            Value: "MyApiKey",
+        },
 	})
 	expectedResponse = append(expectedResponse, model.DataSource{
 		Id:                "test-id-3",
