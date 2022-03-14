@@ -1,16 +1,12 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var GetAllHandler = func() func(c *gin.Context) {
@@ -18,12 +14,12 @@ var GetAllHandler = func() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		logrus.Info("Getting all data sources")
 
-		dataSources, err := service.GetDataSources(c.Request.Context(), nil, c.Query("dataSourceType"))
-		if err != nil {
-			logrus.Error("Get all data sources failed ", err)
+		dataSources, status := service.GetDataSources(c.Request.Context(), nil, c.Query("dataSourceType"))
+		if status == http.StatusOK {
+			c.JSON(status, dataSources)
+		} else {
+			c.Status(status)
 		}
-
-		c.JSON(http.StatusOK, dataSources)
 	}
 }
 
@@ -33,12 +29,12 @@ var GetOrgDataSourcesHandler = func() func(c *gin.Context) {
 		org := c.Param("org")
 		logrus.Infof("Getting data sources for %s", org)
 
-		dataSources, err := service.GetDataSources(c.Request.Context(), &org, c.Query("dataSourceType"))
-		if err != nil {
-			logrus.Errorf("Get data sources for %s failed ", org, err)
+		dataSources, status := service.GetDataSources(c.Request.Context(), &org, c.Query("dataSourceType"))
+		if status == http.StatusOK {
+			c.JSON(status, dataSources)
+		} else {
+			c.Status(status)
 		}
-
-		c.JSON(http.StatusOK, dataSources)
 	}
 }
 
@@ -48,15 +44,11 @@ var GetDataSourceHandler = func() func(c *gin.Context) {
 		id := c.Param("id")
 		logrus.Infof("Getting data source with id %s", id)
 
-		dataSource, err := service.GetDataSource(c.Request.Context(), id)
-		if err != nil {
-			logrus.Errorf("Get data sources with id %s failed ", id, err)
-		}
-
-		if dataSource == nil {
-			c.Status(http.StatusNotFound)
+		dataSource, status := service.GetDataSource(c.Request.Context(), id)
+		if status == http.StatusOK {
+			c.JSON(status, dataSource)
 		} else {
-			c.JSON(http.StatusOK, dataSource)
+			c.Status(status)
 		}
 	}
 }
@@ -67,16 +59,8 @@ var DeleteDataSourceHandler = func() func(c *gin.Context) {
 		id := c.Param("id")
 		logrus.Infof("Deleting data source with id %s", id)
 
-		err := service.DeleteDataSource(c.Request.Context(), id)
-
-		if err == mongo.ErrNoDocuments {
-			c.Status(http.StatusNotFound)
-		} else if err != nil {
-			logrus.Errorf("Delete data source with id %s failed. ", id, err)
-			c.Status(http.StatusInternalServerError)
-		} else {
-			c.Status(http.StatusOK)
-		}
+		status := service.DeleteDataSource(c.Request.Context(), id)
+		c.Status(status)
 	}
 }
 
@@ -88,18 +72,16 @@ var CreateDataSourceHandler = func() func(c *gin.Context) {
 
 		if err != nil {
 			logrus.Errorf("Unable to get bytes from request. ", err)
-			c.Status(http.StatusBadRequest)
+			c.JSON(http.StatusBadRequest, err.Error())
 		} else {
-			id, err := service.CreateDataSource(c.Request.Context(), bytes, c.Param("org"))
-			if err != nil && strings.Contains(err.Error(), "Bad Request") {
-				c.JSON(http.StatusBadRequest, err.Error())
-			} else if err != nil || id == nil {
-				logrus.Errorf("Data source creation failed. ", err)
-				c.Status(http.StatusInternalServerError)
+			msg, location, status := service.CreateDataSource(c.Request.Context(), bytes, c.Param("org"))
+			if status == http.StatusBadRequest {
+				c.JSON(status, msg)
+			} else if status == http.StatusCreated {
+				c.Writer.Header().Add("Location", *location)
+				c.Status(status)
 			} else {
-				location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, c.Param("org"), env.PathValues.Datasources, *id)
-				c.Writer.Header().Add("Location", location)
-				c.Status(http.StatusCreated)
+				c.Status(status)
 			}
 		}
 	}
