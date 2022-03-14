@@ -8,6 +8,7 @@ type DataSource struct {
 	AcceptHeaderValue string             `json:"acceptHeaderValue" bson:"acceptHeaderValue"`
 	PublisherId       string             `json:"publisherId" bson:"publisherId"`
 	Description       string             `json:"description" bson:"description"`
+	AuthHeader        *AuthHeader        `json:"authHeader" bson:"authHeader"`
 }
 
 func (dataSource DataSource) Validate() error {

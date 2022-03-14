@@ -25,6 +25,10 @@ func TestCreateDataSource(t *testing.T) {
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",
+		AuthHeader:        &model.AuthHeader{
+			Name: 		   "X-API-KEY",
+			Value: 		   "MyAPIKey",
+		},
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
 	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
