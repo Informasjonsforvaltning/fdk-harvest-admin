@@ -1,6 +1,7 @@
 export enum Standard {
   DCAT_AP_NO = 'DCAT-AP-NO',
-  SKOS_AP_NO = 'SKOS-AP-NO'
+  SKOS_AP_NO = 'SKOS-AP-NO',
+  TBX = 'TBX'
 }
 
 export enum DataType {
