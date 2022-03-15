@@ -62,6 +62,8 @@ paths:
             enum:
               - SKOS-AP-NO
               - DCAT-AP-NO
+              - CPSV-AP-NO
+              - TBX
       responses:
         "200":
           description: OK
@@ -148,6 +150,18 @@ paths:
           description: No Content
 components:
   schemas:
+    AuthHeader:
+      type: object
+      description: An authorization header
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - name
+        - value
+
     DataSource:
       type: object
       description: A data source that is to be harvested
@@ -161,6 +175,7 @@ components:
             - SKOS-AP-NO
             - DCAT-AP-NO
             - CPSV-AP-NO
+            - TBX
         dataType:
           type: string
           enum:
@@ -181,7 +196,10 @@ components:
         description:
           type: string
           description: A short description of the data source
-      required:
+        authHeader:
+          $ref: "#/components/schemas/AuthHeader"
+
+        required:
         - publisherId
         - dataSourceType
         - dataType

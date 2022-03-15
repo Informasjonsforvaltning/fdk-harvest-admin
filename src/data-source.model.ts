@@ -2,6 +2,11 @@ import { Document, model, Schema } from 'mongoose';
 import pick from 'lodash/pick';
 import { v4 as uuid } from 'uuid';
 
+export interface AuthHeader {
+  name: string;
+  value: string;
+}
+
 interface DataSource {
   // set to any because of mongoose type compatibility, in reality it is string
   id?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -11,6 +16,7 @@ interface DataSource {
   acceptHeaderValue?: string;
   publisherId?: string;
   description?: string;
+  authHeader?: AuthHeader | null;
 }
 
 export interface DataSourceDocument extends Document, DataSource {}
@@ -42,7 +48,20 @@ const dataSourceSchemaDefinition = {
     type: String,
     required: true
   },
-  description: String
+  description: String,
+  authHeader: {
+    type: {
+      name: {
+        type: String,
+        required: true
+      },
+      value: {
+        type: String,
+        required: true
+      }
+    },
+    required: false
+  }
 };
 
 const dataSourceFromDocument = (document: DataSourceDocument): DataSource =>

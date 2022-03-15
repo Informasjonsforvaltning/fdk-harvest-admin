@@ -9,7 +9,7 @@ import { NextFunction } from 'connect';
 
 import { createApp } from '../src/app';
 import keycloak from '../src/keycloak';
-import { DataSourceModel } from '../src/data-source.model';
+import { AuthHeader, DataSourceModel } from '../src/data-source.model';
 import { dataSourceApiValidator, spec } from '../src/data-source.validator';
 
 import { Standard, DataType } from '../src/types/enums';
@@ -28,6 +28,7 @@ interface DataSourceMock {
   acceptHeaderValue: string;
   publisherId: string;
   description: string;
+  authHeader: AuthHeader;
 }
 
 const middlewareMock = (_req: Request, _res: any, next: NextFunction): void => {
@@ -45,7 +46,11 @@ const generateDataSourceMock = (): DataSourceMock => {
     publisherId: random
       .number({ min: 800_000_000, max: 999_999_999 })
       .toString(),
-    description: 'descriptive text here'
+    description: 'descriptive text here',
+    authHeader: {
+      name: 'X-API-KEY',
+      value: 'MyApiKey'
+    }
   };
 };
 
