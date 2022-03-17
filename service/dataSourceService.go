@@ -98,14 +98,13 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	}
 
 	dataSource.Id = uuid.New().String()
-	var createdId *string
-	createdId, err = service.DataSourceRepository.CreateDataSource(ctx, dataSource)
+	err = service.DataSourceRepository.CreateDataSource(ctx, dataSource)
 	if err != nil {
 		logrus.Error("Create failed")
 		logging.LogAndPrintError(err)
 		return nil, nil, http.StatusInternalServerError
 	} else {
-		location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, org, env.PathValues.Datasources, *createdId)
+		location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, org, env.PathValues.Datasources, dataSource.Id)
 		return nil, &location, http.StatusCreated
 	}
 }

@@ -14,7 +14,7 @@ type DataSourceRepository interface {
 	GetDataSources(ctx context.Context, query bson.D) ([]model.DataSource, error)
 	GetDataSource(ctx context.Context, id string) (*model.DataSource, error)
 	DeleteDataSource(ctx context.Context, id string) error
-	CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error)
+	CreateDataSource(ctx context.Context, dataSource model.DataSource) error
 }
 
 type DataSourceRepositoryImpl struct {
@@ -52,7 +52,7 @@ func (r *DataSourceRepositoryImpl) GetDataSources(ctx context.Context, query bso
 }
 
 func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
-	filter := bson.D{{Key: "_id", Value: id}}
+	filter := bson.D{{Key: "id", Value: id}}
 	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
 
 	if err == mongo.ErrNoDocuments {
@@ -72,17 +72,16 @@ func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string)
 }
 
 func (r *DataSourceRepositoryImpl) DeleteDataSource(ctx context.Context, id string) error {
-	filter := bson.D{{Key: "_id", Value: id}}
+	filter := bson.D{{Key: "id", Value: id}}
 	_, err := r.collection.FindOneAndDelete(ctx, filter).DecodeBytes()
 	return err
 }
 
-func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error) {
-	result, err := r.collection.InsertOne(ctx, dataSource, nil)
+func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSource model.DataSource) error {
+	_, err := r.collection.InsertOne(ctx, dataSource, nil)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
-	id := result.InsertedID.(string)
-	return &id, nil
+	return nil
 }
