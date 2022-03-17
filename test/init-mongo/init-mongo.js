@@ -2,7 +2,7 @@ db = db.getSiblingDB('fdk-harvest-admin');
 db.createCollection('datasources');
 db.datasources.insert([
     {
-        "_id": "test-id",
+        "id": "test-id",
         "dataSourceType": "DCAT-AP-NO",
         "dataType": "dataset",
         "url": "http://url.com",
@@ -15,7 +15,7 @@ db.datasources.insert([
         }
     },
     {
-        "_id": "test-id-2",
+        "id": "test-id-2",
         "dataSourceType": "CPSV-AP-NO",
         "dataType": "publicService",
         "url": "http://url2.com",
@@ -24,7 +24,7 @@ db.datasources.insert([
         "description": "test source 2"
     },
     {
-        "_id": "test-id-3",
+        "id": "test-id-3",
         "dataSourceType": "CPSV-AP-NO",
         "dataType": "publicService",
         "url": "http://url3.com",
@@ -33,7 +33,7 @@ db.datasources.insert([
         "description": "test source 3"
     },
     {
-        "_id": "to-be-deleted",
+        "id": "to-be-deleted",
         "dataSourceType": "SKOS-AP-NO",
         "dataType": "concept",
         "url": "http://example.com",

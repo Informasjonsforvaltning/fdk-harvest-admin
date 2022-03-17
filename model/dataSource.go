@@ -1,7 +1,7 @@
 package model
 
 type DataSource struct {
-	Id                string             `json:"id" bson:"_id"`
+	Id                string             `json:"id" bson:"id"`
 	DataSourceType    DataSourceTypeEnum `json:"dataSourceType" bson:"dataSourceType"`
 	DataType          DataTypeEnum       `json:"dataType" bson:"dataType"`
 	Url               string             `json:"url" bson:"url"`

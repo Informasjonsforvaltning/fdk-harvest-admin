@@ -38,12 +38,8 @@ func (m *MockDataSourceRepository) DeleteDataSource(ctx context.Context, id stri
 	return m.MockError
 }
 
-func (m *MockDataSourceRepository) CreateDataSource(ctx context.Context, dataSource model.DataSource) (*string, error) {
-	if m.MockDataSource != nil {
-		return &m.MockDataSource.Id, m.MockError
-	} else {
-		return nil, m.MockError
-	}
+func (m *MockDataSourceRepository) CreateDataSource(ctx context.Context, dataSource model.DataSource) error {
+	return m.MockError
 }
 
 type MockPublisher struct {
