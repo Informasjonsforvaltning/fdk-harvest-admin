@@ -65,7 +65,7 @@ func (service *DataSourceService) GetDataSource(ctx context.Context, id string) 
 func (service *DataSourceService) DeleteDataSource(ctx context.Context, id string) int {
 	err := service.DataSourceRepository.DeleteDataSource(ctx, id)
 	if err == nil {
-		return http.StatusOK
+		return http.StatusNoContent
 	} else if err == mongo.ErrNoDocuments {
 		return http.StatusNotFound
 	} else {
@@ -106,6 +106,53 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	} else {
 		location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, org, env.PathValues.Datasources, dataSource.Id)
 		return nil, &location, http.StatusCreated
+	}
+}
+
+func (service *DataSourceService) UpdateDataSource(ctx context.Context, id string, bytes []byte, org string) (*model.DataSource, *string, int) {
+	var toUpdate model.DataSource
+	var msg string
+	err := json.Unmarshal(bytes, &toUpdate)
+	if err != nil {
+		logging.LogAndPrintError(err)
+		msg = fmt.Sprintf("Bad Request - %s", err.Error())
+		return nil, &msg, http.StatusBadRequest
+	}
+
+	err = toUpdate.Validate()
+	if err != nil {
+		logging.LogAndPrintError(err)
+		msg = fmt.Sprintf("Bad Request - %s", err.Error())
+		return nil, &msg, http.StatusBadRequest
+	}
+
+	var dbSource *model.DataSource
+	dbSource, err = service.DataSourceRepository.GetDataSource(ctx, id)
+	if err != nil {
+		logrus.Errorf("Data source with id %s failed, ", id)
+		logging.LogAndPrintError(err)
+		return nil, nil, http.StatusInternalServerError
+	} else if dbSource == nil {
+		return nil, nil, http.StatusNotFound
+	}
+
+	if org != dbSource.PublisherId {
+		logging.LogAndPrintError(errors.New("Update failed, trying to update data source for other organization"))
+		msg = "Bad Request - trying to update data source for other organization"
+		return nil, &msg, http.StatusBadRequest
+	}
+
+	toUpdate.Id = dbSource.Id
+	err = service.DataSourceRepository.UpdateDataSource(ctx, toUpdate)
+
+	var updated *model.DataSource
+	updated, err = service.DataSourceRepository.GetDataSource(ctx, id)
+	if err != nil {
+		logrus.Error("Update failed")
+		logging.LogAndPrintError(err)
+		return nil, nil, http.StatusInternalServerError
+	} else {
+		return updated, nil, http.StatusOK
 	}
 }
 
