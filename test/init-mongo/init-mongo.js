@@ -40,5 +40,18 @@ db.datasources.insert([
         "acceptHeaderValue": "text/turtle",
         "publisherId": "987654321",
         "description": "source to be deleted"
+    },
+    {
+        "id": "to-be-updated",
+        "dataSourceType": "SKOS-AP-NO",
+        "dataType": "concept",
+        "url": "http://example.com",
+        "acceptHeaderValue": "text/turtle",
+        "publisherId": "987654321",
+        "description": "source to be updated",
+        "authHeader": {
+            "name": "X-API-KEY",
+            "value": "MyApiKey"
+        }
     }
 ]);

@@ -15,6 +15,7 @@ type DataSourceRepository interface {
 	GetDataSource(ctx context.Context, id string) (*model.DataSource, error)
 	DeleteDataSource(ctx context.Context, id string) error
 	CreateDataSource(ctx context.Context, dataSource model.DataSource) error
+	UpdateDataSource(ctx context.Context, toUpdate model.DataSource) error
 }
 
 type DataSourceRepositoryImpl struct {
@@ -84,4 +85,11 @@ func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSou
 		return err
 	}
 	return nil
+}
+
+func (r *DataSourceRepositoryImpl) UpdateDataSource(ctx context.Context, toUpdate model.DataSource) error {
+	filter := bson.D{{Key: "id", Value: toUpdate.Id}}
+	result := r.collection.FindOneAndReplace(ctx, filter, toUpdate, nil)
+
+	return result.Err()
 }

@@ -42,6 +42,10 @@ func (m *MockDataSourceRepository) CreateDataSource(ctx context.Context, dataSou
 	return m.MockError
 }
 
+func (m *MockDataSourceRepository) UpdateDataSource(ctx context.Context, dataSource model.DataSource) error {
+	return m.MockError
+}
+
 type MockPublisher struct {
 	MockError error
 }

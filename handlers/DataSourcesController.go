@@ -89,6 +89,30 @@ var CreateDataSourceHandler = func() func(c *gin.Context) {
 	}
 }
 
+var UpdateDataSourceHandler = func() func(c *gin.Context) {
+	service := service.InitService()
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		logrus.Infof("Updating data source with id %s", id)
+		bytes, err := c.GetRawData()
+
+		if err != nil {
+			logrus.Errorf("Unable to get bytes from request.")
+			logging.LogAndPrintError(err)
+			c.JSON(http.StatusBadRequest, err.Error())
+		} else {
+			dataSource, msg, status := service.UpdateDataSource(c.Request.Context(), id, bytes, c.Param("org"))
+			if status == http.StatusBadRequest {
+				c.JSON(status, msg)
+			} else if status == http.StatusOK {
+				c.JSON(status, dataSource)
+			} else {
+				c.Status(status)
+			}
+		}
+	}
+}
+
 var StartHarvestingHandler = func() func(c *gin.Context) {
 	service := service.InitService()
 	return func(c *gin.Context) {

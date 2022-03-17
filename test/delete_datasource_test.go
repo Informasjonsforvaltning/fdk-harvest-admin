@@ -38,7 +38,7 @@ func TestDeleteDataSource(t *testing.T) {
 	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusNoContent, w.Code)
 
 	post := httptest.NewRecorder()
 	postReq, _ := http.NewRequest("GET", "/organizations/987654321/datasources/to-be-deleted", nil)
