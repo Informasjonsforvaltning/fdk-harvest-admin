@@ -76,21 +76,14 @@ func (service *DataSourceService) DeleteDataSource(ctx context.Context, id strin
 }
 
 func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []byte, org string) (*string, *string, int) {
-	var dataSource model.DataSource
+	dataSource, err := unmarshalAndValidateDataSource(bytes)
 	var msg string
-	err := json.Unmarshal(bytes, &dataSource)
 	if err != nil {
 		logging.LogAndPrintError(err)
 		msg = fmt.Sprintf("Bad Request - %s", err.Error())
 		return &msg, nil, http.StatusBadRequest
 	}
 
-	err = dataSource.Validate()
-	if err != nil {
-		logging.LogAndPrintError(err)
-		msg = fmt.Sprintf("Bad Request - %s", err.Error())
-		return &msg, nil, http.StatusBadRequest
-	}
 	if org != dataSource.PublisherId {
 		logging.LogAndPrintError(errors.New("Create failed, trying to create data source for other organization"))
 		msg = "Bad Request - trying to create data source for other organization"
@@ -98,7 +91,7 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	}
 
 	dataSource.Id = uuid.New().String()
-	err = service.DataSourceRepository.CreateDataSource(ctx, dataSource)
+	err = service.DataSourceRepository.CreateDataSource(ctx, *dataSource)
 	if err != nil {
 		logrus.Error("Create failed")
 		logging.LogAndPrintError(err)
@@ -110,16 +103,8 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 }
 
 func (service *DataSourceService) UpdateDataSource(ctx context.Context, id string, bytes []byte, org string) (*model.DataSource, *string, int) {
-	var toUpdate model.DataSource
+	toUpdate, err := unmarshalAndValidateDataSource(bytes)
 	var msg string
-	err := json.Unmarshal(bytes, &toUpdate)
-	if err != nil {
-		logging.LogAndPrintError(err)
-		msg = fmt.Sprintf("Bad Request - %s", err.Error())
-		return nil, &msg, http.StatusBadRequest
-	}
-
-	err = toUpdate.Validate()
 	if err != nil {
 		logging.LogAndPrintError(err)
 		msg = fmt.Sprintf("Bad Request - %s", err.Error())
@@ -143,7 +128,7 @@ func (service *DataSourceService) UpdateDataSource(ctx context.Context, id strin
 	}
 
 	toUpdate.Id = dbSource.Id
-	err = service.DataSourceRepository.UpdateDataSource(ctx, toUpdate)
+	err = service.DataSourceRepository.UpdateDataSource(ctx, *toUpdate)
 
 	var updated *model.DataSource
 	updated, err = service.DataSourceRepository.GetDataSource(ctx, id)
@@ -196,6 +181,21 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 			return http.StatusOK
 		}
 	}
+}
+
+func unmarshalAndValidateDataSource(bytes []byte) (*model.DataSource, error) {
+	var dataSource model.DataSource
+	err := json.Unmarshal(bytes, &dataSource)
+	if err != nil {
+		return nil, err
+	}
+
+	err = dataSource.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	return &dataSource, nil
 }
 
 func dataTypeToMessageKey(dataType model.DataTypeEnum) (*string, error) {
