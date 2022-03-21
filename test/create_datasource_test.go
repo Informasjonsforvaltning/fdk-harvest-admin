@@ -25,9 +25,9 @@ func TestCreateDataSource(t *testing.T) {
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",
-		AuthHeader:        &model.AuthHeader{
-			Name: 		   "X-API-KEY",
-			Value: 		   "MyAPIKey",
+		AuthHeader: &model.AuthHeader{
+			Name:  "X-API-KEY",
+			Value: "MyAPIKey",
 		},
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
@@ -39,14 +39,8 @@ func TestCreateDataSource(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 
-	post := httptest.NewRecorder()
-	postReq, _ := http.NewRequest("GET", w.HeaderMap.Get("Location"), nil)
-	router.ServeHTTP(post, postReq)
-
-	assert.Equal(t, http.StatusOK, post.Code)
-
 	var actualResponse model.DataSource
-	json.Unmarshal(post.Body.Bytes(), &actualResponse)
+	json.Unmarshal(w.Body.Bytes(), &actualResponse)
 
 	toBeCreated.Id = actualResponse.Id
 	assert.Equal(t, toBeCreated, actualResponse)
