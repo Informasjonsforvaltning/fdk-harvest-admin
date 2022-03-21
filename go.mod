@@ -5,6 +5,7 @@ go 1.17
 require (
 	cloud.google.com/go/errorreporting v0.2.0
 	github.com/Nerzal/gocloak/v10 v10.0.1
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt/v4 v4.3.0
 	github.com/google/uuid v1.3.0
