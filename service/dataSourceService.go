@@ -75,19 +75,19 @@ func (service *DataSourceService) DeleteDataSource(ctx context.Context, id strin
 	}
 }
 
-func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []byte, org string) (*string, *string, int) {
+func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []byte, org string) (*model.DataSource, *string, *string, int) {
 	dataSource, err := unmarshalAndValidateDataSource(bytes)
 	var msg string
 	if err != nil {
 		logging.LogAndPrintError(err)
 		msg = fmt.Sprintf("Bad Request - %s", err.Error())
-		return &msg, nil, http.StatusBadRequest
+		return nil, &msg, nil, http.StatusBadRequest
 	}
 
 	if org != dataSource.PublisherId {
 		logging.LogAndPrintError(errors.New("Create failed, trying to create data source for other organization"))
 		msg = "Bad Request - trying to create data source for other organization"
-		return &msg, nil, http.StatusBadRequest
+		return nil, &msg, nil, http.StatusBadRequest
 	}
 
 	dataSource.Id = uuid.New().String()
@@ -95,10 +95,10 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	if err != nil {
 		logrus.Error("Create failed")
 		logging.LogAndPrintError(err)
-		return nil, nil, http.StatusInternalServerError
+		return nil, nil, nil, http.StatusInternalServerError
 	} else {
 		location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, org, env.PathValues.Datasources, dataSource.Id)
-		return nil, &location, http.StatusCreated
+		return dataSource, nil, &location, http.StatusCreated
 	}
 }
 

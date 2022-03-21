@@ -76,12 +76,12 @@ var CreateDataSourceHandler = func() func(c *gin.Context) {
 			logging.LogAndPrintError(err)
 			c.JSON(http.StatusBadRequest, err.Error())
 		} else {
-			msg, location, status := service.CreateDataSource(c.Request.Context(), bytes, c.Param("org"))
+			dataSource, msg, location, status := service.CreateDataSource(c.Request.Context(), bytes, c.Param("org"))
 			if status == http.StatusBadRequest {
 				c.JSON(status, msg)
 			} else if status == http.StatusCreated {
 				c.Writer.Header().Add("Location", *location)
-				c.Status(status)
+				c.JSON(status, dataSource)
 			} else {
 				c.Status(status)
 			}
