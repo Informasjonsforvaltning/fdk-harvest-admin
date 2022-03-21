@@ -178,7 +178,7 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 			return http.StatusInternalServerError
 		} else {
 			logrus.Infof("Harvest triggered for %s in org %s with type %s", id, org, dataSource.DataType)
-			return http.StatusOK
+			return http.StatusNoContent
 		}
 	}
 }

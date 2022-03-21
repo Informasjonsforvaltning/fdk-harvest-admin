@@ -67,7 +67,7 @@ func TestStartHarvestingConcepts(t *testing.T) {
 	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "concept-source", "123456789")
 
-	assert.Equal(t, http.StatusOK, status)
+	assert.Equal(t, http.StatusNoContent, status)
 }
 
 func TestStartHarvestingDataServices(t *testing.T) {
@@ -85,7 +85,7 @@ func TestStartHarvestingDataServices(t *testing.T) {
 	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "dataservice-source", "123456789")
 
-	assert.Equal(t, http.StatusOK, status)
+	assert.Equal(t, http.StatusNoContent, status)
 }
 
 func TestStartHarvestingDatasets(t *testing.T) {
@@ -103,7 +103,7 @@ func TestStartHarvestingDatasets(t *testing.T) {
 	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "dataset-source", "123456789")
 
-	assert.Equal(t, http.StatusOK, status)
+	assert.Equal(t, http.StatusNoContent, status)
 }
 
 func TestStartHarvestingInformationModels(t *testing.T) {
@@ -121,7 +121,7 @@ func TestStartHarvestingInformationModels(t *testing.T) {
 	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "infomodel-source", "123456789")
 
-	assert.Equal(t, http.StatusOK, status)
+	assert.Equal(t, http.StatusNoContent, status)
 }
 
 func TestStartHarvestingPublicServices(t *testing.T) {
@@ -139,7 +139,7 @@ func TestStartHarvestingPublicServices(t *testing.T) {
 	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "service-source", "123456789")
 
-	assert.Equal(t, http.StatusOK, status)
+	assert.Equal(t, http.StatusNoContent, status)
 }
 
 func TestStartHarvestingInvalidType(t *testing.T) {
