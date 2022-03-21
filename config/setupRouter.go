@@ -1,6 +1,9 @@
 package config
 
 import (
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
@@ -25,7 +28,19 @@ func InitializeRoutes(e *gin.Engine) {
 func SetupRouter() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Recovery())
+	router.Use(corsMiddleware())
 
 	InitializeRoutes(router)
 	return router
+}
+
+func corsMiddleware() gin.HandlerFunc {
+	corsConfig := cors.Config{
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Accept", "Authorization"},
+		AllowCredentials: true,
+		MaxAge:           1 * time.Hour,
+	}
+	corsConfig.AllowAllOrigins = true
+	return cors.New(corsConfig)
 }
