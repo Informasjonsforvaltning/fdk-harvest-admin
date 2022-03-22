@@ -39,6 +39,18 @@ paths:
               - SKOS-AP-NO
               - DCAT-AP-NO
               - CPSV-AP-NO
+        - in: query
+          name: dataType
+          description: If you want to filter by the data type
+          required: false
+          schema:
+            type: string
+            enum:
+              - concept
+              - dataset
+              - informationmodel
+              - dataservice
+              - publicService
       responses:
         "200":
           description: OK
@@ -98,6 +110,18 @@ paths:
               - SKOS-AP-NO
               - DCAT-AP-NO
               - CPSV-AP-NO
+        - in: query
+          name: dataType
+          description: If you want to filter by the data type
+          required: false
+          schema:
+            type: string
+            enum:
+              - concept
+              - dataset
+              - informationmodel
+              - dataservice
+              - publicService
       responses:
         "200":
           description: OK

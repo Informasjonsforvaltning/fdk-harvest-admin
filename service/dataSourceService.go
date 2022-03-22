@@ -31,10 +31,13 @@ func InitService() *DataSourceService {
 	return &service
 }
 
-func (service *DataSourceService) GetDataSources(ctx context.Context, org *string, dataSourceType string) (*[]model.DataSource, int) {
+func (service *DataSourceService) GetDataSources(ctx context.Context, org *string, dataType string, dataSourceType string) (*[]model.DataSource, int) {
 	query := bson.D{}
 	if org != nil {
 		query = append(query, bson.E{Key: "publisherId", Value: org})
+	}
+	if len(dataType) > 0 {
+		query = append(query, bson.E{Key: "dataType", Value: dataType})
 	}
 	if len(dataSourceType) > 0 {
 		query = append(query, bson.E{Key: "dataSourceType", Value: dataSourceType})

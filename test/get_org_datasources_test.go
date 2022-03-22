@@ -30,10 +30,10 @@ func TestGetOrgDataSourcesRoute(t *testing.T) {
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source",
-		AuthHeader:        &model.AuthHeader{
-            Name: "X-API-KEY",
-            Value: "MyApiKey",
-        },
+		AuthHeader: &model.AuthHeader{
+			Name:  "X-API-KEY",
+			Value: "MyApiKey",
+		},
 	})
 	expectedResponse = append(expectedResponse, model.DataSource{
 		Id:                "test-id-3",
@@ -57,6 +57,33 @@ func TestGetOrgDataSourcesByDataSourceType(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources?dataSourceType=CPSV-AP-NO", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var expectedResponse []model.DataSource
+	expectedResponse = append(expectedResponse, model.DataSource{
+		Id:                "test-id-3",
+		DataSourceType:    "CPSV-AP-NO",
+		DataType:          "publicService",
+		Url:               "http://url3.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherId:       "123456789",
+		Description:       "test source 3",
+	})
+
+	var actualResponse []model.DataSource
+	err := json.Unmarshal(w.Body.Bytes(), &actualResponse)
+
+	assert.Nil(t, err)
+	assert.Equal(t, expectedResponse, actualResponse)
+}
+
+func TestGetOrgDataSourcesByDataType(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources?dataType=publicService", nil)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
