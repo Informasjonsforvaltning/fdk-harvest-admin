@@ -49,6 +49,9 @@ func (service *DataSourceService) GetDataSources(ctx context.Context, org *strin
 		return nil, http.StatusInternalServerError
 	}
 
+	if dataSources == nil {
+		dataSources = []model.DataSource{}
+	}
 	return &dataSources, http.StatusOK
 }
 
