@@ -167,6 +167,7 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 		}
 
 		harvestParams := make(map[string]string)
+		harvestParams["dataSourceId"] = dataSource.Id
 		harvestParams["publisherId"] = dataSource.PublisherId
 
 		var msgBody []byte
