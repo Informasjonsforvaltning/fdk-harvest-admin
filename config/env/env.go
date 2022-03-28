@@ -46,8 +46,11 @@ type Constants struct {
 	MongoCollection    string
 	MongoDatabase      string
 	RabbitExchange     string
+	RabbitExchangeKind string
 	RabbitMsgKeyMiddle string
 	RabbitMsgKeyEnd    string
+	RabbitListenQueue  string
+	RabbitListenKey    string
 }
 
 type Paths struct {
@@ -72,8 +75,11 @@ var ConstantValues = Constants{
 	MongoCollection:    "datasources",
 	MongoDatabase:      "fdk-harvest-admin",
 	RabbitExchange:     "harvests",
+	RabbitExchangeKind: "topic",
 	RabbitMsgKeyMiddle: "publisher",
 	RabbitMsgKeyEnd:    "HarvestTrigger",
+	RabbitListenQueue:  "fdkHarvestAdmin",
+	RabbitListenKey:    "*.publisher.NewDataSource",
 }
 
 var PathValues = Paths{

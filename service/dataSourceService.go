@@ -108,6 +108,23 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	}
 }
 
+func (service *DataSourceService) CreateDataSourceFromRabbitMessage(ctx context.Context, bytes []byte) error {
+	dataSource, err := unmarshalAndValidateDataSource(bytes)
+	if err != nil {
+		return err
+	} else {
+		dataSource.Id = uuid.New().String()
+		err = service.DataSourceRepository.CreateDataSource(ctx, *dataSource)
+		if err != nil {
+			logrus.Error("Create failed")
+			return err
+		} else {
+			logrus.Info("Data source created from rabbit message")
+			return nil
+		}
+	}
+}
+
 func (service *DataSourceService) UpdateDataSource(ctx context.Context, id string, bytes []byte, org string) (*model.DataSource, *string, int) {
 	toUpdate, err := unmarshalAndValidateDataSource(bytes)
 	var msg string
