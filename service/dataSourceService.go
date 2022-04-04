@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/logging"
@@ -20,12 +21,14 @@ import (
 
 type DataSourceService struct {
 	DataSourceRepository repository.DataSourceRepository
+	ReportsRepository     repository.ReportsRepository
 	Publisher            rabbit.Publisher
 }
 
 func InitService() *DataSourceService {
 	service := DataSourceService{
-		DataSourceRepository: repository.InitRepository(),
+		DataSourceRepository: repository.InitDataSourceRepository(),
+		ReportsRepository:     repository.InitReportsRepository(),
 		Publisher:            &rabbit.PublisherImpl{},
 	}
 	return &service
@@ -207,43 +210,37 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 	}
 }
 
-func unmarshalAndValidateDataSource(bytes []byte) (*model.DataSource, error) {
-	var dataSource model.DataSource
-	err := json.Unmarshal(bytes, &dataSource)
-	if err != nil {
-		return nil, err
+func (service *DataSourceService) ConsumeReport(ctx context.Context, routingKey string, body []byte) []error {
+	var errors []error
+	if strings.Contains(routingKey, "harvested") {
+		var reports []model.HarvestReport
+		err := json.Unmarshal(body, &reports)
+		if err != nil {
+			errors = append(errors, err)
+		} else {
+			for _, report := range reports {
+				err := service.ReportsRepository.UpsertReports(ctx, report)
+				if err != nil {
+					errors = append(errors, err)
+				}
+			}
+		}
+	} else if strings.Contains(routingKey, "reasoned") || strings.Contains(routingKey, "ingested") {
+		var startAndEnd model.StartAndEndTime
+		err := json.Unmarshal(body, &startAndEnd)
+		if err != nil {
+			errors = append(errors, err)
+		} else {
+			report, err := reasonedOrIngestedReport(routingKey, startAndEnd)
+			if err != nil {
+				errors = append(errors, err)
+			}else {
+				err = service.ReportsRepository.UpsertReports(ctx, *report)
+				if err != nil {
+					errors = append(errors, err)
+				}
+			}
+		}
 	}
-
-	err = dataSource.Validate()
-	if err != nil {
-		return nil, err
-	}
-
-	return &dataSource, nil
-}
-
-func dataTypeToMessageKey(dataType model.DataTypeEnum) (*string, error) {
-	switch dataType {
-	case model.Concept:
-		msgKey := messageKey("concept")
-		return &msgKey, nil
-	case model.Dataset:
-		msgKey := messageKey("dataset")
-		return &msgKey, nil
-	case model.InformationModel:
-		msgKey := messageKey("informationmodel")
-		return &msgKey, nil
-	case model.DataService:
-		msgKey := messageKey("dataservice")
-		return &msgKey, nil
-	case model.PublicService:
-		msgKey := messageKey("publicservice")
-		return &msgKey, nil
-	}
-
-	return nil, errors.New(string(dataType) + " is not a valid data type")
-}
-
-func messageKey(messageType string) string {
-	return fmt.Sprintf("%s.%s.%s", messageType, env.ConstantValues.RabbitMsgKeyMiddle, env.ConstantValues.RabbitMsgKeyEnd)
+	return errors
 }

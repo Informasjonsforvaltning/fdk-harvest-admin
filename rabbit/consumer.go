@@ -32,7 +32,7 @@ func (p ConsumerImpl) StartConsumer(handler func(d amqp.Delivery)) {
 
 	_, err = rabbitConnection.Channel.QueueDeclare(
 		env.ConstantValues.RabbitListenQueue,
-		false, false, false, false, nil,
+		false, true, false, false, nil,
 	)
 	if err != nil {
 		logrus.Error(err)
@@ -41,14 +41,50 @@ func (p ConsumerImpl) StartConsumer(handler func(d amqp.Delivery)) {
 
 	err = rabbitConnection.Channel.QueueBind(
 		env.ConstantValues.RabbitListenQueue,
-		env.ConstantValues.RabbitListenKey,
+		env.ConstantValues.RabbitNewDataSourceKey,
 		env.ConstantValues.RabbitExchange,
 		false,
 		nil,
 	)
 	if err != nil {
 		logrus.Error(err)
-		logrus.Error("unable to bind rabbit queue to exchange")
+		logrus.Error("unable to bind new data source queue to exchange")
+	}
+
+	err = rabbitConnection.Channel.QueueBind(
+		env.ConstantValues.RabbitListenQueue,
+		env.ConstantValues.RabbitReasonedKey,
+		env.ConstantValues.RabbitExchange,
+		false,
+		nil,
+	)
+	if err != nil {
+		logrus.Error(err)
+		logrus.Error("unable to bind reasoned queue to exchange")
+	}
+
+	err = rabbitConnection.Channel.QueueBind(
+		env.ConstantValues.RabbitListenQueue,
+		env.ConstantValues.RabbitHarvestedKey,
+		env.ConstantValues.RabbitExchange,
+		false,
+		nil,
+	)
+	if err != nil {
+		logrus.Error(err)
+		logrus.Error("unable to bind harvested queue to exchange")
+	}
+
+	err = rabbitConnection.Channel.QueueBind(
+		env.ConstantValues.RabbitListenQueue,
+		env.ConstantValues.RabbitIngestedKey,
+		env.ConstantValues.RabbitExchange,
+		false,
+		nil,
+	)
+	if err != nil {
+		logrus.Error(err)
+		logrus.Error("unable to bind ingested queue to exchange")
 	}
 
 	msgs, err := rabbitConnection.Channel.Consume(

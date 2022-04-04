@@ -55,3 +55,22 @@ db.datasources.insert([
         }
     }
 ]);
+db.createCollection('reports');
+db.reports.insert([
+    {
+        "id": "data-source-id",
+        "reports": {
+            "concept": {
+                "id": "data-source-id",
+                "url": "http://example.com",
+                "dataType": "concept",
+                "harvestError": true,
+                "startTime": "2022-04-06 14:00:07 +0200",
+                "endTime": "2022-04-06 14:00:17 +0200",
+                "ErrorMessage": "error message",
+                "changedCatalogs": [],
+                "changedResources": []
+            }
+        }
+    }
+]);

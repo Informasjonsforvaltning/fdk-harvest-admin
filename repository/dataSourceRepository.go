@@ -24,9 +24,9 @@ type DataSourceRepositoryImpl struct {
 
 var dataSourceRepository *DataSourceRepositoryImpl
 
-func InitRepository() *DataSourceRepositoryImpl {
+func InitDataSourceRepository() *DataSourceRepositoryImpl {
 	if dataSourceRepository == nil {
-		dataSourceRepository = &DataSourceRepositoryImpl{collection: connection.MongoCollection()}
+		dataSourceRepository = &DataSourceRepositoryImpl{collection: connection.DataSourcesCollection()}
 	}
 	return dataSourceRepository
 }
