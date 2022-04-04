@@ -23,7 +23,7 @@ func (p ConsumerImpl) StartConsumer(handler func(d amqp.Delivery)) {
 	err = rabbitConnection.Channel.ExchangeDeclare(
 		env.ConstantValues.RabbitExchange,
 		env.ConstantValues.RabbitExchangeKind,
-		true, false, false, false, nil,
+		false, false, false, false, nil,
 	)
 	if err != nil {
 		logrus.Error(err)
@@ -32,7 +32,7 @@ func (p ConsumerImpl) StartConsumer(handler func(d amqp.Delivery)) {
 
 	_, err = rabbitConnection.Channel.QueueDeclare(
 		env.ConstantValues.RabbitListenQueue,
-		true, false, false, false, nil,
+		false, false, false, false, nil,
 	)
 	if err != nil {
 		logrus.Error(err)
