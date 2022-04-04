@@ -30,7 +30,7 @@ jobs:
     if: github.event.pull_request.draft == false
     uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy.yaml@main
     with:
-      app_name: new-harvest-admin
+      app_name: fdk-harvest-admin
       caller_sha: ${{ github.sha }}
       repo: ${{ github.repository }}
       actor: ${{ github.actor }}
