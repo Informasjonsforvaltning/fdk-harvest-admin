@@ -24,14 +24,26 @@ func mongoConnectionString() string {
 	return connectionString
 }
 
-func MongoCollection() *mongo.Collection {
+func DataSourcesCollection() *mongo.Collection {
 	mongoOptions := options.Client().ApplyURI(mongoConnectionString())
 	client, err := mongo.Connect(context.Background(), mongoOptions)
 	if err != nil {
 		logrus.Error("mongo client failed")
 		logging.LogAndPrintError(err)
 	}
-	collection := client.Database(env.ConstantValues.MongoDatabase).Collection(env.ConstantValues.MongoCollection)
+	collection := client.Database(env.ConstantValues.MongoDatabase).Collection(env.ConstantValues.DataSourcesCollection)
+
+	return collection
+}
+
+func ReportsCollection() *mongo.Collection {
+	mongoOptions := options.Client().ApplyURI(mongoConnectionString())
+	client, err := mongo.Connect(context.Background(), mongoOptions)
+	if err != nil {
+		logrus.Error("mongo client failed")
+		logging.LogAndPrintError(err)
+	}
+	collection := client.Database(env.ConstantValues.MongoDatabase).Collection(env.ConstantValues.ReportsCollection)
 
 	return collection
 }

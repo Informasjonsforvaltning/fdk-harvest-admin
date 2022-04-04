@@ -42,15 +42,19 @@ func RabbitPort() string {
 }
 
 type Constants struct {
-	MongoAuthParams    string
-	MongoCollection    string
-	MongoDatabase      string
-	RabbitExchange     string
-	RabbitExchangeKind string
-	RabbitMsgKeyMiddle string
-	RabbitMsgKeyEnd    string
-	RabbitListenQueue  string
-	RabbitListenKey    string
+	MongoAuthParams        string
+	DataSourcesCollection  string
+	ReportsCollection      string
+	MongoDatabase          string
+	RabbitExchange         string
+	RabbitExchangeKind     string
+	RabbitMsgKeyMiddle     string
+	RabbitMsgKeyEnd        string
+	RabbitListenQueue      string
+	RabbitNewDataSourceKey string
+	RabbitHarvestedKey     string
+	RabbitIngestedKey      string
+	RabbitReasonedKey      string
 }
 
 type Paths struct {
@@ -71,15 +75,19 @@ type Security struct {
 }
 
 var ConstantValues = Constants{
-	MongoAuthParams:    "authSource=admin&authMechanism=SCRAM-SHA-1",
-	MongoCollection:    "datasources",
-	MongoDatabase:      "fdk-harvest-admin",
-	RabbitExchange:     "harvests",
-	RabbitExchangeKind: "topic",
-	RabbitMsgKeyMiddle: "publisher",
-	RabbitMsgKeyEnd:    "HarvestTrigger",
-	RabbitListenQueue:  "fdkHarvestAdmin",
-	RabbitListenKey:    "*.publisher.NewDataSource",
+	MongoAuthParams:        "authSource=admin&authMechanism=SCRAM-SHA-1",
+	DataSourcesCollection:  "datasources",
+	ReportsCollection:      "reports",
+	MongoDatabase:          "fdk-harvest-admin",
+	RabbitExchange:         "harvests",
+	RabbitExchangeKind:     "topic",
+	RabbitMsgKeyMiddle:     "publisher",
+	RabbitMsgKeyEnd:        "HarvestTrigger",
+	RabbitListenQueue:      "fdkHarvestAdmin",
+	RabbitNewDataSourceKey: "*.publisher.NewDataSource",
+	RabbitHarvestedKey:     "*.harvested",
+	RabbitIngestedKey:      "*.ingested",
+	RabbitReasonedKey:      "*.reasoned",
 }
 
 var PathValues = Paths{
