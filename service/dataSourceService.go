@@ -21,14 +21,14 @@ import (
 
 type DataSourceService struct {
 	DataSourceRepository repository.DataSourceRepository
-	ReportsRepository     repository.ReportsRepository
+	ReportsRepository    repository.ReportsRepository
 	Publisher            rabbit.Publisher
 }
 
 func InitService() *DataSourceService {
 	service := DataSourceService{
 		DataSourceRepository: repository.InitDataSourceRepository(),
-		ReportsRepository:     repository.InitReportsRepository(),
+		ReportsRepository:    repository.InitReportsRepository(),
 		Publisher:            &rabbit.PublisherImpl{},
 	}
 	return &service
@@ -210,6 +210,40 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 	}
 }
 
+func (service *DataSourceService) GetHarvestStatus(ctx context.Context, id string) (*model.HarvestStatuses, int) {
+	harvestReports, err := service.ReportsRepository.GetReports(ctx, id)
+	if err != nil {
+		logrus.Errorf("Get harvest reports for id %s failed", id)
+		logging.LogAndPrintError(err)
+		return nil, http.StatusInternalServerError
+	} else if harvestReports == nil {
+		return nil, http.StatusNotFound
+	}
+
+	reasoningReports, err := service.ReportsRepository.GetReports(ctx, "reasoned")
+	if err != nil {
+		logrus.Error("Get reasoning reports failed")
+		logging.LogAndPrintError(err)
+		return nil, http.StatusInternalServerError
+	}
+
+	ingestReports, err := service.ReportsRepository.GetReports(ctx, "ingested")
+	if err != nil {
+		logrus.Error("Get ingest reports failed")
+		logging.LogAndPrintError(err)
+		return nil, http.StatusInternalServerError
+	}
+
+	statuses, err := calculateHarvestStatusesFromReports(*harvestReports, *reasoningReports, *ingestReports)
+	if err != nil {
+		logrus.Error("Harvest status calculation failed")
+		logging.LogAndPrintError(err)
+		return nil, http.StatusInternalServerError
+	}
+
+	return statuses, http.StatusOK
+}
+
 func (service *DataSourceService) ConsumeReport(ctx context.Context, routingKey string, body []byte) []error {
 	var errors []error
 	if strings.Contains(routingKey, "harvested") {
@@ -231,10 +265,10 @@ func (service *DataSourceService) ConsumeReport(ctx context.Context, routingKey 
 		if err != nil {
 			errors = append(errors, err)
 		} else {
-			report, err := reasonedOrIngestedReport(routingKey, startAndEnd)
+			report, err := ReasonedOrIngestedReport(routingKey, startAndEnd)
 			if err != nil {
 				errors = append(errors, err)
-			}else {
+			} else {
 				err = service.ReportsRepository.UpsertReports(ctx, *report)
 				if err != nil {
 					errors = append(errors, err)

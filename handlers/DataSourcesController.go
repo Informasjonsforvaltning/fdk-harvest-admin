@@ -54,6 +54,21 @@ var GetDataSourceHandler = func() func(c *gin.Context) {
 	}
 }
 
+var GetHarvestStatusHandler = func() func(c *gin.Context) {
+	service := service.InitService()
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		logrus.Infof("Getting harvest status for data source with id %s", id)
+
+		harvestStatus, httpStatus := service.GetHarvestStatus(c.Request.Context(), id)
+		if httpStatus == http.StatusOK {
+			c.JSON(httpStatus, harvestStatus)
+		} else {
+			c.Status(httpStatus)
+		}
+	}
+}
+
 var DeleteDataSourceHandler = func() func(c *gin.Context) {
 	service := service.InitService()
 	return func(c *gin.Context) {

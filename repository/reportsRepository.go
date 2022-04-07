@@ -11,6 +11,7 @@ import (
 )
 
 type ReportsRepository interface {
+	GetReports(ctx context.Context, id string) (*model.HarvestReports, error)
 	UpsertReports(ctx context.Context, dataSource model.HarvestReport) error
 }
 
@@ -25,6 +26,26 @@ func InitReportsRepository() *ReportsRepositoryImpl {
 		reportsRepository = &ReportsRepositoryImpl{collection: connection.ReportsCollection()}
 	}
 	return reportsRepository
+}
+
+func (r *ReportsRepositoryImpl) GetReports(ctx context.Context, id string) (*model.HarvestReports, error) {
+	filter := bson.D{{Key: "id", Value: id}}
+	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
+
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var reports model.HarvestReports
+	unmarshalError := bson.Unmarshal(bytes, &reports)
+	if unmarshalError != nil {
+		return nil, unmarshalError
+	}
+
+	return &reports, nil
 }
 
 func (r *ReportsRepositoryImpl) UpsertReports(ctx context.Context, report model.HarvestReport) error {
