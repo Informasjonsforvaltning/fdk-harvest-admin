@@ -59,6 +59,7 @@ type Constants struct {
 
 type Paths struct {
 	Datasource     string
+	HarvestStatus  string
 	Datasources    string
 	OrgDatasources string
 	Organizations  string
@@ -92,6 +93,7 @@ var ConstantValues = Constants{
 
 var PathValues = Paths{
 	Datasource:     "organizations/:org/datasources/:id",
+	HarvestStatus:  "organizations/:org/datasources/:id/status",
 	Datasources:    "datasources",
 	OrgDatasources: "organizations/:org/datasources",
 	Organizations:  "organizations",

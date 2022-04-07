@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
@@ -51,7 +52,7 @@ func messageKey(messageType string) string {
 	return fmt.Sprintf("%s.%s.%s", messageType, env.ConstantValues.RabbitMsgKeyMiddle, env.ConstantValues.RabbitMsgKeyEnd)
 }
 
-func harvestTypeFromRoutingKey(routingKeyPrefix string) (*string, error) {
+func HarvestTypeFromRoutingKey(routingKeyPrefix string) (*string, error) {
 	switch routingKeyPrefix {
 	case "concepts":
 		harvestType := model.ConceptHarvestType
@@ -76,13 +77,13 @@ func harvestTypeFromRoutingKey(routingKeyPrefix string) (*string, error) {
 	return nil, errors.New(string(routingKeyPrefix) + " is not a valid harvest type")
 }
 
-func reasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndEndTime) (*model.HarvestReport, error) {
+func ReasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndEndTime) (*model.HarvestReport, error) {
 	splitKey := strings.Split(routingKey, ".")
 	if len(splitKey) != 2 {
 		return nil, errors.New(string(routingKey) + " is not a valid routing key")
 	}
 
-	harvestType, err := harvestTypeFromRoutingKey(splitKey[0])
+	harvestType, err := HarvestTypeFromRoutingKey(splitKey[0])
 	if err != nil {
 		return nil, err
 	}
@@ -100,4 +101,110 @@ func reasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndE
 	}
 
 	return &report, nil
+}
+
+func calculateHarvestStatusesFromReports(
+	harvestReports model.HarvestReports,
+	reasoningReports model.HarvestReports,
+	ingestReports model.HarvestReports,
+) (*model.HarvestStatuses, error) {
+	var statusList []model.HarvestStatus
+	for _, report := range harvestReports.Reports {
+		reasoningReport, _ := reasoningReports.Reports[string(report.DataType)]
+		ingestReport, _ := ingestReports.Reports[string(report.DataType)]
+		status, err := harvestStatusFromRelevantReports(report, &reasoningReport, &ingestReport)
+		if err != nil {
+			return nil, err
+		}
+		statusList = append(statusList, *status)
+	}
+
+	harvestStatuses := model.HarvestStatuses{
+		Id:       harvestReports.Id,
+		Statuses: statusList,
+	}
+
+	return &harvestStatuses, nil
+}
+
+func harvestStatusFromRelevantReports(
+	harvestReport model.HarvestReport,
+	reasoningReport *model.HarvestReport,
+	ingestReport *model.HarvestReport,
+) (*model.HarvestStatus, error) {
+	if harvestReport.HarvestError {
+		status := model.HarvestStatus{
+			HarvestType:  string(harvestReport.DataType),
+			Status:       model.HarvestError,
+			ErrorMessage: harvestReport.ErrorMessage,
+			StartTime:    harvestReport.StartTime,
+		}
+
+		return &status, nil
+	}
+
+	harvestIsInProgress, err := IsInProgress(harvestReport, reasoningReport, ingestReport)
+	if err != nil {
+		return nil, err
+	}
+
+	if harvestIsInProgress {
+		status := model.HarvestStatus{
+			HarvestType: string(harvestReport.DataType),
+			Status:      model.HarvestInProgress,
+			StartTime:   harvestReport.StartTime,
+		}
+		return &status, nil
+	} else {
+		status := model.HarvestStatus{
+			HarvestType: string(harvestReport.DataType),
+			Status:      model.HarvestDone,
+			StartTime:   harvestReport.StartTime,
+			EndTime:     &ingestReport.EndTime,
+		}
+		return &status, nil
+	}
+}
+
+func IsInProgress(
+	harvestReport model.HarvestReport,
+	reasoningReport *model.HarvestReport,
+	ingestReport *model.HarvestReport,
+) (bool, error) {
+	if reasoningReport == nil {
+		return true, nil
+	} else if ingestReport == nil {
+		return true, nil
+	}
+
+	harvestEnd, err := parseDateTime(harvestReport.EndTime)
+	if err != nil {
+		return false, err
+	}
+	reasoningStart, err := parseDateTime(reasoningReport.StartTime)
+	if err != nil {
+		return false, err
+	}
+	if harvestEnd.After(reasoningStart) {
+		return true, nil
+	}
+
+	reasoningEnd, err := parseDateTime(reasoningReport.EndTime)
+	if err != nil {
+		return false, err
+	}
+	ingestStart, err := parseDateTime(ingestReport.StartTime)
+	if err != nil {
+		return false, err
+	}
+	if reasoningEnd.After(ingestStart) {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func parseDateTime(dateString string) (time.Time, error) {
+	layout := "2006-01-02 15:04:05 -0700"
+	return time.Parse(layout, dateString)
 }
