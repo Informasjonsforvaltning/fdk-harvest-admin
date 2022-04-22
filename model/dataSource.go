@@ -1,10 +1,10 @@
 package model
 
 type DataSource struct {
-	Id                string             `json:"id" bson:"id"`
+	ID                string             `json:"id" bson:"id"`
 	DataSourceType    DataSourceTypeEnum `json:"dataSourceType" bson:"dataSourceType"`
 	DataType          DataTypeEnum       `json:"dataType" bson:"dataType"`
-	Url               string             `json:"url" bson:"url"`
+	URL               string             `json:"url" bson:"url"`
 	AcceptHeaderValue string             `json:"acceptHeaderValue" bson:"acceptHeaderValue"`
 	PublisherId       string             `json:"publisherId" bson:"publisherId"`
 	Description       string             `json:"description" bson:"description"`

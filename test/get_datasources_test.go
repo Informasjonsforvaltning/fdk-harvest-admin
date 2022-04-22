@@ -39,10 +39,10 @@ func TestGetDataSourcesByDataSourceType(t *testing.T) {
 
 	var expectedResponse []model.DataSource
 	expectedResponse = append(expectedResponse, model.DataSource{
-		Id:                "test-id",
+		ID:                "test-id",
 		DataSourceType:    "DCAT-AP-NO",
 		DataType:          "dataset",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source",
@@ -70,19 +70,19 @@ func TestGetDataSourcesByDataType(t *testing.T) {
 
 	var expectedResponse []model.DataSource
 	expectedResponse = append(expectedResponse, model.DataSource{
-		Id:                "test-id-2",
+		ID:                "test-id-2",
 		DataSourceType:    "CPSV-AP-NO",
 		DataType:          "publicService",
-		Url:               "http://url2.com",
+		URL:               "http://url2.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "111222333",
 		Description:       "test source 2",
 	})
 	expectedResponse = append(expectedResponse, model.DataSource{
-		Id:                "test-id-3",
+		ID:                "test-id-3",
 		DataSourceType:    "CPSV-AP-NO",
 		DataType:          "publicService",
-		Url:               "http://url3.com",
+		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source 3",

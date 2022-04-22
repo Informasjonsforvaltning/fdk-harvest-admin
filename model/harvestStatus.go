@@ -1,7 +1,7 @@
 package model
 
 type HarvestStatuses struct {
-	Id       string          `json:"id"`
+	ID       string          `json:"id"`
 	Statuses []HarvestStatus `json:"statuses"`
 }
 

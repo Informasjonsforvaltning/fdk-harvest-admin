@@ -23,10 +23,10 @@ func TestGetOrgDataSourcesRoute(t *testing.T) {
 
 	var expectedResponse []model.DataSource
 	expectedResponse = append(expectedResponse, model.DataSource{
-		Id:                "test-id",
+		ID:                "test-id",
 		DataSourceType:    "DCAT-AP-NO",
 		DataType:          "dataset",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source",
@@ -36,10 +36,10 @@ func TestGetOrgDataSourcesRoute(t *testing.T) {
 		},
 	})
 	expectedResponse = append(expectedResponse, model.DataSource{
-		Id:                "test-id-3",
+		ID:                "test-id-3",
 		DataSourceType:    "CPSV-AP-NO",
 		DataType:          "publicService",
-		Url:               "http://url3.com",
+		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source 3",
@@ -63,10 +63,10 @@ func TestGetOrgDataSourcesByDataSourceType(t *testing.T) {
 
 	var expectedResponse []model.DataSource
 	expectedResponse = append(expectedResponse, model.DataSource{
-		Id:                "test-id-3",
+		ID:                "test-id-3",
 		DataSourceType:    "CPSV-AP-NO",
 		DataType:          "publicService",
-		Url:               "http://url3.com",
+		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source 3",
@@ -90,10 +90,10 @@ func TestGetOrgDataSourcesByDataType(t *testing.T) {
 
 	var expectedResponse []model.DataSource
 	expectedResponse = append(expectedResponse, model.DataSource{
-		Id:                "test-id-3",
+		ID:                "test-id-3",
 		DataSourceType:    "CPSV-AP-NO",
 		DataType:          "publicService",
-		Url:               "http://url3.com",
+		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source 3",

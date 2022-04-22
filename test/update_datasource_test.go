@@ -19,10 +19,10 @@ func TestUpdateDataSource(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	toBeUpdated := model.DataSource{
-		Id:                "to-be-updated",
+		ID:                "to-be-updated",
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		Url:               "http://updated.com",
+		URL:               "http://updated.com",
 		AcceptHeaderValue: "application/rdf+json",
 		PublisherId:       "987654321",
 		Description:       "updated source",
@@ -53,7 +53,7 @@ func TestUpdateInvalidDataSourceType(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "BAD-REQUEST",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",
@@ -75,7 +75,7 @@ func TestUpdateInvalidDataType(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "invalid",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",
@@ -111,7 +111,7 @@ func TestUpdateWrongOrganization(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",

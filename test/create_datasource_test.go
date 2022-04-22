@@ -21,7 +21,7 @@ func TestCreateDataSource(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",
@@ -42,7 +42,7 @@ func TestCreateDataSource(t *testing.T) {
 	var actualResponse model.DataSource
 	json.Unmarshal(w.Body.Bytes(), &actualResponse)
 
-	toBeCreated.Id = actualResponse.Id
+	toBeCreated.ID = actualResponse.ID
 	assert.Equal(t, toBeCreated, actualResponse)
 }
 
@@ -53,7 +53,7 @@ func TestInvalidDataSourceType(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "BAD-REQUEST",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",
@@ -75,7 +75,7 @@ func TestInvalidDataType(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "invalid",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "created source",
@@ -111,7 +111,7 @@ func TestWrongOrganization(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "created source",
