@@ -49,7 +49,7 @@ func (r *ReportsRepositoryImpl) GetReports(ctx context.Context, id string) (*mod
 }
 
 func (r *ReportsRepositoryImpl) UpsertReports(ctx context.Context, report model.HarvestReport) error {
-	filter := bson.D{{Key: "id", Value: report.Id}}
+	filter := bson.D{{Key: "id", Value: report.ID}}
 	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
 
 	if err == mongo.ErrNoDocuments {
@@ -65,7 +65,7 @@ func (r *ReportsRepositoryImpl) createReports(ctx context.Context, report model.
 	reportsMap := make(map[string]model.HarvestReport)
 	reportsMap[string(report.DataType)] = report
 	reports := model.HarvestReports{
-		Id:      report.Id,
+		ID:      report.ID,
 		Reports: reportsMap,
 	}
 	_, err := r.collection.InsertOne(ctx, reports, nil)
@@ -82,7 +82,7 @@ func (r *ReportsRepositoryImpl) updateReports(ctx context.Context, dbReports bso
 
 	updated.Reports[string(newReport.DataType)] = newReport
 
-	filter := bson.D{{Key: "id", Value: newReport.Id}}
+	filter := bson.D{{Key: "id", Value: newReport.ID}}
 	result := r.collection.FindOneAndReplace(ctx, filter, updated, nil)
 
 	return result.Err()

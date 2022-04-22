@@ -88,8 +88,8 @@ func ReasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndE
 	}
 
 	report := model.HarvestReport{
-		Id:               splitKey[1],
-		Url:              nil,
+		ID:               splitKey[1],
+		URL:              nil,
 		DataType:         model.HarvestTypeEnum(*harvestType),
 		HarvestError:     false,
 		StartTime:        startAndEndTime.StartTime,
@@ -119,7 +119,7 @@ func calculateHarvestStatusesFromReports(
 	}
 
 	harvestStatuses := model.HarvestStatuses{
-		Id:       harvestReports.Id,
+		ID:       harvestReports.ID,
 		Statuses: statusList,
 	}
 

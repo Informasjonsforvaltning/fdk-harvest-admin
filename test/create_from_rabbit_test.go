@@ -15,7 +15,7 @@ func TestCreateFromRabbit(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "source created from rabbit",
@@ -33,7 +33,7 @@ func TestDoesNotCreateInvalidFromRabbit(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "invalid",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "source created from rabbit",
@@ -51,7 +51,7 @@ func TestHandlesRepositoryError(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "987654321",
 		Description:       "source created from rabbit",

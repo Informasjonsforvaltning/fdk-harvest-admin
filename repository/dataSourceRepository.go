@@ -88,7 +88,7 @@ func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSou
 }
 
 func (r *DataSourceRepositoryImpl) UpdateDataSource(ctx context.Context, toUpdate model.DataSource) error {
-	filter := bson.D{{Key: "id", Value: toUpdate.Id}}
+	filter := bson.D{{Key: "id", Value: toUpdate.ID}}
 	result := r.collection.FindOneAndReplace(ctx, filter, toUpdate, nil)
 
 	return result.Err()

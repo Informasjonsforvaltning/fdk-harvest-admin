@@ -16,8 +16,8 @@ func TestUpdateHarvestedReport(t *testing.T) {
 
 	var reports []model.HarvestReport
 	report := model.HarvestReport{
-		Id:               "data-source-id",
-		Url:              &url,
+		ID:               "data-source-id",
+		URL:              &url,
 		DataType:         model.ConceptHarvestType,
 		HarvestError:     false,
 		StartTime:        "2022-04-06 15:00:07 +0200",
@@ -40,8 +40,8 @@ func TestCreateHarvestedReport(t *testing.T) {
 
 	var reports []model.HarvestReport
 	report := model.HarvestReport{
-		Id:               "data-source-id-2",
-		Url:              &url,
+		ID:               "data-source-id-2",
+		URL:              &url,
 		DataType:         model.ConceptHarvestType,
 		HarvestError:     false,
 		StartTime:        "2022-04-06 15:00:07 +0200",
@@ -63,8 +63,8 @@ func TestHarvestedReportError(t *testing.T) {
 	url := "http://example.com"
 
 	report := model.HarvestReport{
-		Id:               "data-source-id",
-		Url:              &url,
+		ID:               "data-source-id",
+		URL:              &url,
 		DataType:         model.ConceptHarvestType,
 		HarvestError:     false,
 		StartTime:        "2022-04-06 15:00:07 +0200",

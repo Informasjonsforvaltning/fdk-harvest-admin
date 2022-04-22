@@ -35,7 +35,7 @@ func TestGetDatasetStatus(t *testing.T) {
 	})
 
 	expected := model.HarvestStatuses{
-		Id:       "test-id",
+		ID:       "test-id",
 		Statuses: expectedStatuses,
 	}
 
@@ -72,7 +72,7 @@ func TestGetHarvestStatuses(t *testing.T) {
 		EndTime:      &eventEnd,
 	}
 
-	assert.Equal(t, "test-id-2", actualResponse.Id)
+	assert.Equal(t, "test-id-2", actualResponse.ID)
 	assert.Equal(t, 2, len(actualResponse.Statuses))
 	assert.Contains(t, actualResponse.Statuses, expectedServiceStatus)
 	assert.Contains(t, actualResponse.Statuses, expectedEventStatus)
@@ -106,7 +106,7 @@ func TestGetFailedHarvestStatuses(t *testing.T) {
 		EndTime:      nil,
 	}
 
-	assert.Equal(t, "test-id-3", actualResponse.Id)
+	assert.Equal(t, "test-id-3", actualResponse.ID)
 	assert.Equal(t, 2, len(actualResponse.Statuses))
 	assert.Contains(t, actualResponse.Statuses, expectedServiceStatus)
 	assert.Contains(t, actualResponse.Statuses, expectedEventStatus)

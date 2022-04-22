@@ -54,10 +54,10 @@ func TestStartHarvestingConnctionError(t *testing.T) {
 
 func TestStartHarvestingConcepts(t *testing.T) {
 	mockDataSource := model.DataSource{
-		Id:                "concept-source",
+		ID:                "concept-source",
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "concepts source",
@@ -72,10 +72,10 @@ func TestStartHarvestingConcepts(t *testing.T) {
 
 func TestStartHarvestingDataServices(t *testing.T) {
 	mockDataSource := model.DataSource{
-		Id:                "dataservice-source",
+		ID:                "dataservice-source",
 		DataSourceType:    "DCAT-AP-NO",
 		DataType:          "dataservice",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "data services source",
@@ -90,10 +90,10 @@ func TestStartHarvestingDataServices(t *testing.T) {
 
 func TestStartHarvestingDatasets(t *testing.T) {
 	mockDataSource := model.DataSource{
-		Id:                "dataset-source",
+		ID:                "dataset-source",
 		DataSourceType:    "DCAT-AP-NO",
 		DataType:          "dataset",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "datasets source",
@@ -108,10 +108,10 @@ func TestStartHarvestingDatasets(t *testing.T) {
 
 func TestStartHarvestingInformationModels(t *testing.T) {
 	mockDataSource := model.DataSource{
-		Id:                "infomodel-source",
+		ID:                "infomodel-source",
 		DataSourceType:    "DCAT-AP-NO",
 		DataType:          "informationmodel",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "information model source",
@@ -126,10 +126,10 @@ func TestStartHarvestingInformationModels(t *testing.T) {
 
 func TestStartHarvestingPublicServices(t *testing.T) {
 	mockDataSource := model.DataSource{
-		Id:                "service-source",
+		ID:                "service-source",
 		DataSourceType:    "CPSV-AP-NO",
 		DataType:          "publicService",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "public services source",
@@ -144,10 +144,10 @@ func TestStartHarvestingPublicServices(t *testing.T) {
 
 func TestStartHarvestingInvalidType(t *testing.T) {
 	mockDataSource := model.DataSource{
-		Id:                "invalid-source",
+		ID:                "invalid-source",
 		DataSourceType:    "CPSV-AP-NO",
 		DataType:          "invalid",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "invalid source",

@@ -99,14 +99,14 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 		return nil, &msg, nil, http.StatusBadRequest
 	}
 
-	dataSource.Id = uuid.New().String()
+	dataSource.ID = uuid.New().String()
 	err = service.DataSourceRepository.CreateDataSource(ctx, *dataSource)
 	if err != nil {
 		logrus.Error("Create failed")
 		logging.LogAndPrintError(err)
 		return nil, nil, nil, http.StatusInternalServerError
 	} else {
-		location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, org, env.PathValues.Datasources, dataSource.Id)
+		location := fmt.Sprintf("/%s/%s/%s/%s", env.PathValues.Organizations, org, env.PathValues.Datasources, dataSource.ID)
 		return dataSource, nil, &location, http.StatusCreated
 	}
 }
@@ -116,7 +116,7 @@ func (service *DataSourceService) CreateDataSourceFromRabbitMessage(ctx context.
 	if err != nil {
 		return err
 	} else {
-		dataSource.Id = uuid.New().String()
+		dataSource.ID = uuid.New().String()
 		err = service.DataSourceRepository.CreateDataSource(ctx, *dataSource)
 		if err != nil {
 			logrus.Error("Create failed")
@@ -153,7 +153,7 @@ func (service *DataSourceService) UpdateDataSource(ctx context.Context, id strin
 		return nil, &msg, http.StatusBadRequest
 	}
 
-	toUpdate.Id = dbSource.Id
+	toUpdate.ID = dbSource.ID
 	err = service.DataSourceRepository.UpdateDataSource(ctx, *toUpdate)
 
 	var updated *model.DataSource
@@ -187,7 +187,7 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 		}
 
 		harvestParams := make(map[string]string)
-		harvestParams["dataSourceId"] = dataSource.Id
+		harvestParams["dataSourceId"] = dataSource.ID
 		harvestParams["publisherId"] = dataSource.PublisherId
 
 		var msgBody []byte

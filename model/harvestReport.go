@@ -1,8 +1,8 @@
 package model
 
 type HarvestReport struct {
-	Id               string          `json:"id" bson:"id"`
-	Url              *string         `json:"url" bson:"url"`
+	ID               string          `json:"id" bson:"id"`
+	URL              *string         `json:"url" bson:"url"`
 	DataType         HarvestTypeEnum `json:"dataType" bson:"dataType"`
 	HarvestError     bool            `json:"harvestError" bson:"harvestError"`
 	StartTime        string          `json:"startTime" bson:"startTime"`
@@ -13,8 +13,8 @@ type HarvestReport struct {
 }
 
 type FdkIdAndUri struct {
-	FdkId string `json:"fdkId"`
-	Uri   string `json:"uri"`
+	FdkID string `json:"fdkId"`
+	URI   string `json:"uri"`
 }
 
 type HarvestTypeEnum string

@@ -22,10 +22,10 @@ func TestGetDataSourceRoute(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	expectedResponse := model.DataSource{
-		Id:                "test-id",
+		ID:                "test-id",
 		DataSourceType:    "DCAT-AP-NO",
 		DataType:          "dataset",
-		Url:               "http://url.com",
+		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherId:       "123456789",
 		Description:       "test source",
