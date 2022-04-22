@@ -131,13 +131,13 @@ func harvestStatusFromRelevantReports(
 	reasoningReport *model.HarvestReport,
 	ingestReport *model.HarvestReport,
 ) (*model.HarvestStatus, error) {
+	status := model.HarvestStatus{
+		HarvestType: string(harvestReport.DataType),
+		StartTime:   harvestReport.StartTime,
+	}
 	if harvestReport.HarvestError {
-		status := model.HarvestStatus{
-			HarvestType:  string(harvestReport.DataType),
-			Status:       model.HarvestError,
-			ErrorMessage: harvestReport.ErrorMessage,
-			StartTime:    harvestReport.StartTime,
-		}
+		status.Status = model.HarvestError
+		status.ErrorMessage = harvestReport.ErrorMessage
 
 		return &status, nil
 	}
@@ -148,21 +148,13 @@ func harvestStatusFromRelevantReports(
 	}
 
 	if harvestIsInProgress {
-		status := model.HarvestStatus{
-			HarvestType: string(harvestReport.DataType),
-			Status:      model.HarvestInProgress,
-			StartTime:   harvestReport.StartTime,
-		}
-		return &status, nil
+		status.Status = model.HarvestInProgress
 	} else {
-		status := model.HarvestStatus{
-			HarvestType: string(harvestReport.DataType),
-			Status:      model.HarvestDone,
-			StartTime:   harvestReport.StartTime,
-			EndTime:     &ingestReport.EndTime,
-		}
-		return &status, nil
+		status.Status = model.HarvestDone
+		status.EndTime = &ingestReport.EndTime
 	}
+
+	return &status, nil
 }
 
 func IsInProgress(
