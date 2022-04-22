@@ -1,6 +1,6 @@
 package model
 
-import "errors"
+import "fmt"
 
 type DataSourceTypeEnum string
 
@@ -16,5 +16,5 @@ func (dataSourceType DataSourceTypeEnum) Validate() error {
 	case SkosApNo, DcatApNo, CpsvApNo, Tbx:
 		return nil
 	}
-	return errors.New(string(dataSourceType) + " is not a valid data source type")
+	return fmt.Errorf("%s is not a valid data source type", dataSourceType)
 }
