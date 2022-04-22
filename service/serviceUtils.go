@@ -162,9 +162,7 @@ func IsInProgress(
 	reasoningReport *model.HarvestReport,
 	ingestReport *model.HarvestReport,
 ) (bool, error) {
-	if reasoningReport == nil {
-		return true, nil
-	} else if ingestReport == nil {
+	if reasoningReport == nil || ingestReport == nil {
 		return true, nil
 	}
 
