@@ -197,3 +197,8 @@ func parseDateTime(dateString string) (time.Time, error) {
 	layout := "2006-01-02 15:04:05 -0700"
 	return time.Parse(layout, dateString)
 }
+
+func nowDateString() string {
+	layout := "2006-01-02 15:04:05 -0700"
+	return time.Now().Format(layout)
+}

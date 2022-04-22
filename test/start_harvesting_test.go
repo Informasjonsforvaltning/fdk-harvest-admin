@@ -63,8 +63,9 @@ func TestStartHarvestingConcepts(t *testing.T) {
 		Description:       "concepts source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
+	mockReportsRepository := MockReportsRepository{nil, nil}
 	mockPublisher := MockPublisher{nil}
-	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
+	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, ReportsRepository: &mockReportsRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "concept-source", "123456789")
 
 	assert.Equal(t, http.StatusNoContent, status)
@@ -81,8 +82,9 @@ func TestStartHarvestingDataServices(t *testing.T) {
 		Description:       "data services source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
+	mockReportsRepository := MockReportsRepository{nil, nil}
 	mockPublisher := MockPublisher{nil}
-	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
+	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, ReportsRepository: &mockReportsRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "dataservice-source", "123456789")
 
 	assert.Equal(t, http.StatusNoContent, status)
@@ -98,9 +100,16 @@ func TestStartHarvestingDatasets(t *testing.T) {
 		PublisherId:       "123456789",
 		Description:       "datasets source",
 	}
+	mockMap := make(map[string]model.HarvestReport)
+	mockMap["dataset"] = model.HarvestReport{}
+	mockReports := model.HarvestReports{
+		ID: "dataset-source",
+		Reports: mockMap,
+	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
+	mockReportsRepository := MockReportsRepository{&mockReports, nil}
 	mockPublisher := MockPublisher{nil}
-	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
+	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, ReportsRepository: &mockReportsRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "dataset-source", "123456789")
 
 	assert.Equal(t, http.StatusNoContent, status)
@@ -117,8 +126,9 @@ func TestStartHarvestingInformationModels(t *testing.T) {
 		Description:       "information model source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
+	mockReportsRepository := MockReportsRepository{nil, nil}
 	mockPublisher := MockPublisher{nil}
-	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
+	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, ReportsRepository: &mockReportsRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "infomodel-source", "123456789")
 
 	assert.Equal(t, http.StatusNoContent, status)
@@ -135,8 +145,9 @@ func TestStartHarvestingPublicServices(t *testing.T) {
 		Description:       "public services source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
+	mockReportsRepository := MockReportsRepository{nil, nil}
 	mockPublisher := MockPublisher{nil}
-	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
+	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, ReportsRepository: &mockReportsRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "service-source", "123456789")
 
 	assert.Equal(t, http.StatusNoContent, status)
@@ -153,8 +164,9 @@ func TestStartHarvestingInvalidType(t *testing.T) {
 		Description:       "invalid source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
+	mockReportsRepository := MockReportsRepository{nil, nil}
 	mockPublisher := MockPublisher{nil}
-	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, Publisher: &mockPublisher}
+	mockService := service.DataSourceService{DataSourceRepository: &mockRepository, ReportsRepository: &mockReportsRepository, Publisher: &mockPublisher}
 	status := mockService.StartHarvesting(context.TODO(), "invalid-source", "123456789")
 
 	assert.Equal(t, http.StatusInternalServerError, status)

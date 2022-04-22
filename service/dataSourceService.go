@@ -205,7 +205,29 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 			return http.StatusInternalServerError
 		} else {
 			logrus.Infof("Harvest triggered for %s in org %s with type %s", id, org, dataSource.DataType)
+			service.setHarvestStartTimeAsNow(ctx, id)
 			return http.StatusNoContent
+		}
+	}
+}
+
+func (service *DataSourceService) setHarvestStartTimeAsNow(ctx context.Context, id string) {
+	savedReports, err := service.ReportsRepository.GetReports(ctx, id)
+	if err == nil && savedReports != nil {
+		now := nowDateString()
+
+		for _, report := range savedReports.Reports {
+			service.ReportsRepository.UpsertReports(ctx, model.HarvestReport{
+				ID:               report.ID,
+				URL:              report.URL,
+				DataType:         report.DataType,
+				HarvestError:     false,
+				StartTime:        now,
+				EndTime:          now,
+				ErrorMessage:     nil,
+				ChangedCatalogs:  report.ChangedCatalogs,
+				ChangedResources: report.ChangedResources,
+			})
 		}
 	}
 }

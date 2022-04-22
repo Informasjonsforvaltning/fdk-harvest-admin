@@ -46,6 +46,19 @@ func (m *MockDataSourceRepository) UpdateDataSource(ctx context.Context, dataSou
 	return m.MockError
 }
 
+type MockReportsRepository struct {
+	MockReports *model.HarvestReports
+	MockError   error
+}
+
+func (m *MockReportsRepository) GetReports(ctx context.Context, id string) (*model.HarvestReports, error) {
+	return m.MockReports, m.MockError
+}
+
+func (m *MockReportsRepository) UpsertReports(ctx context.Context, report model.HarvestReport) error {
+	return m.MockError
+}
+
 type MockPublisher struct {
 	MockError error
 }
