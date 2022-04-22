@@ -1,6 +1,6 @@
 package model
 
-import "errors"
+import "fmt"
 
 type DataTypeEnum string
 
@@ -17,5 +17,5 @@ func (dataType DataTypeEnum) Validate() error {
 	case Concept, Dataset, InformationModel, DataService, PublicService:
 		return nil
 	}
-	return errors.New(string(dataType) + " is not a valid data type")
+	return fmt.Errorf("%s is not a valid data type", dataType)
 }

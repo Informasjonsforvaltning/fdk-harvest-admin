@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -45,7 +44,7 @@ func dataTypeToMessageKey(dataType model.DataTypeEnum) (*string, error) {
 		return &msgKey, nil
 	}
 
-	return nil, errors.New(string(dataType) + " is not a valid data type")
+	return nil, fmt.Errorf("%s is not a valid data type", dataType)
 }
 
 func messageKey(messageType string) string {
@@ -74,13 +73,13 @@ func HarvestTypeFromRoutingKey(routingKeyPrefix string) (*string, error) {
 		return &harvestType, nil
 	}
 
-	return nil, errors.New(string(routingKeyPrefix) + " is not a valid harvest type")
+	return nil, fmt.Errorf("%s is not a valid harvest type", routingKeyPrefix)
 }
 
 func ReasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndEndTime) (*model.HarvestReport, error) {
 	splitKey := strings.Split(routingKey, ".")
 	if len(splitKey) != 2 {
-		return nil, errors.New(string(routingKey) + " is not a valid routing key")
+		return nil, fmt.Errorf("%s is not a valid routing key", routingKey)
 	}
 
 	harvestType, err := HarvestTypeFromRoutingKey(splitKey[0])
