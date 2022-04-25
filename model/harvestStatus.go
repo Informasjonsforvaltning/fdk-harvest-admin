@@ -16,7 +16,7 @@ type HarvestStatus struct {
 type StatusEnum string
 
 const (
-	HarvestDone       = "done"
-	HarvestError      = "error"
-	HarvestInProgress = "in-progress"
+	HarvestDone       StatusEnum = "done"
+	HarvestError      StatusEnum = "error"
+	HarvestInProgress StatusEnum = "in-progress"
 )

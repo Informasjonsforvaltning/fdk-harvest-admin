@@ -20,10 +20,10 @@ type FDKIDAndURI struct {
 type HarvestTypeEnum string
 
 const (
-	ConceptHarvestType          = "concept"
-	DatasetHarvestType          = "dataset"
-	InformationModelHarvestType = "informationmodel"
-	DataServiceHarvestType      = "dataservice"
-	PublicServiceHarvestType    = "publicService"
-	EventHarvestType            = "event"
+	ConceptHarvestType          HarvestTypeEnum = "concept"
+	DatasetHarvestType          HarvestTypeEnum = "dataset"
+	InformationModelHarvestType HarvestTypeEnum = "informationmodel"
+	DataServiceHarvestType      HarvestTypeEnum = "dataservice"
+	PublicServiceHarvestType    HarvestTypeEnum = "publicService"
+	EventHarvestType            HarvestTypeEnum = "event"
 )
