@@ -23,8 +23,8 @@ func TestUpdateHarvestedReport(t *testing.T) {
 		StartTime:        "2022-04-06 15:00:07 +0200",
 		EndTime:          "2022-04-06 15:00:17 +0200",
 		ErrorMessage:     nil,
-		ChangedCatalogs:  []model.FdkIdAndUri{},
-		ChangedResources: []model.FdkIdAndUri{},
+		ChangedCatalogs:  []model.FDKIDAndURI{},
+		ChangedResources: []model.FDKIDAndURI{},
 	}
 	reports = append(reports, report)
 	body, _ := json.Marshal(reports)
@@ -47,8 +47,8 @@ func TestCreateHarvestedReport(t *testing.T) {
 		StartTime:        "2022-04-06 15:00:07 +0200",
 		EndTime:          "2022-04-06 15:00:17 +0200",
 		ErrorMessage:     nil,
-		ChangedCatalogs:  []model.FdkIdAndUri{},
-		ChangedResources: []model.FdkIdAndUri{},
+		ChangedCatalogs:  []model.FDKIDAndURI{},
+		ChangedResources: []model.FDKIDAndURI{},
 	}
 	reports = append(reports, report)
 	body, _ := json.Marshal(reports)
@@ -70,8 +70,8 @@ func TestHarvestedReportError(t *testing.T) {
 		StartTime:        "2022-04-06 15:00:07 +0200",
 		EndTime:          "2022-04-06 15:00:17 +0200",
 		ErrorMessage:     nil,
-		ChangedCatalogs:  []model.FdkIdAndUri{},
-		ChangedResources: []model.FdkIdAndUri{},
+		ChangedCatalogs:  []model.FDKIDAndURI{},
+		ChangedResources: []model.FDKIDAndURI{},
 	}
 	body, _ := json.Marshal(report)
 

@@ -17,7 +17,7 @@ func TestCreateFromRabbit(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "source created from rabbit",
 	}
 	mockRepository := MockDataSourceRepository{&toBeCreated, nil}
@@ -35,7 +35,7 @@ func TestDoesNotCreateInvalidFromRabbit(t *testing.T) {
 		DataType:          "invalid",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "source created from rabbit",
 	}
 	mockRepository := MockDataSourceRepository{&toBeCreated, nil}
@@ -53,7 +53,7 @@ func TestHandlesRepositoryError(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "source created from rabbit",
 	}
 	mockRepository := MockDataSourceRepository{nil, errors.New("repo error")}

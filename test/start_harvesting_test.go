@@ -59,7 +59,7 @@ func TestStartHarvestingConcepts(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "concepts source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
@@ -78,7 +78,7 @@ func TestStartHarvestingDataServices(t *testing.T) {
 		DataType:          "dataservice",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "data services source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
@@ -97,7 +97,7 @@ func TestStartHarvestingDatasets(t *testing.T) {
 		DataType:          "dataset",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "datasets source",
 	}
 	mockMap := make(map[string]model.HarvestReport)
@@ -122,7 +122,7 @@ func TestStartHarvestingInformationModels(t *testing.T) {
 		DataType:          "informationmodel",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "information model source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
@@ -141,7 +141,7 @@ func TestStartHarvestingPublicServices(t *testing.T) {
 		DataType:          "publicService",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "public services source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}
@@ -160,7 +160,7 @@ func TestStartHarvestingInvalidType(t *testing.T) {
 		DataType:          "invalid",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "invalid source",
 	}
 	mockRepository := MockDataSourceRepository{&mockDataSource, nil}

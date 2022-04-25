@@ -27,7 +27,7 @@ func TestGetDataSourceRoute(t *testing.T) {
 		DataType:          "dataset",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "test source",
 		AuthHeader:        &model.AuthHeader{
             Name: "X-API-KEY",

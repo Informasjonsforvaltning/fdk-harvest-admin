@@ -24,7 +24,7 @@ func TestUpdateDataSource(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://updated.com",
 		AcceptHeaderValue: "application/rdf+json",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "updated source",
 		AuthHeader: &model.AuthHeader{
 			Name:  "X-API-KEY",
@@ -55,7 +55,7 @@ func TestUpdateInvalidDataSourceType(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "created source",
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
@@ -77,7 +77,7 @@ func TestUpdateInvalidDataType(t *testing.T) {
 		DataType:          "invalid",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "created source",
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
@@ -113,7 +113,7 @@ func TestUpdateWrongOrganization(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "created source",
 	}
 	orgAdminAuth := OrgAdminAuth("123456789")
