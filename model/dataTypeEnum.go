@@ -5,11 +5,11 @@ import "fmt"
 type DataTypeEnum string
 
 const (
-	Concept          = "concept"
-	Dataset          = "dataset"
-	InformationModel = "informationmodel"
-	DataService      = "dataservice"
-	PublicService    = "publicService"
+	Concept          DataTypeEnum = "concept"
+	Dataset          DataTypeEnum = "dataset"
+	InformationModel DataTypeEnum = "informationmodel"
+	DataService      DataTypeEnum = "dataservice"
+	PublicService    DataTypeEnum = "publicService"
 )
 
 func (dataType DataTypeEnum) Validate() error {

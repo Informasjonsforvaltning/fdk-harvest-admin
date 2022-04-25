@@ -51,7 +51,7 @@ func messageKey(messageType string) string {
 	return fmt.Sprintf("%s.%s.%s", messageType, env.ConstantValues.RabbitMsgKeyMiddle, env.ConstantValues.RabbitMsgKeyEnd)
 }
 
-func HarvestTypeFromRoutingKey(routingKeyPrefix string) (*string, error) {
+func HarvestTypeFromRoutingKey(routingKeyPrefix string) (*model.HarvestTypeEnum, error) {
 	switch routingKeyPrefix {
 	case "concepts":
 		harvestType := model.ConceptHarvestType
@@ -90,7 +90,7 @@ func ReasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndE
 	report := model.HarvestReport{
 		ID:               splitKey[1],
 		URL:              nil,
-		DataType:         model.HarvestTypeEnum(*harvestType),
+		DataType:         *harvestType,
 		HarvestError:     false,
 		StartTime:        startAndEndTime.StartTime,
 		EndTime:          startAndEndTime.EndTime,

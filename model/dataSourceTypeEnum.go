@@ -5,10 +5,10 @@ import "fmt"
 type DataSourceTypeEnum string
 
 const (
-	SkosApNo = "SKOS-AP-NO"
-	DcatApNo = "DCAT-AP-NO"
-	CpsvApNo = "CPSV-AP-NO"
-	Tbx      = "TBX"
+	SkosApNo DataSourceTypeEnum = "SKOS-AP-NO"
+	DcatApNo DataSourceTypeEnum = "DCAT-AP-NO"
+	CpsvApNo DataSourceTypeEnum = "CPSV-AP-NO"
+	Tbx      DataSourceTypeEnum = "TBX"
 )
 
 func (dataSourceType DataSourceTypeEnum) Validate() error {
