@@ -93,7 +93,7 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 		return nil, &msg, nil, http.StatusBadRequest
 	}
 
-	if org != dataSource.PublisherId {
+	if org != dataSource.PublisherID {
 		logging.LogAndPrintError(errors.New("Create failed, trying to create data source for other organization"))
 		msg = "Bad Request - trying to create data source for other organization"
 		return nil, &msg, nil, http.StatusBadRequest
@@ -147,7 +147,7 @@ func (service *DataSourceService) UpdateDataSource(ctx context.Context, id strin
 		return nil, nil, http.StatusNotFound
 	}
 
-	if org != dbSource.PublisherId {
+	if org != dbSource.PublisherID {
 		logging.LogAndPrintError(errors.New("Update failed, trying to update data source for other organization"))
 		msg = "Bad Request - trying to update data source for other organization"
 		return nil, &msg, http.StatusBadRequest
@@ -175,7 +175,7 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 		return http.StatusInternalServerError
 	} else if dataSource == nil {
 		return http.StatusNotFound
-	} else if dataSource.PublisherId != org {
+	} else if dataSource.PublisherID != org {
 		return http.StatusBadRequest
 	} else {
 		var msgKey *string
@@ -188,7 +188,7 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 
 		harvestParams := make(map[string]string)
 		harvestParams["dataSourceId"] = dataSource.ID
-		harvestParams["publisherId"] = dataSource.PublisherId
+		harvestParams["publisherId"] = dataSource.PublisherID
 
 		var msgBody []byte
 		msgBody, err = json.Marshal(harvestParams)

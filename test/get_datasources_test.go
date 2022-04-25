@@ -44,7 +44,7 @@ func TestGetDataSourcesByDataSourceType(t *testing.T) {
 		DataType:          "dataset",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "test source",
 		AuthHeader: &model.AuthHeader{
 			Name:  "X-API-KEY",
@@ -75,7 +75,7 @@ func TestGetDataSourcesByDataType(t *testing.T) {
 		DataType:          "publicService",
 		URL:               "http://url2.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "111222333",
+		PublisherID:       "111222333",
 		Description:       "test source 2",
 	})
 	expectedResponse = append(expectedResponse, model.DataSource{
@@ -84,7 +84,7 @@ func TestGetDataSourcesByDataType(t *testing.T) {
 		DataType:          "publicService",
 		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "test source 3",
 	})
 

@@ -6,7 +6,7 @@ type DataSource struct {
 	DataType          DataTypeEnum       `json:"dataType" bson:"dataType"`
 	URL               string             `json:"url" bson:"url"`
 	AcceptHeaderValue string             `json:"acceptHeaderValue" bson:"acceptHeaderValue"`
-	PublisherId       string             `json:"publisherId" bson:"publisherId"`
+	PublisherID       string             `json:"publisherId" bson:"publisherId"`
 	Description       string             `json:"description" bson:"description"`
 	AuthHeader        *AuthHeader        `json:"authHeader" bson:"authHeader"`
 }

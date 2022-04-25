@@ -95,8 +95,8 @@ func ReasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndE
 		StartTime:        startAndEndTime.StartTime,
 		EndTime:          startAndEndTime.EndTime,
 		ErrorMessage:     nil,
-		ChangedCatalogs:  []model.FdkIdAndUri{},
-		ChangedResources: []model.FdkIdAndUri{},
+		ChangedCatalogs:  []model.FDKIDAndURI{},
+		ChangedResources: []model.FDKIDAndURI{},
 	}
 
 	return &report, nil

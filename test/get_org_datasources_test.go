@@ -28,7 +28,7 @@ func TestGetOrgDataSourcesRoute(t *testing.T) {
 		DataType:          "dataset",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "test source",
 		AuthHeader: &model.AuthHeader{
 			Name:  "X-API-KEY",
@@ -41,7 +41,7 @@ func TestGetOrgDataSourcesRoute(t *testing.T) {
 		DataType:          "publicService",
 		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "test source 3",
 	})
 
@@ -68,7 +68,7 @@ func TestGetOrgDataSourcesByDataSourceType(t *testing.T) {
 		DataType:          "publicService",
 		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "test source 3",
 	})
 
@@ -95,7 +95,7 @@ func TestGetOrgDataSourcesByDataType(t *testing.T) {
 		DataType:          "publicService",
 		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "test source 3",
 	})
 

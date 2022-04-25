@@ -8,12 +8,12 @@ type HarvestReport struct {
 	StartTime        string          `json:"startTime" bson:"startTime"`
 	EndTime          string          `json:"endTime" bson:"endTime"`
 	ErrorMessage     *string         `json:"errorMessage" bson:"errorMessage"`
-	ChangedCatalogs  []FdkIdAndUri   `json:"changedCatalogs" bson:"changedCatalogs"`
-	ChangedResources []FdkIdAndUri   `json:"changedResources" bson:"changedResources"`
+	ChangedCatalogs  []FDKIDAndURI   `json:"changedCatalogs" bson:"changedCatalogs"`
+	ChangedResources []FDKIDAndURI   `json:"changedResources" bson:"changedResources"`
 }
 
-type FdkIdAndUri struct {
-	FdkID string `json:"fdkId"`
+type FDKIDAndURI struct {
+	FDKID string `json:"fdkId"`
 	URI   string `json:"uri"`
 }
 

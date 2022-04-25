@@ -23,7 +23,7 @@ func TestCreateDataSource(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "created source",
 		AuthHeader: &model.AuthHeader{
 			Name:  "X-API-KEY",
@@ -55,7 +55,7 @@ func TestInvalidDataSourceType(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "created source",
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
@@ -77,7 +77,7 @@ func TestInvalidDataType(t *testing.T) {
 		DataType:          "invalid",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "987654321",
+		PublisherID:       "987654321",
 		Description:       "created source",
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
@@ -113,7 +113,7 @@ func TestWrongOrganization(t *testing.T) {
 		DataType:          "concept",
 		URL:               "http://url.com",
 		AcceptHeaderValue: "text/turtle",
-		PublisherId:       "123456789",
+		PublisherID:       "123456789",
 		Description:       "created source",
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
