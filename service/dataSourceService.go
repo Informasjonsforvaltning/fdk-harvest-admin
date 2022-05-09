@@ -242,11 +242,13 @@ func (service *DataSourceService) GetHarvestStatus(ctx context.Context, id strin
 		return nil, http.StatusNotFound
 	}
 
-	reasoningReports, err := service.ReportsRepository.GetReports(ctx, "reasoned")
+	reasoningReports, err := service.ReportsRepository.GetReports(ctx, ReasoningReportId(id))
 	if err != nil {
 		logrus.Error("Get reasoning reports failed")
 		logging.LogAndPrintError(err)
 		return nil, http.StatusInternalServerError
+	} else if reasoningReports == nil {
+		reasoningReports = &model.HarvestReports{}
 	}
 
 	ingestReports, err := service.ReportsRepository.GetReports(ctx, "ingested")
@@ -281,13 +283,27 @@ func (service *DataSourceService) ConsumeReport(ctx context.Context, routingKey 
 				}
 			}
 		}
-	} else if strings.Contains(routingKey, "reasoned") || strings.Contains(routingKey, "ingested") {
+	} else if strings.Contains(routingKey, "reasoned") {
+		var reports []model.HarvestReport
+		err := json.Unmarshal(body, &reports)
+		if err != nil {
+			errors = append(errors, err)
+		} else {
+			for _, report := range reports {
+				report.ID = ReasoningReportId(report.ID)
+				err := service.ReportsRepository.UpsertReports(ctx, report)
+				if err != nil {
+					errors = append(errors, err)
+				}
+			}
+		}
+	} else if strings.Contains(routingKey, "ingested") {
 		var startAndEnd model.StartAndEndTime
 		err := json.Unmarshal(body, &startAndEnd)
 		if err != nil {
 			errors = append(errors, err)
 		} else {
-			report, err := ReasonedOrIngestedReport(routingKey, startAndEnd)
+			report, err := IngestedReport(routingKey, startAndEnd)
 			if err != nil {
 				errors = append(errors, err)
 			} else {

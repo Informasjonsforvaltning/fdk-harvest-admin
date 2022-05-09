@@ -76,7 +76,7 @@ func HarvestTypeFromRoutingKey(routingKeyPrefix string) (*model.HarvestTypeEnum,
 	return nil, fmt.Errorf("%s is not a valid harvest type", routingKeyPrefix)
 }
 
-func ReasonedOrIngestedReport(routingKey string, startAndEndTime model.StartAndEndTime) (*model.HarvestReport, error) {
+func IngestedReport(routingKey string, startAndEndTime model.StartAndEndTime) (*model.HarvestReport, error) {
 	splitKey := strings.Split(routingKey, ".")
 	if len(splitKey) != 2 {
 		return nil, fmt.Errorf("%s is not a valid routing key", routingKey)
@@ -191,6 +191,10 @@ func IsInProgress(
 	}
 
 	return false, nil
+}
+
+func ReasoningReportId(id string) string {
+	return "reasoning-" + id
 }
 
 func parseDateTime(dateString string) (time.Time, error) {
