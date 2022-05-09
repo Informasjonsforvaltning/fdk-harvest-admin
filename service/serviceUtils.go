@@ -193,7 +193,7 @@ func IsInProgress(
 	return false, nil
 }
 
-func ReasoningReportId(id string) string {
+func ReasoningReportID(id string) string {
 	return "reasoning-" + id
 }
 
