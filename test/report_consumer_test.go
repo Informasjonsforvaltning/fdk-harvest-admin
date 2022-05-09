@@ -82,12 +82,22 @@ func TestHarvestedReportError(t *testing.T) {
 
 func TestConsumeReasonedReport(t *testing.T) {
 	service := service.InitService()
+	url := "http://example.com"
 
-	reasoningReport := model.StartAndEndTime{
-		StartTime: "2022-04-06 15:00:07 +0200",
-		EndTime:   "2022-04-06 15:00:17 +0200",
+	var reasoningReports []model.HarvestReport
+	report := model.HarvestReport{
+		ID:               "data-source-id-2",
+		URL:              &url,
+		DataType:         model.ConceptHarvestType,
+		HarvestError:     false,
+		StartTime:        "2022-04-06 15:00:07 +0200",
+		EndTime:          "2022-04-06 15:00:17 +0200",
+		ErrorMessage:     nil,
+		ChangedCatalogs:  []model.FDKIDAndURI{},
+		ChangedResources: []model.FDKIDAndURI{},
 	}
-	body, _ := json.Marshal(reasoningReport)
+	reasoningReports = append(reasoningReports, report)
+	body, _ := json.Marshal(reasoningReports)
 
 	errors := service.ConsumeReport(context.TODO(), "concepts.reasoned", body)
 
@@ -97,13 +107,11 @@ func TestConsumeReasonedReport(t *testing.T) {
 func TestReasonedReportError(t *testing.T) {
 	service := service.InitService()
 
-	var reports []model.StartAndEndTime
 	reasoningReport := model.StartAndEndTime{
 		StartTime: "2022-04-06 15:00:07 +0200",
 		EndTime:   "2022-04-06 15:00:17 +0200",
 	}
-	reports = append(reports, reasoningReport)
-	body, _ := json.Marshal(reports)
+	body, _ := json.Marshal(reasoningReport)
 
 	errors := service.ConsumeReport(context.TODO(), "concepts.reasoned", body)
 

@@ -50,11 +50,11 @@ func TestReasonedOrIngestedReportErrors(t *testing.T) {
 		EndTime:   "2022-04-06 15:00:17 +0200",
 	}
 
-	result, err := service.ReasonedOrIngestedReport("missing_delimiter", validStartAndEndTime)
+	result, err := service.IngestedReport("missing_delimiter", validStartAndEndTime)
 	assert.NotNil(t, err)
 	assert.Nil(t, result)
 
-	result, err = service.ReasonedOrIngestedReport("invalid.values", validStartAndEndTime)
+	result, err = service.IngestedReport("invalid.values", validStartAndEndTime)
 	assert.NotNil(t, err)
 	assert.Nil(t, result)
 }

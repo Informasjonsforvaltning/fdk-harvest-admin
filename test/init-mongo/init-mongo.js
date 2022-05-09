@@ -139,19 +139,26 @@ db.reports.insert([
         }
     },
     {
-        "id": "reasoned",
+        "id": "reasoning-test-id",
         "reports": {
             "dataset": {
-                "id": "reasoned",
+                "id": "reasoning-test-id",
+                "url": "http://url.com",
                 "dataType": "dataset",
                 "harvestError": false,
                 "startTime": "2022-04-06 14:00:17 +0200",
                 "endTime": "2022-04-06 14:00:27 +0200",
                 "changedCatalogs": [],
                 "changedResources": []
-            },
+            }
+        }
+    },
+    {
+        "id": "reasoning-test-id-2",
+        "reports": {
             "publicService": {
-                "id": "reasoned",
+                "id": "reasoning-test-id-2",
+                "url": "http://url2.com",
                 "dataType": "publicService",
                 "harvestError": false,
                 "startTime": "2022-04-06 14:00:17 +0200",
@@ -160,7 +167,23 @@ db.reports.insert([
                 "changedResources": []
             },
             "event": {
-                "id": "reasoned",
+                "id": "reasoning-test-id-2",
+                "url": "http://url2.com",
+                "dataType": "event",
+                "harvestError": false,
+                "startTime": "2022-04-06 14:00:17 +0200",
+                "endTime": "2022-04-06 14:00:27 +0200",
+                "changedCatalogs": [],
+                "changedResources": []
+            }
+        }
+    },
+    {
+        "id": "reasoning-test-id-3",
+        "reports": {
+            "event": {
+                "id": "reasoning-test-id-3",
+                "url": "http://url3.com",
                 "dataType": "event",
                 "harvestError": false,
                 "startTime": "2022-04-06 14:00:17 +0200",
