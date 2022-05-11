@@ -31,7 +31,7 @@ func TestUpdateHarvestedReport(t *testing.T) {
 
 	errors := service.ConsumeReport(context.TODO(), "concepts.harvested", body)
 
-	assert.Empty(t, errors)
+	assert.Nil(t, errors)
 }
 
 func TestCreateHarvestedReport(t *testing.T) {
@@ -55,7 +55,7 @@ func TestCreateHarvestedReport(t *testing.T) {
 
 	errors := service.ConsumeReport(context.TODO(), "concepts.harvested", body)
 
-	assert.Empty(t, errors)
+	assert.Nil(t, errors)
 }
 
 func TestHarvestedReportError(t *testing.T) {
@@ -101,7 +101,7 @@ func TestConsumeReasonedReport(t *testing.T) {
 
 	errors := service.ConsumeReport(context.TODO(), "concepts.reasoned", body)
 
-	assert.Empty(t, errors)
+	assert.Nil(t, errors)
 }
 
 func TestReasonedReportError(t *testing.T) {
@@ -129,7 +129,7 @@ func TestConsumeIngestReport(t *testing.T) {
 
 	errors := service.ConsumeReport(context.TODO(), "concepts.ingested", body)
 
-	assert.Empty(t, errors)
+	assert.Nil(t, errors)
 }
 
 func TestIngestReportError(t *testing.T) {
