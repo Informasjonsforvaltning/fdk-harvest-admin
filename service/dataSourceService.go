@@ -269,16 +269,16 @@ func (service *DataSourceService) GetHarvestStatus(ctx context.Context, id strin
 }
 
 func (service *DataSourceService) ConsumeReport(ctx context.Context, routingKey string, body []byte) []error {
-	var errors []error
-	if strings.Contains(routingKey, "harvested") {
-		errors = service.consumeHarvestedReport(ctx, body)
-	} else if strings.Contains(routingKey, "reasoned") {
-		errors = service.consumeReasonedReport(ctx, body)
-	} else if strings.Contains(routingKey, "ingested") {
-		errors = service.consumeIngestedReport(ctx, routingKey, body)
+	switch {
+	case strings.Contains(routingKey, "harvested"):
+		return service.consumeHarvestedReport(ctx, body)
+	case strings.Contains(routingKey, "reasoned"):
+		return service.consumeReasonedReport(ctx, body)
+	case strings.Contains(routingKey, "ingested"):
+		return service.consumeIngestedReport(ctx, routingKey, body)
+	default:
+		return nil
 	}
-
-	return errors
 }
 
 func (service *DataSourceService) consumeHarvestedReport(ctx context.Context, body []byte) []error {
