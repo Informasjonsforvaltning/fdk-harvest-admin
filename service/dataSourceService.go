@@ -286,52 +286,51 @@ func (service *DataSourceService) consumeHarvestedReport(ctx context.Context, bo
 	var reports []model.HarvestReport
 	err := json.Unmarshal(body, &reports)
 	if err != nil {
-		errors = append(errors, err)
-	} else {
-		for _, report := range reports {
-			err := service.ReportsRepository.UpsertReports(ctx, report)
-			if err != nil {
-				errors = append(errors, err)
-			}
+		return []error{err}
+	}
+
+	for _, report := range reports {
+		err := service.ReportsRepository.UpsertReports(ctx, report)
+		if err != nil {
+			errors = append(errors, err)
 		}
-		}
+	}
 	return errors
 }
 
 func (service *DataSourceService) consumeReasonedReport(ctx context.Context, body []byte) []error {
-	var errors []error
 	var reports []model.HarvestReport
 	err := json.Unmarshal(body, &reports)
 	if err != nil {
-		errors = append(errors, err)
-	} else {
-		for _, report := range reports {
-			report.ID = ReasoningReportID(report.ID)
-			err := service.ReportsRepository.UpsertReports(ctx, report)
-			if err != nil {
-				errors = append(errors, err)
-			}
+		return []error{err}
+	}
+
+	var errors []error
+	for _, report := range reports {
+		report.ID = ReasoningReportID(report.ID)
+		err := service.ReportsRepository.UpsertReports(ctx, report)
+		if err != nil {
+			errors = append(errors, err)
 		}
 	}
 	return errors
 }
 
 func (service *DataSourceService) consumeIngestedReport(ctx context.Context, routingKey string, body []byte) []error {
-	var errors []error
 	var startAndEnd model.StartAndEndTime
 	err := json.Unmarshal(body, &startAndEnd)
 	if err != nil {
-		errors = append(errors, err)
-	} else {
-		report, err := IngestedReport(routingKey, startAndEnd)
-		if err != nil {
-			errors = append(errors, err)
-		} else {
-			err = service.ReportsRepository.UpsertReports(ctx, *report)
-			if err != nil {
-				errors = append(errors, err)
-			}
-		}
+		return []error{err}
 	}
-	return errors
+
+	report, err := IngestedReport(routingKey, startAndEnd)
+	if err != nil {
+		return []error{err}
+	}
+
+	err = service.ReportsRepository.UpsertReports(ctx, *report)
+	if err != nil {
+		return []error{err}
+	}
+	return nil
 }
