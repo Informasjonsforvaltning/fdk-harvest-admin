@@ -189,6 +189,7 @@ func (service *DataSourceService) StartHarvesting(ctx context.Context, id string
 		harvestParams := make(map[string]string)
 		harvestParams["dataSourceId"] = dataSource.ID
 		harvestParams["publisherId"] = dataSource.PublisherID
+		harvestParams["forceUpdate"] = "true"
 
 		var msgBody []byte
 		msgBody, err = json.Marshal(harvestParams)
