@@ -39,6 +39,7 @@ paths:
               - SKOS-AP-NO
               - DCAT-AP-NO
               - CPSV-AP-NO
+              - ModellDCAT-AP-NO
         - in: query
           name: dataType
           description: If you want to filter by the data type
@@ -110,6 +111,7 @@ paths:
               - SKOS-AP-NO
               - DCAT-AP-NO
               - CPSV-AP-NO
+              - ModellDCAT-AP-NO
         - in: query
           name: dataType
           description: If you want to filter by the data type
@@ -222,6 +224,7 @@ components:
             - SKOS-AP-NO
             - DCAT-AP-NO
             - CPSV-AP-NO
+            - ModellDCAT-AP-NO
         dataType:
           type: string
           enum:
