@@ -3,7 +3,7 @@ A service that provide functionality to register and list data sources to be har
 
 
 ## To run locally:
-* install Golang >=1.17
+* install Golang >=1.20
 
 * Tests:
 ```
