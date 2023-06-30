@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine as build-env
+FROM golang:1.20-alpine as build-env
  
 ENV APP_NAME fdk-harvest-admin
 ENV CMD_PATH main.go
