@@ -12,7 +12,7 @@ require (
 	github.com/ory/dockertest/v3 v3.9.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/streadway/amqp v1.1.0
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 	go.mongodb.org/mongo-driver v1.12.0
 )
 
