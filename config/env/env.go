@@ -73,6 +73,7 @@ type Security struct {
 	SysAdminAuth    string
 	OrgType         string
 	AdminPermission string
+	WritePermission string
 }
 
 var ConstantValues = Constants{
@@ -107,4 +108,5 @@ var SecurityValues = Security{
 	SysAdminAuth:    "system:root:admin",
 	OrgType:         "organization",
 	AdminPermission: "admin",
+	WritePermission: "write",
 }

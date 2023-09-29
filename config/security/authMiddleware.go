@@ -48,25 +48,26 @@ func validateTokenAndParseAuthorities(token string) (string, int) {
 	return authorities, errStatus
 }
 
-func hasOrganizationAdminRole(authorities string, org string) bool {
+func hasSystemAdminRole(authorities string) bool {
 	sysAdminAuth := env.SecurityValues.SysAdminAuth
-	orgAdminAuth := fmt.Sprintf("%s:%s:%s", env.SecurityValues.OrgType, org, env.SecurityValues.AdminPermission)
-	if strings.Contains(authorities, sysAdminAuth) {
-		return true
-	} else if strings.Contains(authorities, orgAdminAuth) {
-		return true
-	} else {
-		return false
-	}
+	return strings.Contains(authorities, sysAdminAuth)
 }
 
-func RequireAdminAuth() gin.HandlerFunc {
+func hasOrganizationRole(authorities string, org string, role string) bool {
+	orgAdminAuth := fmt.Sprintf("%s:%s:%s", env.SecurityValues.OrgType, org, role)
+	return strings.Contains(authorities, orgAdminAuth)
+}
+
+func AuthenticateAndCheckPermissions() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authorities, status := validateTokenAndParseAuthorities(c.GetHeader("Authorization"))
 
 		if status != http.StatusOK {
 			respondWithError(c, status, http.StatusText(status))
-		} else if !hasOrganizationAdminRole(authorities, c.Param("org")) {
+		} else if !(
+			hasSystemAdminRole(authorities) ||
+			hasOrganizationRole(authorities, c.Param("org"), env.SecurityValues.AdminPermission) ||
+			hasOrganizationRole(authorities, c.Param("org"), env.SecurityValues.WritePermission)) {
 			respondWithError(c, http.StatusForbidden, http.StatusText(http.StatusForbidden))
 		}
 

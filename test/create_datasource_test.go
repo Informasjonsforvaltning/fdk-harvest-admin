@@ -14,7 +14,7 @@ import (
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 )
 
-func TestCreateDataSource(t *testing.T) {
+func TestCreateDataSourceWithAdminRole(t *testing.T) {
 	router := config.SetupRouter()
 
 	w := httptest.NewRecorder()
@@ -32,6 +32,69 @@ func TestCreateDataSource(t *testing.T) {
 	}
 	orgAdminAuth := OrgAdminAuth("987654321")
 	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	body, _ := json.Marshal(toBeCreated)
+	req, _ := http.NewRequest("POST", "/organizations/987654321/datasources", bytes.NewReader(body))
+	req.Header.Set("Authorization", *jwt)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	var actualResponse model.DataSource
+	json.Unmarshal(w.Body.Bytes(), &actualResponse)
+
+	toBeCreated.ID = actualResponse.ID
+	assert.Equal(t, toBeCreated, actualResponse)
+}
+
+func TestCreateDataSourceWithWriteRole(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	toBeCreated := model.DataSource{
+		DataSourceType:    "SKOS-AP-NO",
+		DataType:          "concept",
+		URL:               "http://url.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherID:       "987654321",
+		Description:       "created source",
+		AuthHeader: &model.AuthHeader{
+			Name:  "X-API-KEY",
+			Value: "MyAPIKey",
+		},
+	}
+	orgAdminAuth := OrgWriteAuth("987654321")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	body, _ := json.Marshal(toBeCreated)
+	req, _ := http.NewRequest("POST", "/organizations/987654321/datasources", bytes.NewReader(body))
+	req.Header.Set("Authorization", *jwt)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	var actualResponse model.DataSource
+	json.Unmarshal(w.Body.Bytes(), &actualResponse)
+
+	toBeCreated.ID = actualResponse.ID
+	assert.Equal(t, toBeCreated, actualResponse)
+}
+
+func TestCreateDataSourceWithSysAdminRole(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	toBeCreated := model.DataSource{
+		DataSourceType:    "SKOS-AP-NO",
+		DataType:          "concept",
+		URL:               "http://url.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherID:       "987654321",
+		Description:       "created source",
+		AuthHeader: &model.AuthHeader{
+			Name:  "X-API-KEY",
+			Value: "MyAPIKey",
+		},
+	}
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &TestValues.SysAdminAuth, &TestValues.Audience)
 	body, _ := json.Marshal(toBeCreated)
 	req, _ := http.NewRequest("POST", "/organizations/987654321/datasources", bytes.NewReader(body))
 	req.Header.Set("Authorization", *jwt)

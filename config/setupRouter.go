@@ -18,12 +18,12 @@ func InitializeRoutes(e *gin.Engine) {
 	e.GET(env.PathValues.Ready, handlers.ReadyHandler())
 	e.GET(env.PathValues.Datasource, handlers.GetDataSourceHandler())
 	e.GET(env.PathValues.HarvestStatus, handlers.GetHarvestStatusHandler())
-	e.PUT(env.PathValues.Datasource, security.RequireAdminAuth(), handlers.UpdateDataSourceHandler())
-	e.DELETE(env.PathValues.Datasource, security.RequireAdminAuth(), handlers.DeleteDataSourceHandler())
+	e.PUT(env.PathValues.Datasource, security.AuthenticateAndCheckPermissions(), handlers.UpdateDataSourceHandler())
+	e.DELETE(env.PathValues.Datasource, security.AuthenticateAndCheckPermissions(), handlers.DeleteDataSourceHandler())
 	e.GET(env.PathValues.Datasources, handlers.GetAllHandler())
 	e.GET(env.PathValues.OrgDatasources, handlers.GetOrgDataSourcesHandler())
-	e.POST(env.PathValues.OrgDatasources, security.RequireAdminAuth(), handlers.CreateDataSourceHandler())
-	e.POST(env.PathValues.StartHarvest, security.RequireAdminAuth(), handlers.StartHarvestingHandler())
+	e.POST(env.PathValues.OrgDatasources, security.AuthenticateAndCheckPermissions(), handlers.CreateDataSourceHandler())
+	e.POST(env.PathValues.StartHarvest, security.AuthenticateAndCheckPermissions(), handlers.StartHarvestingHandler())
 }
 
 func SetupRouter() *gin.Engine {
