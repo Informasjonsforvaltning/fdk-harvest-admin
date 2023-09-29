@@ -29,6 +29,10 @@ func OrgAdminAuth(org string) string {
 	return fmt.Sprintf("organization:%s:admin", org)
 }
 
+func OrgWriteAuth(org string) string {
+	return fmt.Sprintf("organization:%s:write", org)
+}
+
 func TestMain(m *testing.M) {
 	mockJwkStore := MockJwkStore()
 	os.Setenv("KEYCLOAK_HOST", mockJwkStore.URL)
