@@ -1,6 +1,6 @@
 module github.com/Informasjonsforvaltning/fdk-harvest-admin
 
-go 1.20
+go 1.22
 
 require (
 	cloud.google.com/go/errorreporting v0.3.0
