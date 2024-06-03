@@ -41,6 +41,10 @@ func RabbitPort() string {
 	return getEnv("RABBIT_PORT", "5672")
 }
 
+func ApiKey() string {
+	return getEnv("API_KEY", "test-key")
+}
+
 type Constants struct {
 	MongoAuthParams        string
 	DataSourcesCollection  string
@@ -58,14 +62,18 @@ type Constants struct {
 }
 
 type Paths struct {
-	Datasource     string
-	HarvestStatus  string
-	Datasources    string
-	OrgDatasources string
-	Organizations  string
-	Ping           string
-	Ready          string
-	StartHarvest   string
+	Datasource             string
+	InternalDatasource     string
+	HarvestStatus          string
+	Datasources            string
+	InternalDatasources    string
+	OrgDatasources         string
+	InternalOrgDatasources string
+	Organizations          string
+	Ping                   string
+	Ready                  string
+	StartHarvest           string
+	Internal               string
 }
 
 type Security struct {
@@ -93,14 +101,17 @@ var ConstantValues = Constants{
 }
 
 var PathValues = Paths{
-	Datasource:     "organizations/:org/datasources/:id",
-	HarvestStatus:  "organizations/:org/datasources/:id/status",
-	Datasources:    "datasources",
-	OrgDatasources: "organizations/:org/datasources",
-	Organizations:  "organizations",
-	Ping:           "ping",
-	Ready:          "ready",
-	StartHarvest:   "organizations/:org/datasources/:id/start-harvesting",
+	Datasource:             "organizations/:org/datasources/:id",
+	InternalDatasource:     "internal/organizations/:org/datasources/:id",
+	HarvestStatus:          "organizations/:org/datasources/:id/status",
+	Datasources:            "datasources",
+	InternalDatasources:    "internal/datasources",
+	OrgDatasources:         "organizations/:org/datasources",
+	InternalOrgDatasources: "internal/organizations/:org/datasources",
+	Organizations:          "organizations",
+	Ping:                   "ping",
+	Ready:                  "ready",
+	StartHarvest:           "organizations/:org/datasources/:id/start-harvesting",
 }
 
 var SecurityValues = Security{
