@@ -52,6 +52,58 @@ func TestGetOrgDataSourcesRoute(t *testing.T) {
 	assert.Equal(t, expectedResponse, actualResponse)
 }
 
+func TestGetOrgDataSourcesInternalRoute(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/internal/organizations/123456789/datasources", nil)
+	req.Header.Set("X-API-KEY", "test-key")
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var expectedResponse []model.DataSource
+	expectedResponse = append(expectedResponse, model.DataSource{
+		ID:                "test-id",
+		DataSourceType:    "DCAT-AP-NO",
+		DataType:          "dataset",
+		URL:               "http://url.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherID:       "123456789",
+		Description:       "test source",
+		AuthHeader: &model.AuthHeader{
+			Name:  "X-API-KEY",
+			Value: "MyApiKey",
+		},
+	})
+	expectedResponse = append(expectedResponse, model.DataSource{
+		ID:                "test-id-3",
+		DataSourceType:    "CPSV-AP-NO",
+		DataType:          "publicService",
+		URL:               "http://url3.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherID:       "123456789",
+		Description:       "test source 3",
+	})
+
+	var actualResponse []model.DataSource
+	err := json.Unmarshal(w.Body.Bytes(), &actualResponse)
+
+	assert.Nil(t, err)
+	assert.Equal(t, expectedResponse, actualResponse)
+}
+
+func TestGetOrgDataSourcesInternalForbidden(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/internal/organizations/123456789/datasources", nil)
+	req.Header.Set("X-API-KEY", "wrong-key")
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusForbidden, w.Code)
+}
+
 func TestGetOrgDataSourcesByDataSourceType(t *testing.T) {
 	router := config.SetupRouter()
 

@@ -64,10 +64,19 @@ func AuthenticateAndCheckPermissions() gin.HandlerFunc {
 
 		if status != http.StatusOK {
 			respondWithError(c, status, http.StatusText(status))
-		} else if !(
-			hasSystemAdminRole(authorities) ||
+		} else if !(hasSystemAdminRole(authorities) ||
 			hasOrganizationRole(authorities, c.Param("org"), env.SecurityValues.AdminPermission) ||
 			hasOrganizationRole(authorities, c.Param("org"), env.SecurityValues.WritePermission)) {
+			respondWithError(c, http.StatusForbidden, http.StatusText(http.StatusForbidden))
+		}
+
+		c.Next()
+	}
+}
+
+func AuthenticateApiKey() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.GetHeader("X-API-KEY") != env.ApiKey() {
 			respondWithError(c, http.StatusForbidden, http.StatusText(http.StatusForbidden))
 		}
 

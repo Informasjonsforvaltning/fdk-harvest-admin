@@ -28,6 +28,34 @@ func TestGetDataSourcesRoute(t *testing.T) {
 	assert.True(t, len(actualResponse) > 2)
 }
 
+func TestGetDataSourcesInternalRoute(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/internal/datasources", nil)
+	req.Header.Set("X-API-KEY", "test-key")
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var actualResponse []model.DataSource
+	err := json.Unmarshal(w.Body.Bytes(), &actualResponse)
+
+	assert.Nil(t, err)
+	assert.True(t, len(actualResponse) > 2)
+}
+
+func TestGetDataSourcesInternalForbidden(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/internal/datasources", nil)
+	req.Header.Set("X-API-KEY", "wrong-key")
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusForbidden, w.Code)
+}
+
 func TestGetDataSourcesByDataSourceType(t *testing.T) {
 	router := config.SetupRouter()
 
