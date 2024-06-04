@@ -74,6 +74,20 @@ func AuthenticateAndCheckPermissions() gin.HandlerFunc {
 	}
 }
 
+func AuthenticateSysAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authorities, status := validateTokenAndParseAuthorities(c.GetHeader("Authorization"))
+
+		if status != http.StatusOK {
+			respondWithError(c, status, http.StatusText(status))
+		} else if !hasSystemAdminRole(authorities) {
+			respondWithError(c, http.StatusForbidden, http.StatusText(http.StatusForbidden))
+		}
+
+		c.Next()
+	}
+}
+
 func AuthenticateApiKey() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.GetHeader("X-API-KEY") != env.ApiKey() {
