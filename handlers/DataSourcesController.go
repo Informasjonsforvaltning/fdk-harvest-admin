@@ -15,6 +15,20 @@ func GetAllHandler() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		logrus.Info("Getting all data sources")
 
+		dataSources, status := service.GetAllowedDataSources(c.Request.Context(), c.GetHeader("Authorization"), c.Query("dataType"), c.Query("dataSourceType"))
+		if status == http.StatusOK {
+			c.JSON(status, dataSources)
+		} else {
+			c.Status(status)
+		}
+	}
+}
+
+func GetAllInternalHandler() func(c *gin.Context) {
+	service := service.InitService()
+	return func(c *gin.Context) {
+		logrus.Info("Getting all data sources")
+
 		dataSources, status := service.GetDataSources(c.Request.Context(), nil, c.Query("dataType"), c.Query("dataSourceType"))
 		if status == http.StatusOK {
 			c.JSON(status, dataSources)
@@ -30,7 +44,7 @@ func GetOrgDataSourcesHandler() func(c *gin.Context) {
 		org := c.Param("org")
 		logrus.Infof("Getting data sources for %s", org)
 
-		dataSources, status := service.GetDataSources(c.Request.Context(), &org, c.Query("dataType"), c.Query("dataSourceType"))
+		dataSources, status := service.GetDataSources(c.Request.Context(), []string{org}, c.Query("dataType"), c.Query("dataSourceType"))
 		if status == http.StatusOK {
 			c.JSON(status, dataSources)
 		} else {

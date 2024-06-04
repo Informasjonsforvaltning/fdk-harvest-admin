@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -205,4 +206,19 @@ func parseDateTime(dateString string) (time.Time, error) {
 func nowDateString() string {
 	layout := "2006-01-02 15:04:05 -0700"
 	return time.Now().Format(layout)
+}
+
+func HasSystemAdminRole(authorities string) bool {
+	sysAdminAuth := env.SecurityValues.SysAdminAuth
+	return strings.Contains(authorities, sysAdminAuth)
+}
+
+func AllAuthorizedOrgs(authorities string) []string {
+	orgs := []string{}
+	re := regexp.MustCompile(env.SecurityValues.OrgType + ":([0-9]*):")
+	matches := re.FindAllStringSubmatch(authorities, -1)
+	for _, match := range matches {
+		orgs = append(orgs, match[1])
+	}
+	return orgs
 }

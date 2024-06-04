@@ -58,6 +58,10 @@ func hasOrganizationRole(authorities string, org string, role string) bool {
 	return strings.Contains(authorities, orgAdminAuth)
 }
 
+func hasAnyOrgAuth(authorities string) bool {
+	return strings.Contains(authorities, env.SecurityValues.OrgType)
+}
+
 func AuthenticateAndCheckPermissions() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authorities, status := validateTokenAndParseAuthorities(c.GetHeader("Authorization"))
@@ -74,13 +78,13 @@ func AuthenticateAndCheckPermissions() gin.HandlerFunc {
 	}
 }
 
-func AuthenticateSysAdmin() gin.HandlerFunc {
+func AuthenticateAnyOrgOrSysAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authorities, status := validateTokenAndParseAuthorities(c.GetHeader("Authorization"))
 
 		if status != http.StatusOK {
 			respondWithError(c, status, http.StatusText(status))
-		} else if !hasSystemAdminRole(authorities) {
+		} else if !(hasSystemAdminRole(authorities) || hasAnyOrgAuth(authorities)) {
 			respondWithError(c, http.StatusForbidden, http.StatusText(http.StatusForbidden))
 		}
 

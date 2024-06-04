@@ -128,3 +128,15 @@ func TestIsInProgress(t *testing.T) {
 	result, err = service.IsInProgress(validHarvestTimes, &validReasoningTimes, &invalidIngestStart)
 	assert.NotNil(t, err)
 }
+
+func TestHasSysAdmin(t *testing.T) {
+	assert.True(t, service.HasSystemAdminRole("system:root:admin"))
+	assert.True(t, service.HasSystemAdminRole("organization:123456789:admin,system:root:admin,organization:987654321:write"))
+	assert.False(t, service.HasSystemAdminRole("organization:123456789:admin,organization:987654321:write"))
+}
+
+func TestAllAuthorizedOrgs(t *testing.T) {
+	assert.Equal(t, []string{}, service.AllAuthorizedOrgs("system:root:admin"))
+	assert.Equal(t, []string{"123456789"}, service.AllAuthorizedOrgs("organization:123456789:admin"))
+	assert.Equal(t, []string{"123456789", "987654321"}, service.AllAuthorizedOrgs("organization:123456789:admin,system:root:admin,organization:987654321:write"))
+}

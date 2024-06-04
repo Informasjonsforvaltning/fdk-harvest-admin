@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/Nerzal/gocloak/v10"
 	"net/http"
 	"strings"
 
@@ -34,10 +35,22 @@ func InitService() *DataSourceService {
 	return &service
 }
 
-func (service *DataSourceService) GetDataSources(ctx context.Context, org *string, dataType string, dataSourceType string) (*[]model.DataSource, int) {
+func (service *DataSourceService) GetAllowedDataSources(ctx context.Context, token string, dataType string, dataSourceType string) (*[]model.DataSource, int) {
+	client := gocloak.NewClient(env.KeycloakHost())
+	_, claims, _ := client.DecodeAccessToken(ctx, token, "fdk")
+	authorities := (*claims)["authorities"].(string)
+
+	if HasSystemAdminRole(authorities) {
+		return service.GetDataSources(ctx, nil, dataType, dataSourceType)
+	} else {
+		return service.GetDataSources(ctx, AllAuthorizedOrgs(authorities), dataType, dataSourceType)
+	}
+}
+
+func (service *DataSourceService) GetDataSources(ctx context.Context, orgs []string, dataType string, dataSourceType string) (*[]model.DataSource, int) {
 	query := bson.D{}
-	if org != nil {
-		query = append(query, bson.E{Key: "publisherId", Value: org})
+	if orgs != nil {
+		query = append(query, bson.E{Key: "publisherId", Value: bson.D{{Key: "$in", Value: orgs}}})
 	}
 	if len(dataType) > 0 {
 		query = append(query, bson.E{Key: "dataType", Value: dataType})
