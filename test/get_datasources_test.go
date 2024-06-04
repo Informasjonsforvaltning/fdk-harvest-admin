@@ -41,17 +41,23 @@ func TestGetDataSourcesUnauthorized(t *testing.T) {
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
 
-func TestGetDataSourcesForbidden(t *testing.T) {
+func TestGetAllowedDataSources(t *testing.T) {
 	router := config.SetupRouter()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/datasources", nil)
-	orgAdminAuth := OrgAdminAuth("987654321")
+	orgAdminAuth := OrgAdminAuth("123456789")
 	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
 	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusForbidden, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var actualResponse []model.DataSource
+	err := json.Unmarshal(w.Body.Bytes(), &actualResponse)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(actualResponse))
 }
 
 func TestGetDataSourcesInternalRoute(t *testing.T) {
