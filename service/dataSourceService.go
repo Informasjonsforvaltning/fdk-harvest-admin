@@ -52,11 +52,13 @@ func (service *DataSourceService) GetDataSources(ctx context.Context, orgs []str
 	if orgs != nil {
 		query = append(query, bson.E{Key: "publisherId", Value: bson.D{{Key: "$in", Value: orgs}}})
 	}
-	if len(dataType) > 0 {
-		query = append(query, bson.E{Key: "dataType", Value: dataType})
+	dataTypeEnum := model.DataTypeEnum(dataType)
+	if dataTypeEnum.Validate() == nil {
+		query = append(query, bson.E{Key: "dataType", Value: dataTypeEnum})
 	}
-	if len(dataSourceType) > 0 {
-		query = append(query, bson.E{Key: "dataSourceType", Value: dataSourceType})
+	dataSourceTypeEnum := model.DataSourceTypeEnum(dataSourceType)
+	if dataSourceTypeEnum.Validate() == nil {
+		query = append(query, bson.E{Key: "dataSourceType", Value: dataSourceTypeEnum})
 	}
 	dataSources, err := service.DataSourceRepository.GetDataSources(ctx, query)
 	if err != nil {
