@@ -26,15 +26,17 @@ func TestDeleteDataSourceNotFound(t *testing.T) {
 func TestDeleteDataSource(t *testing.T) {
 	router := config.SetupRouter()
 
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &TestValues.SysAdminAuth, &TestValues.Audience)
+
 	pre := httptest.NewRecorder()
 	preReq, _ := http.NewRequest("GET", "/organizations/987654321/datasources/to-be-deleted", nil)
+	preReq.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(pre, preReq)
 
 	assert.Equal(t, http.StatusOK, pre.Code)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("DELETE", "/organizations/987654321/datasources/to-be-deleted", nil)
-	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &TestValues.SysAdminAuth, &TestValues.Audience)
 	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
@@ -42,6 +44,7 @@ func TestDeleteDataSource(t *testing.T) {
 
 	post := httptest.NewRecorder()
 	postReq, _ := http.NewRequest("GET", "/organizations/987654321/datasources/to-be-deleted", nil)
+	postReq.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(post, postReq)
 
 	assert.Equal(t, http.StatusNotFound, post.Code)

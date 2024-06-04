@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
@@ -16,6 +17,9 @@ func TestGetDatasetStatus(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/test-id/status", nil)
+	orgAdminAuth := OrgAdminAuth("123456789")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -42,11 +46,37 @@ func TestGetDatasetStatus(t *testing.T) {
 	assert.Equal(t, expected, actualResponse)
 }
 
+func TestGetDatasetStatusUnauthorized(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/test-id/status", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+}
+
+func TestGetDatasetStatusForbidden(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/test-id/status", nil)
+	orgAdminAuth := OrgAdminAuth("987654321")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	req.Header.Set("Authorization", *jwt)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusForbidden, w.Code)
+}
+
 func TestGetHarvestStatuses(t *testing.T) {
 	router := config.SetupRouter()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/test-id-2/status", nil)
+	orgAdminAuth := OrgAdminAuth("123456789")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -83,6 +113,9 @@ func TestGetFailedHarvestStatuses(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/test-id-3/status", nil)
+	orgAdminAuth := OrgAdminAuth("123456789")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -117,6 +150,9 @@ func TestHarvestStatusErrorMissingReasoningReport(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/organizations/123456789/datasources/data-source-id/status", nil)
+	orgAdminAuth := OrgAdminAuth("123456789")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
