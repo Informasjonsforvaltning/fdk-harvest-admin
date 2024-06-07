@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Nerzal/gocloak/v10"
+	"github.com/Nerzal/gocloak/v13"
 	"net/http"
 	"strings"
 

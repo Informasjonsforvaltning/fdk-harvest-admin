@@ -35,7 +35,7 @@ func OrgWriteAuth(org string) string {
 
 func TestMain(m *testing.M) {
 	mockJwkStore := MockJwkStore()
-	os.Setenv("KEYCLOAK_HOST", mockJwkStore.URL)
+	os.Setenv("SSO_AUTH_URI", mockJwkStore.URL)
 
 	pool, err := dockertest.NewPool("")
 	if err != nil {
