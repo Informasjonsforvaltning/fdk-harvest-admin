@@ -3,10 +3,12 @@ package security
 import (
 	"context"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"strings"
+	"time"
 
-	gocloak "github.com/Nerzal/gocloak/v10"
+	gocloak "github.com/Nerzal/gocloak/v13"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/env"
@@ -30,12 +32,12 @@ func validateTokenAndParseAuthorities(token string) (string, int) {
 	} else if claims == nil {
 		errStatus = http.StatusForbidden
 	} else {
-		validError := claims.Valid()
+		var v = jwt.NewValidator(
+			jwt.WithLeeway(5*time.Second),
+			jwt.WithAudience(env.SecurityValues.TokenAudience),
+		)
+		validError := v.Validate(claims)
 		if validError != nil {
-			errStatus = http.StatusForbidden
-		}
-
-		if !claims.VerifyAudience(env.SecurityValues.TokenAudience, true) {
 			errStatus = http.StatusForbidden
 		}
 
