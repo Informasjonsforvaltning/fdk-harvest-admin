@@ -18,24 +18,37 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  build-and-deploy-production:
+  build-and-push-image:
     needs: run-tests
     name: Deploy to prod on merge to main branch
-    uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy.yaml@main
+    uses: Informasjonsforvaltning/workflows/.github/workflows/build-push.yaml@main
+    with:
+      app_name: fdk-harvest-admin
+      environment: prod
+      build_env: true
+      build_env_name: BINARY
+      build_env_value: fdk-harvest-admin
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GCP_SA_DIGDIR_FDK_GCR_KEY: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
+
+  deploy-to-prod:
+    needs: build-and-push-image
+    name: Deploy to prod if prod-deploy is successful
+    uses: Informasjonsforvaltning/workflows/.github/workflows/kustomize-deploy.yaml@main
     with:
       app_name: fdk-harvest-admin
       environment: prod
       cluster: digdir-fdk-prod
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GCP_SA_DIGDIR_FDK_GCR_KEY: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
       DIGDIR_FDK_AUTODEPLOY: ${{ secrets.DIGDIR_FDK_PROD_AUTODEPLOY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   deploy-to-demo:
-    needs: build-and-deploy-production
+    needs: deploy-to-prod
     name: Deploy to demo if prod-deploy is successful
-    uses: Informasjonsforvaltning/workflows/.github/workflows/deploy.yaml@main
+    uses: Informasjonsforvaltning/workflows/.github/workflows/kustomize-deploy.yaml@main
     with:
       app_name: fdk-harvest-admin
       environment: demo
