@@ -18,17 +18,31 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  build-and-deploy-staging:
+  build-and-push-image:
     needs: run-tests
     name: Call reusable workflow when pull request is created
     if: ${{ github.actor != 'dependabot[bot]' && github.event.pull_request.draft == false }}
-    uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy.yaml@main
+    uses: Informasjonsforvaltning/workflows/.github/workflows/build-push.yaml@main
+    with:
+      app_name: fdk-harvest-admin
+      environment: staging
+      build_env: true
+      build_env_name: BINARY
+      build_env_value: fdk-harvest-admin
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GCP_SA_DIGDIR_FDK_GCR_KEY: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
+
+  deploy:
+    name: Deploy to staging environment with reusable workflow
+    if: github.event.pull_request.draft == false
+    needs: [ run-tests, build-and-push-image ]
+    uses: Informasjonsforvaltning/workflows/.github/workflows/kustomize-deploy.yaml@main
     with:
       app_name: fdk-harvest-admin
       environment: staging
       cluster: digdir-fdk-dev
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GCP_SA_DIGDIR_FDK_GCR_KEY: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
       DIGDIR_FDK_AUTODEPLOY: ${{ secrets.DIGDIR_FDK_DEV_AUTODEPLOY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
