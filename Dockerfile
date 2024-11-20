@@ -17,4 +17,4 @@ COPY --from=build-env /$APP_NAME .
 
 EXPOSE 8080
 
-CMD ["./$APP_NAME"]
+CMD ["sh", "-c", "./$APP_NAME"]
