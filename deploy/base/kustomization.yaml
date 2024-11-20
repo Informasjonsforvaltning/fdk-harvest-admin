@@ -6,5 +6,5 @@ resources:
   - service-fdk-harvest-admin.yaml
 images:
   - name: fdk-harvest-admin
-    newName: eu.gcr.io/digdir-fdk-infra/fdk-harvest-admin
+    newName: ghcr.io/informasjonsforvaltning/fdk-harvest-admin
     newTag: $(GIT_COMMIT_SHA)
