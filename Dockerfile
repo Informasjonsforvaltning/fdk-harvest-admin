@@ -1,7 +1,7 @@
-FROM golang:1.22-alpine as build-env
+FROM golang:1.22-alpine AS build-env
  
-ENV APP_NAME fdk-harvest-admin
-ENV CMD_PATH main.go
+ENV APP_NAME=fdk-harvest-admin
+ENV CMD_PATH=main.go
  
 COPY . $GOPATH/src/$APP_NAME
 WORKDIR $GOPATH/src/$APP_NAME
@@ -17,4 +17,4 @@ COPY --from=build-env /$APP_NAME .
 
 EXPOSE 8080
 
-CMD ./$APP_NAME
+CMD ["./$APP_NAME"]
