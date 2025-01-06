@@ -40,11 +40,14 @@ func SetupRouter() *gin.Engine {
 
 func corsMiddleware() gin.HandlerFunc {
 	corsConfig := cors.Config{
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowOrigins:     env.CorsOriginPatterns(),
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Accept", "Authorization"},
-		AllowCredentials: true,
+		AllowWildcard:    true,
+		AllowAllOrigins:  false,
+		AllowCredentials: false,
+		AllowFiles:       false,
 		MaxAge:           1 * time.Hour,
 	}
-	corsConfig.AllowAllOrigins = true
 	return cors.New(corsConfig)
 }
