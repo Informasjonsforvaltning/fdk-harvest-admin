@@ -82,7 +82,6 @@ func (service *DataSourceService) GetDataSource(ctx context.Context, id string) 
 	} else if dataSource == nil {
 		return nil, http.StatusNotFound
 	} else {
-		logrus.Info(dataSource)
 		return dataSource, http.StatusOK
 	}
 }
