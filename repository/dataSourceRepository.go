@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -53,12 +54,20 @@ func (r *DataSourceRepositoryImpl) GetDataSources(ctx context.Context, query bso
 }
 
 func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
-	filter := bson.D{{Key: "id", Value: id}}
-	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
-
-	if err == mongo.ErrNoDocuments {
-		return nil, nil
+	if !isValidID(id) {
+		return nil, fmt.Errorf("invalid id format")
 	}
+	
+	filter := bson.D{{Key: "id", Value: id}}
+	singleResult := r.collection.FindOne(ctx, filter)
+	if err := singleResult.Err(); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+	
+	bytes, err := singleResult.Raw()
 	if err != nil {
 		return nil, err
 	}
@@ -73,9 +82,21 @@ func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string)
 }
 
 func (r *DataSourceRepositoryImpl) DeleteDataSource(ctx context.Context, id string) error {
+	if !isValidID(id) {
+		return fmt.Errorf("invalid id format")
+	}
+
 	filter := bson.D{{Key: "id", Value: id}}
-	_, err := r.collection.FindOneAndDelete(ctx, filter).DecodeBytes()
-	return err
+	singleResult := r.collection.FindOne(ctx, filter)
+	if err := singleResult.Err(); err != nil {
+		return err
+	}
+
+	_, err := r.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSource model.DataSource) error {
@@ -88,6 +109,10 @@ func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSou
 }
 
 func (r *DataSourceRepositoryImpl) UpdateDataSource(ctx context.Context, toUpdate model.DataSource) error {
+	if !isValidID(toUpdate.ID) {
+		return fmt.Errorf("invalid id format")
+	}
+	
 	filter := bson.D{{Key: "id", Value: toUpdate.ID}}
 	result := r.collection.FindOneAndReplace(ctx, filter, toUpdate, nil)
 
