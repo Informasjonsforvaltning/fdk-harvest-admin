@@ -6,6 +6,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"fmt"
+
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/config/connection"
 	"github.com/Informasjonsforvaltning/fdk-harvest-admin/model"
 )
@@ -28,13 +30,21 @@ func InitReportsRepository() *ReportsRepositoryImpl {
 	return reportsRepository
 }
 
-func (r *ReportsRepositoryImpl) GetReports(ctx context.Context, id string) (*model.HarvestReports, error) {
-	filter := bson.D{{Key: "id", Value: id}}
-	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
 
-	if err == mongo.ErrNoDocuments {
-		return nil, nil
+func (r *ReportsRepositoryImpl) GetReports(ctx context.Context, id string) (*model.HarvestReports, error) {
+	if !isValidID(id) {
+		return nil, fmt.Errorf("invalid id format")
 	}
+	
+	filter := bson.D{{Key: "id", Value: id}}
+	singleResult := r.collection.FindOne(ctx, filter)
+	if err := singleResult.Err(); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+	bytes, err := singleResult.Raw()
 	if err != nil {
 		return nil, err
 	}
@@ -49,12 +59,20 @@ func (r *ReportsRepositoryImpl) GetReports(ctx context.Context, id string) (*mod
 }
 
 func (r *ReportsRepositoryImpl) UpsertReports(ctx context.Context, report model.HarvestReport) error {
+	if !isValidID(report.ID) {
+		return fmt.Errorf("invalid id format")
+	}
+	
 	filter := bson.D{{Key: "id", Value: report.ID}}
-	bytes, err := r.collection.FindOne(ctx, filter).DecodeBytes()
-
-	if err == mongo.ErrNoDocuments {
-		return r.createReports(ctx, report)
-	} else if err != nil {
+	singleResult := r.collection.FindOne(ctx, filter)
+	if err := singleResult.Err(); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return r.createReports(ctx, report)
+		} 
+		return err
+	}
+	bytes, err := singleResult.Raw()
+	if err != nil {
 		return err
 	} else {
 		return r.updateReports(ctx, bytes, report)
