@@ -132,7 +132,7 @@ func TestCreateAlreadyExist(t *testing.T) {
 	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusConflict, w.Code)
 }
 
 func TestInvalidDataSourceType(t *testing.T) {
