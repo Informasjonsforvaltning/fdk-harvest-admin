@@ -117,8 +117,8 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 	err = service.validateAgainstExistingSources(ctx, *dataSource)
 	if err != nil {
 		logging.LogAndPrintError(errors.New("Create failed, trying to recreate existing data source"))
-		msg = "Bad Request - trying to create recreate existing data source"
-		return nil, &msg, nil, http.StatusBadRequest
+		msg = "Conflict - trying to create recreate existing data source"
+		return nil, &msg, nil, http.StatusConflict
 	}
 
 	dataSource.ID = uuid.New().String()
@@ -168,8 +168,8 @@ func (service *DataSourceService) UpdateDataSource(ctx context.Context, id strin
 	err = service.validateAgainstExistingSources(ctx, *toUpdate)
 	if err != nil {
 		logging.LogAndPrintError(err)
-		msg = fmt.Sprintf("Bad Request - %s", err.Error())
-		return nil, &msg, http.StatusBadRequest
+		msg = fmt.Sprintf("Conflict - %s", err.Error())
+		return nil, &msg, http.StatusConflict
 	}
 
 	var dbSource *model.DataSource

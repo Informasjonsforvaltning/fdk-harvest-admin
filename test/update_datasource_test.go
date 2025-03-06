@@ -46,7 +46,7 @@ func TestUpdateDataSource(t *testing.T) {
 	assert.Equal(t, toBeUpdated, actualResponse)
 }
 
-func TestUpdateBadRequestWhenCopyingExistingSource(t *testing.T) {
+func TestUpdateConflictWhenCopyingExistingSource(t *testing.T) {
 	router := config.SetupRouter()
 
 	w := httptest.NewRecorder()
@@ -66,7 +66,7 @@ func TestUpdateBadRequestWhenCopyingExistingSource(t *testing.T) {
 	req.Header.Set("Authorization", *jwt)
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusConflict, w.Code)
 }
 
 func TestUpdateInvalidDataSourceType(t *testing.T) {
