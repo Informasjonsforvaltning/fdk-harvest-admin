@@ -114,6 +114,13 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 		return nil, &msg, nil, http.StatusBadRequest
 	}
 
+	err = service.validateAgainstExistingSources(ctx, *dataSource)
+	if err != nil {
+		logging.LogAndPrintError(errors.New("Create failed, trying to recreate existing data source"))
+		msg = "Bad Request - trying to create recreate existing data source"
+		return nil, &msg, nil, http.StatusBadRequest
+	}
+
 	dataSource.ID = uuid.New().String()
 	err = service.DataSourceRepository.CreateDataSource(ctx, *dataSource)
 	if err != nil {
@@ -129,6 +136,12 @@ func (service *DataSourceService) CreateDataSource(ctx context.Context, bytes []
 func (service *DataSourceService) CreateDataSourceFromRabbitMessage(ctx context.Context, bytes []byte) error {
 	dataSource, err := unmarshalAndValidateDataSource(bytes)
 	if err != nil {
+		return err
+	}
+
+	err = service.validateAgainstExistingSources(ctx, *dataSource)
+	if err != nil {
+		logrus.Error("Create failed, source already exists")
 		return err
 	} else {
 		dataSource.ID = uuid.New().String()
@@ -146,6 +159,13 @@ func (service *DataSourceService) CreateDataSourceFromRabbitMessage(ctx context.
 func (service *DataSourceService) UpdateDataSource(ctx context.Context, id string, bytes []byte, org string) (*model.DataSource, *string, int) {
 	toUpdate, err := unmarshalAndValidateDataSource(bytes)
 	var msg string
+	if err != nil {
+		logging.LogAndPrintError(err)
+		msg = fmt.Sprintf("Bad Request - %s", err.Error())
+		return nil, &msg, http.StatusBadRequest
+	}
+
+	err = service.validateAgainstExistingSources(ctx, *toUpdate)
 	if err != nil {
 		logging.LogAndPrintError(err)
 		msg = fmt.Sprintf("Bad Request - %s", err.Error())
@@ -349,4 +369,25 @@ func (service *DataSourceService) consumeIngestedReport(ctx context.Context, rou
 		return []error{err}
 	}
 	return nil
+}
+
+func (service *DataSourceService) validateAgainstExistingSources(ctx context.Context, dataSource model.DataSource) error {
+	query := bson.D{}
+	query = append(query, bson.E{Key: "url", Value: dataSource.URL})
+	query = append(query, bson.E{Key: "dataType", Value: dataSource.DataType})
+
+	dataSources, err := service.DataSourceRepository.GetDataSources(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	if len(dataSources) == 0 {
+		return nil
+	}
+
+	if len(dataSources) == 1 && dataSources[0].ID == dataSource.ID {
+		return nil
+	}
+
+	return fmt.Errorf("source not unique")
 }
