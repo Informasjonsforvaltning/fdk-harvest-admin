@@ -21,7 +21,7 @@ func TestCreateDataSourceWithAdminRole(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		URL:               "http://url.com",
+		URL:               "http://url0.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherID:       "987654321",
 		Description:       "created source",
@@ -53,7 +53,7 @@ func TestCreateDataSourceWithWriteRole(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		URL:               "http://url.com",
+		URL:               "http://url1.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherID:       "987654321",
 		Description:       "created source",
@@ -85,7 +85,7 @@ func TestCreateDataSourceWithSysAdminRole(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		URL:               "http://url.com",
+		URL:               "http://url2.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherID:       "987654321",
 		Description:       "created source",
@@ -109,6 +109,32 @@ func TestCreateDataSourceWithSysAdminRole(t *testing.T) {
 	assert.Equal(t, toBeCreated, actualResponse)
 }
 
+func TestCreateAlreadyExist(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	toBeCreated := model.DataSource{
+		DataSourceType:    "SKOS-AP-NO",
+		DataType:          "dataset",
+		URL:               "http://url.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherID:       "987654321",
+		Description:       "created source",
+		AuthHeader: &model.AuthHeader{
+			Name:  "X-API-KEY",
+			Value: "MyAPIKey",
+		},
+	}
+	orgAdminAuth := OrgAdminAuth("987654321")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	body, _ := json.Marshal(toBeCreated)
+	req, _ := http.NewRequest("POST", "/organizations/987654321/datasources", bytes.NewReader(body))
+	req.Header.Set("Authorization", *jwt)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
 func TestInvalidDataSourceType(t *testing.T) {
 	router := config.SetupRouter()
 
@@ -116,7 +142,7 @@ func TestInvalidDataSourceType(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "BAD-REQUEST",
 		DataType:          "concept",
-		URL:               "http://url.com",
+		URL:               "http://url3.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherID:       "987654321",
 		Description:       "created source",
@@ -138,7 +164,7 @@ func TestInvalidDataType(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "invalid",
-		URL:               "http://url.com",
+		URL:               "http://url4.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherID:       "987654321",
 		Description:       "created source",
@@ -174,7 +200,7 @@ func TestWrongOrganization(t *testing.T) {
 	toBeCreated := model.DataSource{
 		DataSourceType:    "SKOS-AP-NO",
 		DataType:          "concept",
-		URL:               "http://url.com",
+		URL:               "http://url5.com",
 		AcceptHeaderValue: "text/turtle",
 		PublisherID:       "123456789",
 		Description:       "created source",

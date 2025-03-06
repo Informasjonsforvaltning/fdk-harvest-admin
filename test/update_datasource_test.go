@@ -46,6 +46,29 @@ func TestUpdateDataSource(t *testing.T) {
 	assert.Equal(t, toBeUpdated, actualResponse)
 }
 
+func TestUpdateBadRequestWhenCopyingExistingSource(t *testing.T) {
+	router := config.SetupRouter()
+
+	w := httptest.NewRecorder()
+	toBeUpdated := model.DataSource{
+		ID:                "to-be-updated",
+		DataSourceType:    "DCAT-AP-NO",
+		DataType:          "dataset",
+		URL:               "http://url.com",
+		AcceptHeaderValue: "text/turtle",
+		PublisherID:       "987654321",
+		Description:       "test source",
+	}
+	orgAdminAuth := OrgAdminAuth("987654321")
+	jwt := CreateMockJwt(time.Now().Add(time.Hour).Unix(), &orgAdminAuth, &TestValues.Audience)
+	body, _ := json.Marshal(toBeUpdated)
+	req, _ := http.NewRequest("PUT", "/organizations/987654321/datasources/to-be-updated", bytes.NewReader(body))
+	req.Header.Set("Authorization", *jwt)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
 func TestUpdateInvalidDataSourceType(t *testing.T) {
 	router := config.SetupRouter()
 

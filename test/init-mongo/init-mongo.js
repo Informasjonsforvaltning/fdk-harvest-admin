@@ -45,7 +45,7 @@ db.datasources.insert([
         "id": "to-be-updated",
         "dataSourceType": "SKOS-AP-NO",
         "dataType": "concept",
-        "url": "http://example.com",
+        "url": "http://example1.com",
         "acceptHeaderValue": "text/turtle",
         "publisherId": "987654321",
         "description": "source to be updated",
