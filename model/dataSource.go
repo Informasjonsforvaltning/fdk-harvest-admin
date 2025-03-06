@@ -1,5 +1,9 @@
 package model
 
+import (
+	"net/url"
+)
+
 type DataSource struct {
 	ID                string             `json:"id" bson:"id"`
 	DataSourceType    DataSourceTypeEnum `json:"dataSourceType" bson:"dataSourceType"`
@@ -16,5 +20,14 @@ func (dataSource DataSource) Validate() error {
 	if err != nil {
 		return err
 	}
-	return dataSource.DataType.Validate()
+	err = dataSource.DataType.Validate()
+	if err != nil {
+		return err
+	}
+	return validateURL(dataSource.URL)
+}
+
+func validateURL(rawURL string) error {
+	_, err := url.ParseRequestURI(rawURL)
+	return err
 }
