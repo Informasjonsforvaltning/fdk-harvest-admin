@@ -7,7 +7,7 @@ require (
 	github.com/Nerzal/gocloak/v13 v13.9.0
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/lestrrat-go/jwx v1.2.29
 	github.com/ory/dockertest/v3 v3.10.0
