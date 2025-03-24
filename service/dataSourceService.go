@@ -165,13 +165,6 @@ func (service *DataSourceService) UpdateDataSource(ctx context.Context, id strin
 		return nil, &msg, http.StatusBadRequest
 	}
 
-	err = service.validateAgainstExistingSources(ctx, *toUpdate)
-	if err != nil {
-		logging.LogAndPrintError(err)
-		msg = fmt.Sprintf("Conflict - %s", err.Error())
-		return nil, &msg, http.StatusConflict
-	}
-
 	var dbSource *model.DataSource
 	dbSource, err = service.DataSourceRepository.GetDataSource(ctx, id)
 	if err != nil {
@@ -189,6 +182,14 @@ func (service *DataSourceService) UpdateDataSource(ctx context.Context, id strin
 	}
 
 	toUpdate.ID = dbSource.ID
+
+	err = service.validateAgainstExistingSources(ctx, *toUpdate)
+	if err != nil {
+		logging.LogAndPrintError(err)
+		msg = fmt.Sprintf("Conflict - %s", err.Error())
+		return nil, &msg, http.StatusConflict
+	}
+
 	err = service.DataSourceRepository.UpdateDataSource(ctx, *toUpdate)
 
 	var updated *model.DataSource
