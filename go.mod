@@ -9,7 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
-	github.com/lestrrat-go/jwx v1.2.29
+	github.com/lestrrat-go/jwx v1.2.31
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/streadway/amqp v1.1.0
@@ -31,7 +31,7 @@ require (
 	github.com/cloudwego/base64x v0.1.5 // indirect
 	github.com/containerd/continuity v0.4.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/docker/cli v26.1.3+incompatible // indirect
 	github.com/docker/docker v26.1.3+incompatible // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
