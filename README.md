@@ -1,4 +1,4 @@
-# FDK HARVEST ADMIN
+# FDK Harvest Admin
 
 This application provides an API to register and list data sources to be harvested.
 
