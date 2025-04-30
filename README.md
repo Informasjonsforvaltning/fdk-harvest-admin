@@ -1,30 +1,63 @@
-# fdk-harvest-admin
-A service that provide functionality to register and list data sources to be harvested.
+# FDK Harvest Admin
 
+This application provides an API to register and list data sources to be harvested.
 
-## To run locally:
-* install Golang >=1.20
+For a broader understanding of the system’s context, refer to
+the [architecture documentation](https://github.com/Informasjonsforvaltning/architecture-documentation) wiki. For more
+specific context on this application, see the **Harvesting** subsystem section.
 
-* Tests:
+## Getting Started
+
+These instructions will give you a copy of the project up and running on your local machine for development and testing
+purposes.
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- Go
+- Docker
+
+Clone the repository.
+
+```sh
+git clone https://github.com/Informasjonsforvaltning/fdk-harvest-admin.git
+cd fdk-harvest-admin
 ```
-// Run all tests
-go test ./test
-// Run tests with coverage report
-go test -v -race -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic ./test
+
+#### Start MongoDB and RabbitMQ
+
+```sh
+docker-compose up -d
 ```
-* Start the service:
-```
-// Start with go run
-docker-compose up -d mongodb
-docker-compose up -d rabbitmq
+
+If you have problems starting kafka, check if all health checks are ok. Make sure number at the end (after 'grep')
+matches desired topics.
+
+#### Install required dependencies
+
+```sh
 go get
+```
+
+#### Start application
+
+```sh
 go run main.go
-// Start with docker-compose
-docker-compose up -d --build
 ```
-* Check that service is running:
+
+### API Documentation (OpenAPI)
+
+The API documentation is available at ```spec/fdk-harvest-admin.yaml```.
+
+### Running tests
+
+```sh
+go test ./test
 ```
-curl -X 'GET' \
-  'localhost:8000/ping' \
-  -H 'accept: application/json'
+
+To generate a test coverage report, use the following command:
+
+```sh
+go test -v -race -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic ./test
 ```
