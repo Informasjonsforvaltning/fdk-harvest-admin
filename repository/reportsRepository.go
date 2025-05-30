@@ -2,6 +2,9 @@ package repository
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readconcern"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,6 +21,7 @@ type ReportsRepository interface {
 }
 
 type ReportsRepositoryImpl struct {
+	client     *mongo.Client
 	collection *mongo.Collection
 }
 
@@ -25,17 +29,17 @@ var reportsRepository *ReportsRepositoryImpl
 
 func InitReportsRepository() *ReportsRepositoryImpl {
 	if reportsRepository == nil {
-		reportsRepository = &ReportsRepositoryImpl{collection: connection.ReportsCollection()}
+		client := connection.MongoClient()
+		reportsRepository = &ReportsRepositoryImpl{client: client, collection: connection.ReportsCollection(client)}
 	}
 	return reportsRepository
 }
 
-
 func (r *ReportsRepositoryImpl) GetReports(ctx context.Context, id string) (*model.HarvestReports, error) {
 	if !isValidID(id) {
-		return nil, fmt.Errorf("invalid id format")
+		return nil, fmt.Errorf("invalid id format: %s", id)
 	}
-	
+
 	filter := bson.D{{Key: "id", Value: id}}
 	singleResult := r.collection.FindOne(ctx, filter)
 	if err := singleResult.Err(); err != nil {
@@ -60,23 +64,37 @@ func (r *ReportsRepositoryImpl) GetReports(ctx context.Context, id string) (*mod
 
 func (r *ReportsRepositoryImpl) UpsertReports(ctx context.Context, report model.HarvestReport) error {
 	if !isValidID(report.ID) {
-		return fmt.Errorf("invalid id format")
+		return fmt.Errorf("invalid id format: %s", report.ID)
 	}
-	
-	filter := bson.D{{Key: "id", Value: report.ID}}
-	singleResult := r.collection.FindOne(ctx, filter)
-	if err := singleResult.Err(); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return r.createReports(ctx, report)
-		} 
-		return err
-	}
-	bytes, err := singleResult.Raw()
-	if err != nil {
-		return err
-	} else {
-		return r.updateReports(ctx, bytes, report)
-	}
+
+	return r.client.UseSession(ctx, func(sctx mongo.SessionContext) error {
+		err := sctx.StartTransaction(options.Transaction().
+			SetReadConcern(readconcern.Snapshot()).
+			SetWriteConcern(writeconcern.Majority()),
+		)
+
+		if err != nil {
+			return err
+		}
+
+		filter := bson.D{{Key: "id", Value: report.ID}}
+		singleResult := r.collection.FindOne(ctx, filter)
+		if err := singleResult.Err(); err != nil {
+			if err == mongo.ErrNoDocuments {
+				return r.createReports(ctx, report)
+			} else {
+				sctx.AbortTransaction(sctx)
+				return err
+			}
+		}
+		bytes, err := singleResult.Raw()
+		if err != nil {
+			sctx.AbortTransaction(sctx)
+			return err
+		} else {
+			return r.updateReports(ctx, bytes, report)
+		}
+	})
 }
 
 func (r *ReportsRepositoryImpl) createReports(ctx context.Context, report model.HarvestReport) error {

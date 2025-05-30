@@ -2,7 +2,7 @@ package connection
 
 import (
 	"context"
-	"fmt"
+	"strings"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -13,37 +13,38 @@ import (
 )
 
 func mongoConnectionString() string {
-	authParams := env.ConstantValues.MongoAuthParams
-	dbName := env.ConstantValues.MongoDatabase
-	host := env.MongoHost()
-	password := env.MongoPassword()
-	user := env.MongoUsername()
+	var connectionString strings.Builder
+	connectionString.WriteString("mongodb://")
+	connectionString.WriteString(env.MongoUsername())
+	connectionString.WriteString(":")
+	connectionString.WriteString(env.MongoPassword())
+	connectionString.WriteString("@")
+	connectionString.WriteString(env.MongoHost())
+	connectionString.WriteString("/")
+	connectionString.WriteString(env.ConstantValues.MongoDatabase)
+	connectionString.WriteString("?authSource=")
+	connectionString.WriteString(env.MongoAuthSource())
+	connectionString.WriteString("&replicaSet=")
+	connectionString.WriteString(env.MongoReplicaSet())
 
-	connectionString := fmt.Sprintf("mongodb://%s:%s@%s/%s?%s", user, password, host, dbName, authParams)
-
-	return connectionString
+	return connectionString.String()
 }
 
-func DataSourcesCollection() *mongo.Collection {
+func MongoClient() *mongo.Client {
 	mongoOptions := options.Client().ApplyURI(mongoConnectionString())
 	client, err := mongo.Connect(context.Background(), mongoOptions)
 	if err != nil {
 		logrus.Error("mongo client failed")
 		logging.LogAndPrintError(err)
 	}
-	collection := client.Database(env.ConstantValues.MongoDatabase).Collection(env.ConstantValues.DataSourcesCollection)
 
-	return collection
+	return client
 }
 
-func ReportsCollection() *mongo.Collection {
-	mongoOptions := options.Client().ApplyURI(mongoConnectionString())
-	client, err := mongo.Connect(context.Background(), mongoOptions)
-	if err != nil {
-		logrus.Error("mongo client failed")
-		logging.LogAndPrintError(err)
-	}
-	collection := client.Database(env.ConstantValues.MongoDatabase).Collection(env.ConstantValues.ReportsCollection)
+func DataSourcesCollection(client *mongo.Client) *mongo.Collection {
+	return client.Database(env.ConstantValues.MongoDatabase).Collection(env.ConstantValues.DataSourcesCollection)
+}
 
-	return collection
+func ReportsCollection(client *mongo.Client) *mongo.Collection {
+	return client.Database(env.ConstantValues.MongoDatabase).Collection(env.ConstantValues.ReportsCollection)
 }
