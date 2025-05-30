@@ -1,6 +1,6 @@
-db = db.getSiblingDB('fdk-harvest-admin');
-db.createCollection('datasources');
-db.datasources.insert([
+db = db.getSiblingDB('fdkHarvestAdmin');
+db.createCollection('dataSources');
+db.dataSources.insert([
     {
         "id": "test-id",
         "dataSourceType": "DCAT-AP-NO",

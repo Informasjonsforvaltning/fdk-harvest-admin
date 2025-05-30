@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"os"
 	"testing"
@@ -37,6 +38,10 @@ func TestMain(m *testing.M) {
 	mockJwkStore := MockJwkStore()
 	os.Setenv("SSO_AUTH_URI", mockJwkStore.URL)
 
+	MongoContainerRunner(m)
+}
+
+func MongoContainerRunner(m *testing.M) {
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
@@ -48,14 +53,20 @@ func TestMain(m *testing.M) {
 	}
 
 	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
-		Repository: "mongo",
-		Tag:        "4",
+		Repository: "bitnami/mongodb",
+		Tag:        "latest",
 		Env: []string{
-			"MONGO_INITDB_ROOT_USERNAME=admin",
-			"MONGO_INITDB_ROOT_PASSWORD=admin",
+			"MONGODB_ROOT_PASSWORD=admin",
+			"MONGODB_ADVERTISED_HOSTNAME=localhost",
+			"MONGODB_REPLICA_SET_MODE=primary",
+			"MONGODB_REPLICA_SET_KEY=replicaset",
+		},
+		ExposedPorts: []string{"27017"},
+		PortBindings: map[docker.Port][]docker.PortBinding{
+			"27017": {{HostIP: "127.0.0.1", HostPort: "27017"}},
 		},
 		Mounts: []string{
-			currentDirectory + "/init-mongo:/docker-entrypoint-initdb.d",
+			currentDirectory + "/init-mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro",
 		},
 	}, func(config *docker.HostConfig) {
 		// set AutoRemove to true so that stopped container is automatically removed
@@ -68,8 +79,9 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not start resource: %s", err)
 	}
 
-	// set MONGO_HOST environment variable to reference test db
-	os.Setenv("MONGO_HOST", fmt.Sprintf("localhost:%s", resource.GetPort("27017/tcp")))
+	if err != nil {
+		log.Fatalf("Could not start resource: %s", err)
+	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	err = pool.Retry(func() error {
@@ -77,15 +89,18 @@ func TestMain(m *testing.M) {
 		dbClient, err = mongo.Connect(
 			context.TODO(),
 			options.Client().ApplyURI(
-				fmt.Sprintf("mongodb://admin:admin@localhost:%s", resource.GetPort("27017/tcp")),
+				"mongodb://root:admin@localhost:27017",
 			),
 		)
 		if err != nil {
 			return err
 		}
-		return dbClient.Ping(context.TODO(), nil)
+		// try to find a document added in init-mongo file
+		db := dbClient.Database("fdkHarvestAdmin")
+		coll := db.Collection("dataSources")
+		_, err = coll.FindOne(context.TODO(), bson.D{{Key: "id", Value: "test-id"}}).Raw()
+		return err
 	})
-
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}

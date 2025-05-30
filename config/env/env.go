@@ -25,7 +25,15 @@ func MongoPassword() string {
 }
 
 func MongoUsername() string {
-	return getEnv("MONGO_USERNAME", "admin")
+	return getEnv("MONGO_USERNAME", "root")
+}
+
+func MongoAuthSource() string {
+	return getEnv("MONGODB_AUTH", "admin")
+}
+
+func MongoReplicaSet() string {
+	return getEnv("MONGODB_REPLICASET", "replicaset")
 }
 
 func KeycloakHost() string {
@@ -53,7 +61,6 @@ func ApiKey() string {
 }
 
 type Constants struct {
-	MongoAuthParams        string
 	DataSourcesCollection  string
 	ReportsCollection      string
 	MongoDatabase          string
@@ -92,10 +99,9 @@ type Security struct {
 }
 
 var ConstantValues = Constants{
-	MongoAuthParams:        "authSource=admin&authMechanism=SCRAM-SHA-1",
-	DataSourcesCollection:  "datasources",
+	DataSourcesCollection:  "dataSources",
 	ReportsCollection:      "reports",
-	MongoDatabase:          "fdk-harvest-admin",
+	MongoDatabase:          "fdkHarvestAdmin",
 	RabbitExchange:         "harvests",
 	RabbitExchangeKind:     "topic",
 	RabbitMsgKeyMiddle:     "publisher",

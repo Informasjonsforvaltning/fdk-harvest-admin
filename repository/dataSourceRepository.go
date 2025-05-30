@@ -3,6 +3,9 @@ package repository
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readconcern"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,6 +23,7 @@ type DataSourceRepository interface {
 }
 
 type DataSourceRepositoryImpl struct {
+	client     *mongo.Client
 	collection *mongo.Collection
 }
 
@@ -27,7 +31,8 @@ var dataSourceRepository *DataSourceRepositoryImpl
 
 func InitDataSourceRepository() *DataSourceRepositoryImpl {
 	if dataSourceRepository == nil {
-		dataSourceRepository = &DataSourceRepositoryImpl{collection: connection.DataSourcesCollection()}
+		client := connection.MongoClient()
+		dataSourceRepository = &DataSourceRepositoryImpl{client: client, collection: connection.DataSourcesCollection(client)}
 	}
 	return dataSourceRepository
 }
@@ -55,9 +60,9 @@ func (r *DataSourceRepositoryImpl) GetDataSources(ctx context.Context, query bso
 
 func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string) (*model.DataSource, error) {
 	if !isValidID(id) {
-		return nil, fmt.Errorf("invalid id format")
+		return nil, fmt.Errorf("invalid id format: %s", id)
 	}
-	
+
 	filter := bson.D{{Key: "id", Value: id}}
 	singleResult := r.collection.FindOne(ctx, filter)
 	if err := singleResult.Err(); err != nil {
@@ -66,7 +71,7 @@ func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string)
 		}
 		return nil, err
 	}
-	
+
 	bytes, err := singleResult.Raw()
 	if err != nil {
 		return nil, err
@@ -83,38 +88,81 @@ func (r *DataSourceRepositoryImpl) GetDataSource(ctx context.Context, id string)
 
 func (r *DataSourceRepositoryImpl) DeleteDataSource(ctx context.Context, id string) error {
 	if !isValidID(id) {
-		return fmt.Errorf("invalid id format")
+		return fmt.Errorf("invalid id format: %s", id)
 	}
 
-	filter := bson.D{{Key: "id", Value: id}}
-	singleResult := r.collection.FindOne(ctx, filter)
-	if err := singleResult.Err(); err != nil {
-		return err
-	}
+	return r.client.UseSession(ctx, func(sctx mongo.SessionContext) error {
+		err := sctx.StartTransaction(options.Transaction().
+			SetReadConcern(readconcern.Snapshot()).
+			SetWriteConcern(writeconcern.Majority()),
+		)
 
-	_, err := r.collection.DeleteOne(ctx, filter)
-	if err != nil {
-		return err
-	}
-	return nil
+		if err != nil {
+			return err
+		}
+
+		filter := bson.D{{Key: "id", Value: id}}
+		singleResult := r.collection.FindOne(ctx, filter)
+
+		if err = singleResult.Err(); err != nil {
+			sctx.AbortTransaction(sctx)
+			return err
+		}
+
+		_, err = r.collection.DeleteOne(ctx, filter)
+		if err != nil {
+			sctx.AbortTransaction(sctx)
+			return err
+		}
+		return nil
+	})
 }
 
 func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSource model.DataSource) error {
-	_, err := r.collection.InsertOne(ctx, dataSource, nil)
+	return r.client.UseSession(ctx, func(sctx mongo.SessionContext) error {
+		err := sctx.StartTransaction(options.Transaction().
+			SetReadConcern(readconcern.Snapshot()).
+			SetWriteConcern(writeconcern.Majority()),
+		)
 
-	if err != nil {
-		return err
-	}
-	return nil
+		if err != nil {
+			return err
+		}
+
+		_, err = r.collection.InsertOne(ctx, dataSource, nil)
+
+		if err != nil {
+			sctx.AbortTransaction(sctx)
+			return err
+		}
+		return nil
+	})
 }
 
 func (r *DataSourceRepositoryImpl) UpdateDataSource(ctx context.Context, toUpdate model.DataSource) error {
-	if !isValidID(toUpdate.ID) {
-		return fmt.Errorf("invalid id format")
-	}
-	
-	filter := bson.D{{Key: "id", Value: toUpdate.ID}}
-	result := r.collection.FindOneAndReplace(ctx, filter, toUpdate, nil)
+	return r.client.UseSession(ctx, func(sctx mongo.SessionContext) error {
+		err := sctx.StartTransaction(options.Transaction().
+			SetReadConcern(readconcern.Snapshot()).
+			SetWriteConcern(writeconcern.Majority()),
+		)
 
-	return result.Err()
+		if err != nil {
+			return err
+		}
+
+		if !isValidID(toUpdate.ID) {
+			return fmt.Errorf("invalid id format: %s", toUpdate.ID)
+		}
+
+		filter := bson.D{{Key: "id", Value: toUpdate.ID}}
+		result := r.collection.FindOneAndReplace(ctx, filter, toUpdate, nil)
+		err = result.Err()
+
+		if err != nil {
+			sctx.AbortTransaction(sctx)
+			return err
+		} else {
+			return nil
+		}
+	})
 }
