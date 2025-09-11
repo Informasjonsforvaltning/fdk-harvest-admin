@@ -22,6 +22,72 @@ spec:
       serviceAccountName: error-reporting-sa
       containers:
         - name: fdk-harvest-admin
+          env:
+            - name: MONGO_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb
+                  key: MONGODB_HOST
+            - name: MONGODB_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb
+                  key: MONGODB_AUTH
+            - name: MONGODB_REPLICASET
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb
+                  key: MONGODB_REPLICASET
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: fdk-harvest-admin
+                  key: MONGODB_USER
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fdk-harvest-admin
+                  key: MONGODB_PASSWORD
+            - name: RABBIT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: RABBITMQ_USERNAME
+            - name: RABBIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: RABBITMQ_PASSWORD
+            - name: RABBIT_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: RABBITMQ_HOST
+            - name: RABBIT_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: RABBITMQ_PORT
+            - name: SSO_AUTH_URI
+              valueFrom:
+                secretKeyRef:
+                  name: commonurl
+                  key: SSO_AUTH_URI
+            - name: PROJECT_ID_GCP
+              valueFrom:
+                secretKeyRef:
+                  name: common
+                  key: PROJECT_ID
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: fdk-harvest-admin
+                  key: API_KEY
+            - name: CORS_ORIGIN_PATTERNS
+              valueFrom:
+                secretKeyRef:
+                  name: fdk-harvest-admin
+                  key: CORS_ORIGIN_PATTERNS
           image: fdk-harvest-admin
           imagePullPolicy: Always
           ports:
