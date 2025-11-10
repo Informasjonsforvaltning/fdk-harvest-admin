@@ -93,7 +93,7 @@ func (service *DataSourceService) DeleteDataSource(ctx context.Context, id strin
 	} else if err == mongo.ErrNoDocuments {
 		return http.StatusNotFound
 	} else {
-		logrus.Error("Delete data source with id %s failed, ", id)
+		logrus.Errorf("Delete data source with id %s failed, ", id)
 		logging.LogAndPrintError(err)
 		return http.StatusInternalServerError
 	}
