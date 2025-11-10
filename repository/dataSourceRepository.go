@@ -38,6 +38,11 @@ func InitDataSourceRepository() *DataSourceRepositoryImpl {
 }
 
 func (r *DataSourceRepositoryImpl) GetDataSources(ctx context.Context, query bson.D) ([]model.DataSource, error) {
+	// Validate query is not nil
+	if query == nil {
+		return nil, fmt.Errorf("query cannot be nil")
+	}
+
 	current, err := r.collection.Find(ctx, query)
 	if err != nil {
 		return nil, err
@@ -119,6 +124,16 @@ func (r *DataSourceRepositoryImpl) DeleteDataSource(ctx context.Context, id stri
 }
 
 func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSource model.DataSource) error {
+	// Validate data source
+	if err := validateDataSource(&dataSource); err != nil {
+		return fmt.Errorf("invalid data source: %w", err)
+	}
+
+	// Validate PublisherID format
+	if !isValidPublisherID(dataSource.PublisherID) {
+		return fmt.Errorf("invalid publisherId format: %s", dataSource.PublisherID)
+	}
+
 	return r.client.UseSession(ctx, func(sctx mongo.SessionContext) error {
 		err := sctx.StartTransaction(options.Transaction().
 			SetReadConcern(readconcern.Snapshot()).
@@ -140,6 +155,21 @@ func (r *DataSourceRepositoryImpl) CreateDataSource(ctx context.Context, dataSou
 }
 
 func (r *DataSourceRepositoryImpl) UpdateDataSource(ctx context.Context, toUpdate model.DataSource) error {
+	// Validate ID format
+	if !isValidID(toUpdate.ID) {
+		return fmt.Errorf("invalid id format: %s", toUpdate.ID)
+	}
+
+	// Validate data source
+	if err := validateDataSource(&toUpdate); err != nil {
+		return fmt.Errorf("invalid data source: %w", err)
+	}
+
+	// Validate PublisherID format
+	if !isValidPublisherID(toUpdate.PublisherID) {
+		return fmt.Errorf("invalid publisherId format: %s", toUpdate.PublisherID)
+	}
+
 	return r.client.UseSession(ctx, func(sctx mongo.SessionContext) error {
 		err := sctx.StartTransaction(options.Transaction().
 			SetReadConcern(readconcern.Snapshot()).
@@ -148,10 +178,6 @@ func (r *DataSourceRepositoryImpl) UpdateDataSource(ctx context.Context, toUpdat
 
 		if err != nil {
 			return err
-		}
-
-		if !isValidID(toUpdate.ID) {
-			return fmt.Errorf("invalid id format: %s", toUpdate.ID)
 		}
 
 		filter := bson.D{{Key: "id", Value: toUpdate.ID}}
