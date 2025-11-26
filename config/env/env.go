@@ -37,7 +37,7 @@ func MongoReplicaSet() string {
 }
 
 func KeycloakHost() string {
-	return getEnv("SSO_AUTH_URI", "https://sso.staging.fellesdatakatalog.digdir.no/auth")
+	return getEnv("KEYCLOAK_BASE_URI", "https://auth.staging.fellesdatakatalog.digdir.no")
 }
 
 func RabbitPassword() string {

@@ -68,11 +68,11 @@ spec:
                 secretKeyRef:
                   name: rabbitmq
                   key: RABBITMQ_PORT
-            - name: SSO_AUTH_URI
+            - name: KEYCLOAK_BASE_URI
               valueFrom:
                 secretKeyRef:
-                  name: commonurl
-                  key: SSO_AUTH_URI
+                  name: keycloak
+                  key: KEYCLOAK_BASE_URI
             - name: PROJECT_ID_GCP
               valueFrom:
                 secretKeyRef:

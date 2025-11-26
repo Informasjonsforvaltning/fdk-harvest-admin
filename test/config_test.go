@@ -3,10 +3,11 @@ package test
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"os"
 	"testing"
+
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
@@ -36,7 +37,7 @@ func OrgWriteAuth(org string) string {
 
 func TestMain(m *testing.M) {
 	mockJwkStore := MockJwkStore()
-	os.Setenv("SSO_AUTH_URI", mockJwkStore.URL)
+	os.Setenv("KEYCLOAK_BASE_URI", mockJwkStore.URL)
 
 	MongoContainerRunner(m)
 }
