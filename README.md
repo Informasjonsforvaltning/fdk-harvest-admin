@@ -1,3 +1,12 @@
+⚠️ **Archived / Deprecated**
+
+> This repository is no longer maintained.
+> Its functionality has been replaced by:
+
+➡️ https://github.com/Informasjonsforvaltning/fdk-harvest-admin-service
+
+---
+
 # FDK Harvest Admin
 
 This application provides an API to register and list data sources to be harvested.
